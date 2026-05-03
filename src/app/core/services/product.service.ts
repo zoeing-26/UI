@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import {
   Product, ProductFilter, ProductListResponse,
-  Category, ApiCategory, ApiMaterial, Brand, Banner, Quote, CartResponse, CartItem,
+  Category, ApiCategory, ApiMaterial, ApiBrand, AllMaterialsResponse, Banner, Quote, CartResponse, CartItem,
 } from '../../models/product.model';
 
 @Injectable({ providedIn: 'root' })
@@ -90,15 +90,24 @@ export class ProductService {
   /**
    * GET /v1/brand_materials
    */
-  getBrands(): Observable<Brand[]> {
-    return this.api.get<Brand[]>('v1/brand_materials');
+  getBrands(): Observable<ApiBrand[]> {
+    return this.api.getRaw<ApiBrand[]>('v1/brand_materials');
+  }
+
+  /**
+   * GET /v1/all_materials
+   */
+  getAllMaterials(): Observable<ApiMaterial[]> {
+    return this.api.getRaw<AllMaterialsResponse>('v1/all_materials').pipe(
+      map(res => res.materials)
+    );
   }
 
   /**
    * GET /v1/brand_materials/featured
    */
-  getFeaturedBrands(): Observable<Brand[]> {
-    return this.api.get<Brand[]>('v1/brand_materials/featured');
+  getFeaturedBrands(): Observable<ApiBrand[]> {
+    return this.api.getRaw<ApiBrand[]>('v1/brand_materials/featured');
   }
 
   /**

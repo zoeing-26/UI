@@ -80,13 +80,28 @@ export interface SubCategory {
 
 export interface ApiMaterial {
   id: number;
-  name: string;
-  description: string;
+  name?: string;
+  description: string | null;
   count: number;
-  price: number | null;
+  price: string | number | null;  // API returns price as string e.g. "1250.00"
   product_code: string;
   image: string | null;
-  industry: string;
+  industry: string | null;
+  category?: string;
+  brand?: string | null;
+  sub_category?: string;
+}
+
+export interface AllMaterialsResponse {
+  message: string;
+  materials: ApiMaterial[];
+}
+
+// Shape returned by GET /v1/brand_materials
+export interface ApiBrand {
+  id: number;
+  name: string;
+  materials: ApiMaterial[];
 }
 
 export interface ApiSubProduct {

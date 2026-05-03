@@ -48,7 +48,7 @@ import { ApiMaterial } from '../../../models/product.model';
 
         <!-- Name -->
         <p class="text-xs font-semibold text-gray-800 dark:text-gray-100 leading-snug line-clamp-2 flex-1">
-          {{ mat().name }}
+          {{ mat().name || mat().product_code }}
         </p>
 
         <!-- Series label -->

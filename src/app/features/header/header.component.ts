@@ -239,6 +239,7 @@ export class HeaderComponent implements OnInit {
 
 
   readonly navItems: NavItem[] = [
+    { label: 'Products', key: 'products', link: '/inventory' },
     { label: 'Manufacturers', key: 'manufacturers', link: '/manufacturers' },
     { label: 'Inventory', key: 'inventory', link: '/inventory' },
     { label: 'About', key: 'about', link: '/about' },

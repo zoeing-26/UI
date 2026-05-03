@@ -7,8 +7,10 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({ name: 'inrCurrency', standalone: true, pure: true })
 export class InrCurrencyPipe implements PipeTransform {
-  transform(value: number | null | undefined, showDash = false): string {
-    if (value === null || value === undefined || isNaN(value)) return '—';
+  transform(value: string | number | null | undefined, showDash = false): string {
+    if (value === null || value === undefined) return '—';
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(num)) return '—';
 
     // Indian number system: last 3 digits, then groups of 2
     const formatted = new Intl.NumberFormat('en-IN', {
@@ -16,7 +18,7 @@ export class InrCurrencyPipe implements PipeTransform {
       currency: 'INR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(num);
 
     return showDash ? `${formatted}/-` : formatted;
   }

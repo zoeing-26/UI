@@ -9,6 +9,11 @@ export const routes: Routes = [
   },
   {
     path: 'products',
+    redirectTo: 'inventory',
+    pathMatch: 'full',
+  },
+  {
+    path: 'product-list',
     loadComponent: () =>
       import('./features/product-list/product-list.component').then(m => m.ProductListComponent),
     title: 'Products | Zoieng Global',
@@ -50,7 +55,7 @@ export const routes: Routes = [
   {
     path: 'inventory',
     loadComponent: () =>
-      import('./features/economy-series/economy-series.component').then(m => m.EconomySeriesComponent),
+      import('./features/inventory/inventory.component').then(m => m.InventoryComponent),
     title: 'Inventory | Zoieng Global',
   },
   {

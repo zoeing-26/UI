@@ -1,247 +1,294 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
-import { LanguageService } from '../../core/services/language.service';
-import { Brand, ApiCategory } from '../../models/product.model';
-import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
+import { ApiBrand, ApiMaterial } from '../../models/product.model';
+import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
 
 @Component({
   selector: 'app-brand',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, FormsModule, RouterModule, MaterialCardComponent],
   template: `
-    <main class="max-w-screen-xl mx-auto px-4 py-10">
-      <ng-container *ngIf="!selectedBrand(); else brandDetail">
-        <section class="space-y-6">
-          <span class="text-sm font-semibold uppercase tracking-widest text-zoeing-secondary">Manufacturer Catalogue</span>
-          <h1 class="font-display text-4xl md:text-5xl text-zoeing-primary dark:text-white font-black">Trusted industrial manufacturers for your projects</h1>
-          <p class="max-w-3xl text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-            Explore a curated selection of premium manufacturing partners, including pneumatic, motion control, electrical and tooling brands that power modern factories.
-          </p>
-        </section>
+  <main class="max-w-screen-xl mx-auto px-4 py-10">
 
-        <div class="mt-8">
-          <div class="flex flex-wrap gap-2 mb-6">
-            <button
-              *ngFor="let letter of letters"
-              type="button"
-              class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              [ngClass]="activeLetter() === letter ? 'bg-zoeing-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
-              (click)="setActiveLetter(letter)">
-              {{ letter }}
-            </button>
-          </div>
+    <!-- ═══ BRAND LIST ═══ -->
+    @if (!selectedBrand()) {
 
-          <div *ngIf="brands().length === 0; else brandsLoaded" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 text-center text-gray-600 dark:text-gray-300">
-            Loading brands...
-          </div>
+      <!-- Header -->
+      <section class="mb-8">
+        <p class="text-xs font-bold uppercase tracking-widest text-zoeing-accent mb-2">
+          Manufacturer Catalogue
+        </p>
+        <h1 class="font-display font-black text-4xl md:text-5xl text-zoeing-primary
+                   dark:text-white mb-3">
+          Trusted Industrial Manufacturers
+        </h1>
+        <p class="text-gray-600 dark:text-gray-300 max-w-2xl text-base leading-relaxed">
+          Explore premium manufacturing partners powering modern factories — from
+          pneumatic and motion control to electrical and tooling brands.
+        </p>
+      </section>
 
-          <ng-template #brandsLoaded>
-            <ng-container *ngFor="let group of groupedBrands(); let i = index">
-              <section class="mb-8">
-                <h2 class="text-lg font-semibold text-zoeing-primary dark:text-white mb-4">{{ group.letter }}</h2>
-                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  <button
-                    *ngFor="let brand of group.brands"
-                    type="button"
-                    class="w-full text-left rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition hover:border-zoeing-primary hover:bg-gray-50 dark:hover:bg-gray-800"
-                    (click)="openBrand(brand)">
-                    <p class="font-semibold text-zoeing-primary dark:text-white">{{ brand.name }}</p>
-                    <p *ngIf="brand.logo" class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ brand.logo }}</p>
-                  </button>
-                </div>
-              </section>
-            </ng-container>
-          </ng-template>
+      <!-- Letter filter -->
+      <div class="flex flex-wrap gap-1.5 mb-6">
+        @for (letter of letters; track letter) {
+          <button
+            class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors"
+            [class]="activeLetter() === letter
+              ? 'bg-zoeing-primary text-white'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+            (click)="activeLetter.set(letter)"
+          >{{ letter }}</button>
+        }
+      </div>
+
+      <!-- Loading skeleton -->
+      @if (loading()) {
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          @for (i of [1,2,3,4,5,6,7,8]; track i) {
+            <div class="h-28 rounded-xl bg-gray-100 dark:bg-gray-800 animate-pulse"></div>
+          }
         </div>
-      </ng-container>
+      }
 
-      <ng-template #brandDetail>
-        <section class="space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p class="text-sm text-gray-500">Manufacturer detail</p>
-              <h1 class="text-4xl font-bold text-zoeing-primary dark:text-white">{{ selectedBrand()?.name }}</h1>
-              <p class="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl">
-                Browse categories and subcategories available under this brand. Select any category or subcategory to see the full product listing.
-              </p>
-            </div>
-            <button class="rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-zoeing-primary dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
-              (click)="goToBrandList()">
-              Back to manufacturers
-            </button>
+      <!-- Error -->
+      @if (error()) {
+        <div class="rounded-xl border border-red-200 dark:border-red-800 bg-red-50
+                    dark:bg-red-900/20 p-6 text-center">
+          <span class="material-icons text-red-400 text-3xl mb-2 block">wifi_off</span>
+          <p class="text-red-600 dark:text-red-400 font-medium">{{ error() }}</p>
+        </div>
+      }
+
+      <!-- Brand grid grouped by letter -->
+      @if (!loading() && !error()) {
+        @if (groupedBrands().length === 0) {
+          <div class="text-center py-16 text-gray-400 dark:text-gray-500">
+            <span class="material-icons text-4xl block mb-2">search_off</span>
+            No manufacturers found for "{{ activeLetter() }}"
           </div>
-        </section>
-
-        <div class="mt-8 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-          <aside class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-4">All Categories</p>
-            <div *ngIf="categories().length === 0; else categoryNav">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Loading categories...</p>
+        }
+        @for (group of groupedBrands(); track group.letter) {
+          <section class="mb-8">
+            <h2 class="text-sm font-bold text-zoeing-primary dark:text-zoeing-accent
+                       uppercase tracking-widest mb-3 border-b border-gray-100
+                       dark:border-gray-800 pb-2">
+              {{ group.letter }}
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              @for (brand of group.brands; track brand.id) {
+                <button
+                  type="button"
+                  class="text-left rounded-xl border border-gray-200 dark:border-gray-700
+                         bg-white dark:bg-gray-900 overflow-hidden
+                         hover:border-zoeing-primary hover:shadow-md transition-all group"
+                  (click)="openBrand(brand)"
+                >
+                  <!-- Brand colour bar -->
+                  <div class="h-2 bg-zoeing-primary group-hover:bg-zoeing-accent transition-colors"></div>
+                  <div class="p-4">
+                    <p class="font-display font-black text-lg text-zoeing-primary
+                               dark:text-white leading-tight mb-1">
+                      {{ brand.name }}
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                      <span class="material-icons text-sm">inventory_2</span>
+                      {{ brand.materials.length }}
+                      {{ brand.materials.length === 1 ? 'product' : 'products' }}
+                    </p>
+                  </div>
+                </button>
+              }
             </div>
-
-            <ng-template #categoryNav>
-              <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <li *ngFor="let category of categories()">
-                  <a class="block rounded-lg px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    [routerLink]="['/products']"
-                    [queryParams]="{ brand: selectedBrand()?.slug, category: category.name }">
-                    {{ category.name }}
-                  </a>
-                  <ul *ngIf="category.sub_category?.length" class="mt-1 ml-4 space-y-1 text-sm text-gray-500 dark:text-gray-400">
-                    <li *ngFor="let sub of category.sub_category">
-                      <a class="block rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                        [routerLink]="['/products']"
-                        [queryParams]="{ brand: selectedBrand()?.slug, category: category.name, subCategory: sub.name }">
-                        {{ sub.name }}
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </ng-template>
-          </aside>
-
-          <section class="space-y-6">
-            <div *ngIf="categories().length === 0; else categoryList" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 text-gray-500 dark:text-gray-400">
-              Loading category content...
-            </div>
-
-            <ng-template #categoryList>
-              <div *ngFor="let category of categories()" class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-                <div class="flex items-center justify-between gap-4 mb-4">
-                  <h2 class="text-xl font-semibold text-zoeing-primary dark:text-white">{{ category.name }}</h2>
-                  <a class="text-sm text-zoeing-primary dark:text-zoeing-secondary hover:underline"
-                    [routerLink]="['/products']"
-                    [queryParams]="{ brand: selectedBrand()?.slug, category: category.name }">
-                    View all
-                  </a>
-                </div>
-                <div *ngIf="category.sub_category?.length; else noSubcategories" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  <a *ngFor="let sub of category.sub_category"
-                    class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-950 p-4 hover:border-zoeing-primary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    [routerLink]="['/products']"
-                    [queryParams]="{ brand: selectedBrand()?.slug, category: category.name, subCategory: sub.name }">
-                    <p class="font-semibold text-zoeing-primary dark:text-white">{{ sub.name }}</p>
-                  </a>
-                </div>
-                <ng-template #noSubcategories>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">No subcategories available.</p>
-                </ng-template>
-              </div>
-            </ng-template>
           </section>
+        }
+      }
+    }
+
+    <!-- ═══ BRAND DETAIL ═══ -->
+    @if (selectedBrand(); as brand) {
+
+      <!-- Header row -->
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+        <div>
+          <button
+            class="flex items-center gap-1 text-sm text-zoeing-primary dark:text-zoeing-accent
+                   hover:underline mb-3"
+            (click)="goToBrandList()"
+          >
+            <span class="material-icons text-sm">arrow_back</span>
+            Back to manufacturers
+          </button>
+          <h1 class="font-display font-black text-4xl text-zoeing-primary dark:text-white mb-1">
+            {{ brand.name }}
+          </h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ brand.materials.length }} product{{ brand.materials.length !== 1 ? 's' : '' }} available
+          </p>
         </div>
-      </ng-template>
-    </main>
+
+        <!-- Search -->
+        <div class="relative w-full sm:w-72">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 material-icons text-gray-400 text-sm">
+            search
+          </span>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search products…"
+            class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600
+                   rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+                   placeholder-gray-400 focus:outline-none focus:border-zoeing-primary
+                   focus:ring-1 focus:ring-zoeing-primary/40 transition-colors"
+          />
+        </div>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="flex gap-6 mb-6 p-4 rounded-xl bg-zoeing-primary/5 dark:bg-zoeing-primary/10
+                  border border-zoeing-primary/10">
+        <div class="text-center">
+          <p class="font-display font-black text-2xl text-zoeing-primary dark:text-white">
+            {{ brand.materials.length }}
+          </p>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            Total Products
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="font-display font-black text-2xl text-zoeing-accent">
+            {{ inStockCount() }}
+          </p>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            In Stock
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="font-display font-black text-2xl text-gray-700 dark:text-gray-300">
+            {{ filteredMaterials().length }}
+          </p>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            Showing
+          </p>
+        </div>
+      </div>
+
+      <!-- Materials grid -->
+      @if (filteredMaterials().length > 0) {
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          @for (mat of filteredMaterials(); track mat.id) {
+            <app-material-card [mat]="mat" />
+          }
+        </div>
+      } @else {
+        <div class="text-center py-20 text-gray-400 dark:text-gray-500">
+          <span class="material-icons text-5xl block mb-3">search_off</span>
+          <p class="font-medium">No products match "{{ searchQuery }}"</p>
+          <button
+            class="mt-3 text-sm text-zoeing-primary dark:text-zoeing-accent hover:underline"
+            (click)="searchQuery = ''"
+          >Clear search</button>
+        </div>
+      }
+    }
+
+  </main>
   `,
 })
 export class BrandComponent implements OnInit {
   private productService = inject(ProductService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  protected lang = inject(LanguageService);
+  private router         = inject(Router);
+  private route          = inject(ActivatedRoute);
 
-  private readonly mockBrands: Brand[] = [
-    { id: '1', name: 'ZOIENG', slug: 'zoieng', logo: 'Local Industrial Partner', bgColor: '#111827', textColor: '#F8FAFC', featured: true },
-    { id: '2', name: 'SMC', slug: 'smc', logo: 'Pneumatic Automation', bgColor: '#002B5C', textColor: '#FFFFFF' },
-    { id: '3', name: 'OMRON', slug: 'omron', logo: 'Sensors & Control', bgColor: '#003366', textColor: '#FFFFFF' },
-    { id: '4', name: 'FESTO', slug: 'festo', logo: 'Fluid Power', bgColor: '#003A63', textColor: '#FFFFFF' },
-    { id: '5', name: 'THK', slug: 'thk', logo: 'Linear Motion', bgColor: '#003366', textColor: '#FFFFFF' },
-    { id: '6', name: 'NSK', slug: 'nsk', logo: 'Bearing Precision', bgColor: '#1F2937', textColor: '#FFFFFF' },
-    { id: '7', name: 'PANASONIC', slug: 'panasonic', logo: 'Electrical Components', bgColor: '#002B5C', textColor: '#FFFFFF' },
-    { id: '8', name: 'ABB', slug: 'abb', logo: 'Power & Automation', bgColor: '#DD0000', textColor: '#FFFFFF' },
-    { id: '9', name: 'SCHNEIDER', slug: 'schneider-electric', logo: 'Energy Controllers', bgColor: '#1D5A0D', textColor: '#FFFFFF' },
-    { id: '10', name: 'MITSUBISHI', slug: 'mitsubishi-electric', logo: 'PLC & Drives', bgColor: '#C8102E', textColor: '#FFFFFF' },
-    { id: '11', name: 'BOSCH REXROTH', slug: 'bosch-rexroth', logo: 'Motion Systems', bgColor: '#003A63', textColor: '#FFFFFF' },
-    { id: '12', name: 'YASKAWA', slug: 'yaskawa', logo: 'Robotics', bgColor: '#0B4F8C', textColor: '#FFFFFF' },
-    { id: '13', name: 'KEYENCE', slug: 'keyence', logo: 'Machine Vision', bgColor: '#E60012', textColor: '#FFFFFF' },
-    { id: '14', name: 'PARKER', slug: 'parker-hannifin', logo: 'Hydraulics', bgColor: '#003E7E', textColor: '#FFFFFF' },
-    { id: '15', name: 'SKF', slug: 'skf', logo: 'Precision Bearings', bgColor: '#0046AE', textColor: '#FFFFFF' },
-  ];
-
-  private readonly mockCategories: ApiCategory[] = [
-    { name: 'Automation Components', sub_category: [
-      { name: 'Pneumatic', materials: [] },
-      { name: 'Air Valves', materials: [] },
-      { name: 'Sensors', materials: [] },
-    ]},
-    { name: 'Electrical Control', sub_category: [
-      { name: 'Relays & Timers', materials: [] },
-      { name: 'PLC Modules', materials: [] },
-      { name: 'Power Supplies', materials: [] },
-    ]},
-    { name: 'Motion & Transmission', sub_category: [
-      { name: 'Linear Guides', materials: [] },
-      { name: 'Bearings', materials: [] },
-      { name: 'Gearboxes', materials: [] },
-    ]},
-  ];
-
-  brands = signal<Brand[]>(this.mockBrands);
-  categories = signal<ApiCategory[]>([]);
-  selectedBrand = signal<Brand | null>(null);
+  brands       = signal<ApiBrand[]>([]);
+  loading      = signal(true);
+  error        = signal('');
   activeLetter = signal('All');
-  currentSlug = signal<string | null>(null);
+  selectedBrand = signal<ApiBrand | null>(null);
+  searchQuery   = '';
 
   readonly letters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
 
   readonly groupedBrands = computed(() => {
-    const letters = new Map<string, Brand[]>();
-    const sorted = [...this.brands()].sort((a, b) => a.name.localeCompare(b.name));
-    sorted.forEach(brand => {
-      const first = (brand.name?.charAt(0) ?? '#').toUpperCase();
-      const letter = /[A-Z]/.test(first) ? first : '#';
-      if (!letters.has(letter)) {
-        letters.set(letter, []);
-      }
-      letters.get(letter)!.push(brand);
-    });
+    const filtered = this.activeLetter() === 'All'
+      ? this.brands()
+      : this.brands().filter(b =>
+          b.name.charAt(0).toUpperCase() === this.activeLetter()
+        );
 
-    const groups = Array.from(letters.entries()).map(([letter, brands]) => ({ letter, brands }));
-    if (this.activeLetter() === 'All') {
-      return groups;
-    }
-    return groups.filter(group => group.letter === this.activeLetter());
+    const map = new Map<string, ApiBrand[]>();
+    [...filtered]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach(brand => {
+        const letter = /[A-Z]/i.test(brand.name.charAt(0))
+          ? brand.name.charAt(0).toUpperCase()
+          : '#';
+        if (!map.has(letter)) map.set(letter, []);
+        map.get(letter)!.push(brand);
+      });
+
+    return Array.from(map.entries()).map(([letter, brands]) => ({ letter, brands }));
   });
+
+  readonly filteredMaterials = computed((): ApiMaterial[] => {
+    const brand = this.selectedBrand();
+    if (!brand) return [];
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) return brand.materials;
+    return brand.materials.filter(m =>
+      (m.name ?? m.product_code).toLowerCase().includes(q) ||
+      m.product_code.toLowerCase().includes(q) ||
+      (m.description?.toLowerCase().includes(q) ?? false)
+    );
+  });
+
+  readonly inStockCount = computed(() =>
+    (this.selectedBrand()?.materials ?? []).filter(m => (m.count ?? 0) > 0).length
+  );
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.currentSlug.set(params.get('slug'));
-      this.syncSelectedBrand();
+      const idParam = params.get('slug');
+      if (idParam && this.brands().length) {
+        this.selectById(Number(idParam));
+      } else if (!idParam) {
+        this.selectedBrand.set(null);
+      }
     });
 
-    this.productService.getBrands().subscribe(brands => {
-      this.brands.set(brands.length ? brands : this.mockBrands);
-      this.syncSelectedBrand();
-    });
-
-    this.productService.getCategories().subscribe(categories => {
-      this.categories.set(categories.length ? categories : this.mockCategories);
+    this.productService.getBrands().subscribe({
+      next: brands => {
+        this.brands.set(brands);
+        this.loading.set(false);
+        const idParam = this.route.snapshot.paramMap.get('slug');
+        if (idParam) this.selectById(Number(idParam));
+      },
+      error: () => {
+        this.error.set('Could not load manufacturers. Please try again.');
+        this.loading.set(false);
+      },
     });
   }
 
-  setActiveLetter(letter: string): void {
-    this.activeLetter.set(letter);
-  }
-
-  openBrand(brand: Brand): void {
-    this.router.navigate(['/manufacturers', brand.slug]);
+  openBrand(brand: ApiBrand): void {
+    this.searchQuery = '';
+    this.selectedBrand.set(brand);
+    this.router.navigate(['/manufacturers', brand.id]);
   }
 
   goToBrandList(): void {
+    this.searchQuery = '';
+    this.selectedBrand.set(null);
     this.router.navigate(['/manufacturers']);
   }
 
-  private syncSelectedBrand(): void {
-    const slug = this.currentSlug();
-    if (!slug) {
-      this.selectedBrand.set(null);
-      return;
-    }
-    const brand = this.brands().find(item => item.slug === slug) ?? null;
+  private selectById(id: number): void {
+    const brand = this.brands().find(b => b.id === id) ?? null;
     this.selectedBrand.set(brand);
   }
 }

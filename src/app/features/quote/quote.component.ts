@@ -609,12 +609,12 @@ export class QuoteComponent implements OnInit {
 
     const fromMatCart: QuoteItem[] = this.cart.matItems().map(i => ({
       id: i.materialId,
-      name: i.material.name,
+      name: i.material.name ?? i.material.product_code,
       product_code: i.material.product_code ?? '',
       image: i.material.image ?? null,
       price: i.price,
       qty: i.qty,
-      industry: i.material.industry,
+      industry: i.material.industry ?? undefined,
     }));
 
     const fromProductCart: QuoteItem[] = this.cart.items().map(i => ({

@@ -53,7 +53,7 @@ export class CartService {
   // ── Material cart ──────────────────────────────────────────────────────────
 
   addMaterial(material: ApiMaterial, qty = 1): void {
-    const price = material.price ?? 0;
+    const price = typeof material.price === 'string' ? parseFloat(material.price) || 0 : (material.price ?? 0);
     this._matItems.update(items => {
       const existing = items.find(i => i.materialId === material.id);
       if (existing) {
