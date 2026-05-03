@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\" -Directory)",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(npx tsc *)",
+      "Bash(npx ng *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\" -Recurse -Filter \"*.ts\" -o -Filter \"*.tsx\")",
+      "Bash(Select-Object -First 30 -ExpandProperty FullName)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\\\\app\\\\features\" -Recurse -Filter \"*.ts\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\\\\app\" -Recurse -Filter \"*.ts\" -Name)",
+      "Bash(Select-String \"\\(app\\\\.routes|auth\\\\.service|login|register|about\\\\.component\\)\")"
+    ]
+  }
+}
