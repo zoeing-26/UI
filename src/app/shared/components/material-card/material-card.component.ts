@@ -11,7 +11,8 @@ import { ApiMaterial } from '../../../models/product.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, InrCurrencyPipe],
   template: `
-    <div class="flex flex-col rounded-lg overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 h-full">
+    <div class="group flex flex-col rounded-lg overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 h-full cursor-pointer hover:shadow-md hover:border-brand-blue/40 transition-all"
+         (click)="onCardClick()">
 
       <!-- Image -->
       <div class="relative bg-gray-50 dark:bg-gray-800 flex items-center justify-center" style="height:160px">
@@ -67,9 +68,9 @@ import { ApiMaterial } from '../../../models/product.model';
             }
           </div>
 
-          <!-- Action buttons — only when in stock -->
+          <!-- Cart + Quote buttons (in-stock only) -->
           @if (inStock()) {
-            <div class="flex gap-1 shrink-0">
+            <div class="flex gap-1 shrink-0" (click)="$event.stopPropagation()">
               <button
                 class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors"
                 title="Request Quote"
@@ -97,7 +98,7 @@ import { ApiMaterial } from '../../../models/product.model';
           } @else {
             <button
               class="w-full flex items-center justify-center gap-1 rounded py-1.5 text-[11px] font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white transition-colors"
-              (click)="onRequestMail()"
+              (click)="onRequestMail(); $event.stopPropagation()"
             >
               <span class="material-icons text-[14px]">mail</span>
               Request by Mail
@@ -118,6 +119,10 @@ export class MaterialCardComponent {
   protected inStock       = computed(() => (this.mat().count ?? 0) > 0);
   protected addedFeedback = signal(false);
 
+  onCardClick(): void {
+    this.router.navigate(['/material', this.mat().id], { state: { material: this.mat() } });
+  }
+
   onAddToCart(): void {
     this.cart.addMaterial(this.mat());
     this.addedFeedback.set(true);
@@ -130,13 +135,8 @@ export class MaterialCardComponent {
     const exists = (items as { id: number }[]).find(i => i.id === m.id);
     if (!exists) {
       items.push({
-        id: m.id,
-        name: m.name,
-        product_code: m.product_code,
-        image: m.image,
-        price: m.price ?? 0,
-        qty: 1,
-        industry: m.industry,
+        id: m.id, name: m.name, product_code: m.product_code,
+        image: m.image, price: m.price ?? 0, qty: 1, industry: m.industry,
       });
       localStorage.setItem('quoteItems', JSON.stringify(items));
     }
@@ -144,21 +144,7 @@ export class MaterialCardComponent {
   }
 
   onRequestMail(): void {
-    const m = this.mat();
-    const items: unknown[] = JSON.parse(localStorage.getItem('quoteItems') || '[]');
-    const exists = (items as { id: number }[]).find(i => i.id === m.id);
-    if (!exists) {
-      items.push({
-        id: m.id,
-        name: m.name,
-        product_code: m.product_code,
-        image: m.image,
-        price: 0,
-        qty: 1,
-        industry: m.industry,
-      });
-      localStorage.setItem('quoteItems', JSON.stringify(items));
-    }
-    this.router.navigate(['/quote']);
+    this.cart.addMaterial(this.mat());
+    this.router.navigate(['/cart']);
   }
 }

@@ -32,7 +32,7 @@ const FLAT_PROMOS: Record<string, number> = {
           {{ cart.count() }} item{{ cart.count() !== 1 ? 's' : '' }}
         </p>
       </div>
-      <a routerLink="/products"
+      <a routerLink="/inventory"
          class="flex items-center gap-1 text-sm text-brand-blue hover:underline dark:text-blue-400">
         <span class="material-icons text-base">arrow_back</span>
         Continue Shopping
@@ -44,7 +44,7 @@ const FLAT_PROMOS: Record<string, number> = {
       <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-16 text-center">
         <span class="material-icons text-5xl text-gray-300 dark:text-gray-600 mb-3 block">shopping_cart</span>
         <p class="text-gray-500 dark:text-gray-400 mb-4">Your cart is empty.</p>
-        <a routerLink="/products"
+        <a routerLink="/inventory"
            class="inline-flex items-center gap-1 px-5 py-2 bg-brand-blue text-white rounded-lg text-sm font-semibold hover:bg-brand-blue/90 transition-colors">
           Browse Products
         </a>
@@ -78,11 +78,18 @@ const FLAT_PROMOS: Record<string, number> = {
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-100 leading-snug">
                   {{ item.material.name }}
                 </p>
-                @if (item.material.industry) {
-                  <span class="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded px-1.5 py-0.5 font-medium">
-                    {{ item.material.industry }}
-                  </span>
-                }
+                <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                  @if (item.material.industry) {
+                    <span class="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded px-1.5 py-0.5 font-medium">
+                      {{ item.material.industry }}
+                    </span>
+                  }
+                  @if ((item.material.count ?? 0) === 0) {
+                    <span class="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded px-1.5 py-0.5 font-medium flex items-center gap-0.5">
+                      <span class="material-icons text-[11px]">mail</span>Request by Mail
+                    </span>
+                  }
+                </div>
                 @if (item.price > 0) {
                   <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     {{ item.price | inrCurrency }} each

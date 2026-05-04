@@ -14,7 +14,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git config *)",
       "Bash(git push *)",
-      "Bash(dir *)"
+      "Bash(dir *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\" -Recurse -Directory)"
     ]
   }
 }

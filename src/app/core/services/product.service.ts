@@ -104,6 +104,15 @@ export class ProductService {
   }
 
   /**
+   * Find a single material by id across all materials
+   */
+  getMaterialById(id: number): Observable<ApiMaterial | undefined> {
+    return this.getAllMaterials().pipe(
+      map(materials => materials.find(m => m.id === id))
+    );
+  }
+
+  /**
    * GET /v1/brand_materials/featured
    */
   getFeaturedBrands(): Observable<ApiBrand[]> {

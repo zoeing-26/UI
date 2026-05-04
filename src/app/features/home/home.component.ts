@@ -8,7 +8,6 @@ import { PromoBannersComponent } from './sections/promo-banners/promo-banners.co
 import { BrandHeroComponent } from './sections/brand-hero/brand-hero.component';
 import { PopularBrandsComponent } from './sections/popular-brands/popular-brands.component';
 import { ZoiengChannelComponent } from './sections/misumi-channel/misumi-channel.component';
-import { EconomySeriesComponent } from './sections/economy-series/economy-series.component';
 import { AutomationComponentsComponent } from './sections/automation-components/automation-components.component';
 import { CartService } from '../../core/services/cart.service';
 
@@ -24,16 +23,15 @@ import { CartService } from '../../core/services/cart.service';
     BrandHeroComponent,
     PopularBrandsComponent,
     ZoiengChannelComponent,
-    EconomySeriesComponent,
     AutomationComponentsComponent,
   ],
   template: `
-  <main>
+  <main class="bg-gray-50 dark:bg-gray-950">
     <!-- ── Video hero — full-screen, below top bar ── -->
     <app-brand-hero />
 
     <!-- ── Top container with sidebar + carousel ── -->
-    <div class="max-w-screen-xl mx-auto px-3 md:px-4 xl:px-0">
+    <div class="px-3 md:px-4">
       <section class="flex gap-4 mt-4">
         <div class="hidden lg:block">
           <app-category-sidebar />
@@ -48,19 +46,13 @@ import { CartService } from '../../core/services/cart.service';
     </div>
 
     <!-- ── Continue with constrained width ── -->
-    <div class="max-w-screen-xl mx-auto px-3 md:px-4 xl:px-0">
+    <div class="px-3 md:px-4">
       <app-popular-brands />
 
       @defer (on viewport) {
 <!-- <app-zoieng-channel /> -->
       } @placeholder {
         <div class="h-48 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse my-6"></div>
-      }
-
-      @defer (on viewport) {
-        <app-economy-series />
-      } @placeholder {
-        <div class="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse my-6"></div>
       }
 
       @defer (on viewport) {

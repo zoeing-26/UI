@@ -36,7 +36,7 @@ type CustomerType = 'individual' | 'company';
     <nav class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1 mb-4">
       <a routerLink="/" class="hover:text-brand-blue">Home</a>
       <span class="material-icons text-[12px]">chevron_right</span>
-      <a routerLink="/products" class="hover:text-brand-blue">Products</a>
+      <a routerLink="/inventory" class="hover:text-brand-blue">Products</a>
       <span class="material-icons text-[12px]">chevron_right</span>
       <span class="text-gray-600 dark:text-gray-300">Request for Quote</span>
     </nav>
@@ -63,7 +63,7 @@ type CustomerType = 'individual' | 'company';
           </div>
         }
         <div class="flex gap-3 justify-center">
-          <a routerLink="/products"
+          <a routerLink="/inventory"
              class="px-5 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             Continue Shopping
           </a>
@@ -201,6 +201,13 @@ type CustomerType = 'individual' | 'company';
               </button>
             </div>
           }
+
+          <!-- Browse Products button -->
+          <a routerLink="/inventory"
+             class="flex items-center justify-center gap-1.5 w-full rounded-lg border border-gray-300 dark:border-gray-600 text-xs font-semibold py-2 text-gray-600 dark:text-gray-300 hover:border-brand-blue hover:text-brand-blue dark:hover:border-brand-yellow dark:hover:text-brand-yellow transition-colors">
+            <span class="material-icons text-sm">storefront</span>
+            Browse All Products
+          </a>
 
           <!-- OR + Upload — always visible -->
           <div class="flex items-center gap-2 my-2">
@@ -607,6 +614,13 @@ export class QuoteComponent implements OnInit {
       return;
     }
 
+    const searchTerm = localStorage.getItem('quoteSearch');
+    if (searchTerm) {
+      this.manualForm.name = searchTerm;
+      this.showManualForm.set(true);
+      localStorage.removeItem('quoteSearch');
+    }
+
     const fromMatCart: QuoteItem[] = this.cart.matItems().map(i => ({
       id: i.materialId,
       name: i.material.name ?? i.material.product_code,
@@ -626,25 +640,28 @@ export class QuoteComponent implements OnInit {
       qty: i.qty,
     }));
 
-    const merged = [...fromMatCart, ...fromProductCart];
-
-    if (merged.length > 0) {
-      this.items.set(merged);
-      return;
-    }
-
-    // Fallback: items added via individual "Request Quote" buttons
+    // Always read localStorage items (Request by Mail / Request Quote from detail page)
+    let fromStorage: QuoteItem[] = [];
     try {
       const raw: unknown[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      this.items.set(raw.map((item: any) => item?.product
+      fromStorage = raw.map((item: any) => item?.product
         ? { id: item.product.id, name: item.product.name,
             product_code: item.product.partNumber ?? String(item.product.id),
             image: item.product.image ?? null, price: item.product.price ?? 0, qty: item.quantity ?? 1 }
         : { id: item.id, name: item.name, product_code: item.product_code ?? '',
             image: item.image ?? null, price: item.price ?? 0, qty: item.qty ?? 1,
             industry: item.industry } as QuoteItem
-      ));
-    } catch { this.items.set([]); }
+      );
+    } catch { /* ignore */ }
+
+    // Merge all sources, deduplicate by id (cart takes priority over localStorage)
+    const cartIds = new Set([
+      ...fromMatCart.map(i => String(i.id)),
+      ...fromProductCart.map(i => String(i.id)),
+    ]);
+    const uniqueStorage = fromStorage.filter(i => !cartIds.has(String(i.id)));
+
+    this.items.set([...fromMatCart, ...fromProductCart, ...uniqueStorage]);
   }
 
   // ── Method step navigation ─────────────────────────────────────────────────
@@ -756,6 +773,7 @@ export class QuoteComponent implements OnInit {
         this.step.set('submitted');
         this.submitting.set(false);
         localStorage.removeItem(STORAGE_KEY);
+        this.cart.clear();
       },
       error: (err) => {
         this.submitting.set(false);

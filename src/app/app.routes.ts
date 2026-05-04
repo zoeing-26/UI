@@ -59,6 +59,12 @@ export const routes: Routes = [
     title: 'Inventory | Zoieng Global',
   },
   {
+    path: 'material/:id',
+    loadComponent: () =>
+      import('./features/material-detail/material-detail.component').then(m => m.MaterialDetailComponent),
+    title: 'Product Details | Zoieng Global',
+  },
+  {
     path: 'about',
     loadComponent: () =>
       import('./features/about/about.component').then(m => m.AboutComponent),

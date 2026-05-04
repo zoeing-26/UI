@@ -1,9 +1,10 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit,
+  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { ApiMaterial } from '../../models/product.model';
 import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
@@ -41,7 +42,8 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
         </span>
         <input
           type="text"
-          [(ngModel)]="searchQuery"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
           placeholder="Search by name, code, description…"
           class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600
                  rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white
@@ -51,17 +53,19 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
       </div>
 
       <!-- Stats chips -->
-      <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-        <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
-          <span class="font-bold text-zoeing-primary dark:text-white">{{ materials().length }}</span> total
-        </span>
-        <span class="bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full">
-          <span class="font-bold text-green-600 dark:text-green-400">{{ inStockCount() }}</span> in stock
-        </span>
-        <span class="bg-zoeing-primary/5 dark:bg-zoeing-primary/10 px-3 py-1.5 rounded-full">
-          <span class="font-bold text-zoeing-primary dark:text-zoeing-accent">{{ filtered().length }}</span> shown
-        </span>
-      </div>
+      @if (filtered().length > 0) {
+        <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+          <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
+            <span class="font-bold text-zoeing-primary dark:text-white">{{ materials().length }}</span> total
+          </span>
+          <span class="bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full">
+            <span class="font-bold text-green-600 dark:text-green-400">{{ inStockCount() }}</span> in stock
+          </span>
+          <span class="bg-zoeing-primary/5 dark:bg-zoeing-primary/10 px-3 py-1.5 rounded-full">
+            <span class="font-bold text-zoeing-primary dark:text-zoeing-accent">{{ filtered().length }}</span> shown
+          </span>
+        </div>
+      }
     </div>
 
     <!-- Category filter tabs -->
@@ -118,13 +122,46 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
           }
         </div>
       } @else {
-        <div class="text-center py-20 text-gray-400 dark:text-gray-500">
-          <span class="material-icons text-5xl block mb-3">search_off</span>
-          <p class="font-medium">No products match your filters</p>
-          <button
-            class="mt-3 text-sm text-zoeing-primary dark:text-zoeing-accent hover:underline"
-            (click)="clearFilters()"
-          >Clear filters</button>
+        <div class="py-16 flex flex-col items-center text-center max-w-sm mx-auto">
+
+          <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-5">
+            <span class="material-icons text-4xl text-gray-400 dark:text-gray-500">search_off</span>
+          </div>
+
+          <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">No products found</h3>
+
+          @if (searchQuery()) {
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              No results for
+              <span class="font-semibold text-gray-700 dark:text-gray-200">"{{ searchQuery() }}"</span>
+            </p>
+          } @else {
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">
+              No products match the selected filters.
+            </p>
+          }
+
+          <p class="text-xs text-gray-400 dark:text-gray-500 mb-6">
+            Can't find what you need? Submit a quote request and our team will source it for you.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 w-full">
+            <button
+              class="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-brand-blue text-white font-semibold text-sm hover:bg-brand-blue/90 transition-colors"
+              (click)="requestQuote()"
+            >
+              <span class="material-icons text-base">description</span>
+              Request for Quote
+            </button>
+            <button
+              class="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-semibold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              (click)="clearFilters()"
+            >
+              <span class="material-icons text-base">filter_alt_off</span>
+              Clear Filters
+            </button>
+          </div>
+
         </div>
       }
     }
@@ -132,15 +169,18 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
   </main>
   `,
 })
-export class InventoryComponent implements OnInit {
+export class InventoryComponent implements OnInit, OnDestroy {
+  private routeSub?: Subscription;
   private productService = inject(ProductService);
+  private route          = inject(ActivatedRoute);
+  private router         = inject(Router);
 
-  materials     = signal<ApiMaterial[]>([]);
-  loading       = signal(true);
-  error         = signal('');
+  materials         = signal<ApiMaterial[]>([]);
+  loading           = signal(true);
+  error             = signal('');
   activeCategory    = signal('All');
   activeSubCategory = signal('All');
-  searchQuery       = '';
+  searchQuery       = signal('');
 
   readonly categories = computed(() => {
     const cats = [...new Set(this.materials().map(m => m.category ?? 'Other'))].sort();
@@ -160,7 +200,7 @@ export class InventoryComponent implements OnInit {
     let items = this.materials();
     const cat = this.activeCategory();
     const sub = this.activeSubCategory();
-    const q   = this.searchQuery.toLowerCase().trim();
+    const q   = this.searchQuery().toLowerCase().trim();
 
     if (cat !== 'All') items = items.filter(m => (m.category ?? 'Other') === cat);
     if (sub !== 'All') items = items.filter(m => (m.sub_category ?? 'General') === sub);
@@ -180,21 +220,27 @@ export class InventoryComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.routeSub = this.route.queryParamMap.subscribe(params => {
+      this.searchQuery.set(params.get('q') ?? '');
+    });
+
     this.productService.getAllMaterials().subscribe({
-      next: mats => {
-        this.materials.set(mats);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Could not load inventory. Please try again.');
-        this.loading.set(false);
-      },
+      next: mats => { this.materials.set(mats); this.loading.set(false); },
+      error: ()   => { this.error.set('Could not load inventory. Please try again.'); this.loading.set(false); },
     });
   }
+
+  ngOnDestroy(): void { this.routeSub?.unsubscribe(); }
 
   clearFilters(): void {
     this.activeCategory.set('All');
     this.activeSubCategory.set('All');
-    this.searchQuery = '';
+    this.router.navigate(['/inventory']);
+  }
+
+  requestQuote(): void {
+    const q = this.searchQuery();
+    if (q) localStorage.setItem('quoteSearch', q);
+    this.router.navigate(['/quote']);
   }
 }
