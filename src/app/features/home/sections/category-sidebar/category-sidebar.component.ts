@@ -36,24 +36,12 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
             @for (cat of categories(); track cat.name; let ci = $index) {
               <li (mouseenter)="setHoveredCategory(cat.name)">
                 <button
-                  class="w-full flex items-center justify-between px-3 py-2.5 text-xs transition-colors text-left group"
+                  class="w-full flex items-center justify-between px-3 py-2.5 text-sm transition-colors text-left group"
                   [class]="hoveredCategory() === cat.name
                     ? 'bg-brand-blue text-white font-semibold'
                     : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'"
                 >
-                  <span class="flex items-center gap-2 min-w-0 overflow-hidden">
-                    <span
-                      class="material-icons text-[16px] shrink-0 transition-colors"
-                      [class]="hoveredCategory() === cat.name ? 'text-brand-yellow' : getCategoryIconColor(ci)"
-                    >{{ getCategoryIcon(cat.name, ci) }}</span>
-                    <span class="truncate leading-snug" [title]="cat.name">{{ cat.name }}</span>
-                  </span>
-                  @if (cat.sub_category.length > 0) {
-                    <span
-                      class="material-icons text-xs shrink-0 transition-colors"
-                      [class]="hoveredCategory() === cat.name ? 'text-white/70' : 'text-gray-300 dark:text-gray-600'"
-                    >chevron_right</span>
-                  }
+                  <span class="truncate leading-snug" [title]="cat.name">{{ cat.name }}</span>
                 </button>
               </li>
             }
@@ -77,16 +65,8 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
                     : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'"
                   (click)="navigateToSubCategory(hoveredCategory()!, group.name)"
                 >
-                  <span
-                    class="material-icons text-[15px] shrink-0"
-                    [class]="hoveredSubCategory() === group.name ? 'text-brand-blue dark:text-brand-yellow' : getIconColor(i)"
-                  >{{ getSubCategoryIcon(group.name, i) }}</span>
-                  <span class="flex-1 text-xs truncate">{{ group.name }}</span>
-                  <span class="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">{{ group.materials.length }}</span>
-                  <span
-                    class="material-icons text-xs shrink-0 transition-colors"
-                    [class]="hoveredSubCategory() === group.name ? 'text-brand-blue dark:text-brand-yellow' : 'text-gray-300 dark:text-gray-600'"
-                  >chevron_right</span>
+                  <span class="flex-1 text-sm truncate">{{ group.name }}</span>
+                  <span class="text-xs text-gray-400 dark:text-gray-500 shrink-0">{{ group.materials.length }}</span>
                 </button>
               </li>
             }
@@ -124,24 +104,22 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
 
                   <!-- Name + code -->
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs text-gray-700 dark:text-gray-200 truncate group-hover:text-brand-blue dark:group-hover:text-brand-yellow leading-snug">
+                    <p class="text-sm text-gray-700 dark:text-gray-200 truncate group-hover:text-brand-blue dark:group-hover:text-brand-yellow leading-snug">
                       {{ item.name || item.product_code }}
                     </p>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-500 font-mono truncate">
+                    <p class="text-xs text-gray-400 dark:text-gray-500 font-mono truncate">
                       {{ item.product_code }}
                     </p>
                   </div>
 
                   <!-- Price -->
                   @if (item.price) {
-                    <span class="text-[10px] font-semibold text-zoeing-secondary dark:text-zoeing-secondary-light shrink-0">
+                    <span class="text-xs font-semibold text-zoeing-secondary dark:text-zoeing-secondary-light shrink-0">
                       {{ item.price | inrCurrency }}
                     </span>
                   } @else {
-                    <span class="text-[10px] text-gray-400 dark:text-gray-500 shrink-0 italic">POA</span>
+                    <span class="text-xs text-gray-400 dark:text-gray-500 shrink-0 italic">POA</span>
                   }
-
-                  <span class="material-icons text-[11px] text-gray-300 group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors shrink-0">chevron_right</span>
                 </button>
               </li>
             }

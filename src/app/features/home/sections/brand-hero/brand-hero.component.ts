@@ -11,6 +11,13 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
+  styles: [`
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  `],
   template: `
   <div class="relative w-full overflow-hidden" style="height: 50vh; background: #1a2535;">
 
@@ -18,14 +25,13 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
       @if (i === currentIndex()) {
         <video
           class="w-full h-full"
-          style="object-fit: cover; display: block;"
           [muted]="true"
           autoplay
           playsinline
           preload="auto"
           (ended)="next()"
         >
-          <source [src]="clip.src" type="video/mp4" />
+          <source [src]="clip.src" />
         </video>
       }
     }
@@ -65,6 +71,13 @@ export class BrandHeroComponent {
   currentIndex = signal(0);
 
   readonly clips: VideoClip[] = [
+    {
+      src: this.sanitizer.bypassSecurityTrustUrl(
+        '/assets/videos/CNC video.mp4'
+      ),
+      label: 'CNC Machining & Machine Tool Industry',
+      industry: 'Advanced Manufacturing',
+    },
     {
       src: this.sanitizer.bypassSecurityTrustUrl(
         '/assets/videos/From KlickPin CF Pin on Industrial - Royalty Free Video - Pin-1083397254103183183.mp4'

@@ -1,12 +1,13 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
   <footer class="mt-10 border-t border-gray-200 dark:border-gray-700">
 
@@ -25,7 +26,7 @@ import { LanguageService } from '../../core/services/language.service';
     </div>
 
     <!-- Payment Methods -->
-    <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 py-5 px-4">
+    <!--<div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 py-5 px-4">
       <div class="max-w-screen-xl mx-auto">
         <h3 class="text-sm font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
           <span class="material-icons text-sm text-zoeing-navy">payment</span>
@@ -46,7 +47,7 @@ import { LanguageService } from '../../core/services/language.service';
           }
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Main Footer Links -->
     <div class="bg-gray-50 dark:bg-gray-900 py-8 px-4">
@@ -59,7 +60,9 @@ import { LanguageService } from '../../core/services/language.service';
             <ul class="space-y-2">
               @for (link of col.links; track link.label) {
                 <li>
-                  <a class="text-sm text-gray-500 dark:text-gray-400 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors flex items-center gap-1 cursor-pointer">
+                  <a
+                    [routerLink]="link.route ?? null"
+                    class="text-sm text-gray-500 dark:text-gray-400 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors flex items-center gap-1 cursor-pointer">
                     @if (link.external) {
                       <span class="material-icons text-xs">open_in_new</span>
                     } @else {
@@ -115,31 +118,31 @@ export class FooterComponent {
 
   readonly footerColumns = [
     { title: 'Customer Service', links: [
-      { label: 'Register', external: false },
-      { label: 'How To Use', external: false },
-      { label: 'Catalog Request', external: false },
-      { label: 'Inquiry', external: false },
-      { label: 'Sitemap', external: false },
+      { label: 'Register',        route: '/register',  external: false },
+      { label: 'How To Use',      route: null,         external: false },
+      { label: 'Catalog Request', route: null,         external: false },
+      { label: 'Inquiry',         route: null,         external: false },
+      { label: 'Sitemap',         route: null,         external: false },
     ] },
     { title: 'My Account', links: [
-      { label: 'Request a Quote', external: false },
-      { label: 'Cart', external: false },
-      { label: 'Order History', external: false },
-      { label: 'Quote History', external: false },
+      { label: 'Request a Quote', route: '/quote',     external: false },
+      { label: 'Cart',            route: '/cart',      external: false },
+      { label: 'Order History',   route: null,         external: false },
+      { label: 'Quote History',   route: null,         external: false },
     ] },
     { title: 'About ZOIENG', links: [
-      { label: 'Company Profile', external: false },
-      { label: 'Code of Conduct', external: true },
-      { label: 'Privacy Policy', external: false },
-      { label: 'Terms of Use', external: false },
-      { label: 'Eco-Friendly', external: true },
-      { label: 'RoHS Information', external: false },
+      { label: 'Company Profile', route: '/about',     external: false },
+      { label: 'Code of Conduct', route: null,         external: true  },
+      { label: 'Privacy Policy',  route: null,         external: false },
+      { label: 'Terms of Use',    route: null,         external: false },
+      { label: 'Eco-Friendly',    route: null,         external: true  },
+      { label: 'RoHS Information',route: null,         external: false },
     ] },
     { title: 'Related Sites', links: [
-      { label: 'ZOIENG Group Inc.', external: true },
-      { label: 'Country/Region/Language', external: true },
-      { label: 'Technical Data', external: false },
-      { label: 'Technical Tutorial', external: true },
+      { label: 'ZOIENG Group Inc.',         route: null,          external: true  },
+      { label: 'Country/Region/Language',   route: null,          external: true  },
+      { label: 'Technical Data',            route: '/inventory',  external: false },
+      { label: 'Technical Tutorial',        route: null,          external: true  },
     ] },
   ];
 

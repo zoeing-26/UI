@@ -258,6 +258,26 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
         </div>
       </div>
 
+      <!-- Datasheets & Manuals -->
+      @if (material()!.attachment?.length) {
+        <div class="mt-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+          <h2 class="text-base font-bold text-zoeing-navy dark:text-white mb-4 flex items-center gap-2">
+            <span class="material-icons text-base text-zoeing-navy dark:text-zoeing-gold">attach_file</span>
+            Datasheets &amp; Manuals
+          </h2>
+          <div class="flex flex-col gap-2">
+            @for (doc of material()!.attachment!; track doc.file) {
+              <a [href]="doc.file" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400
+                        hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                <span class="material-icons text-[16px] text-red-500">picture_as_pdf</span>
+                {{ doc.name }}
+              </a>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Description + Specifications -->
       <div class="mt-10 grid lg:grid-cols-2 gap-6">
 

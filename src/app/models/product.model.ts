@@ -78,6 +78,11 @@ export interface SubCategory {
 
 // ─── API Category Models (v1/materials response) ──────────────────────────────
 
+export interface ApiMaterialAttachment {
+  name: string;
+  file: string;
+}
+
 export interface ApiMaterial {
   id: number;
   name?: string;
@@ -90,6 +95,7 @@ export interface ApiMaterial {
   category?: string;
   brand?: string | null;
   sub_category?: string;
+  attachment?: ApiMaterialAttachment[];
 }
 
 export interface AllMaterialsResponse {
