@@ -1,0 +1,9 @@
+# Copy this file to terraform.tfvars and replace the placeholder values.
+# Keep the S3 bucket name globally unique.
+
+aws_region     = "us-east-1"
+bucket_name    = "zoieng-ui-prod"
+project_name   = "zoieng-ui"
+domain_name    = ""
+hosted_zone_id = ""
+certificate_arn = ""

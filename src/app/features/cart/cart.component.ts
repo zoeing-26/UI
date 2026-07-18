@@ -84,7 +84,7 @@ const FLAT_PROMOS: Record<string, number> = {
                       {{ item.material.industry }}
                     </span>
                   }
-                  @if ((item.material.count ?? 0) === 0) {
+                  @if (item.material.count === 0) {
                     <span class="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded px-1.5 py-0.5 font-medium flex items-center gap-0.5">
                       <span class="material-icons text-[11px]">mail</span>Request by Mail
                     </span>

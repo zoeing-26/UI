@@ -7,7 +7,7 @@ import { CategorySidebarComponent } from './sections/category-sidebar/category-s
 import { PromoBannersComponent } from './sections/promo-banners/promo-banners.component';
 import { BrandHeroComponent } from './sections/brand-hero/brand-hero.component';
 import { PopularBrandsComponent } from './sections/popular-brands/popular-brands.component';
-import { ZoiengChannelComponent } from './sections/misumi-channel/misumi-channel.component';
+import { ZoiengChannelComponent } from './sections/zoieng-channel/zoieng-channel.component';
 import { AutomationComponentsComponent } from './sections/automation-components/automation-components.component';
 import { CartService } from '../../core/services/cart.service';
 

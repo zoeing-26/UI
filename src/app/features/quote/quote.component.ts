@@ -174,7 +174,7 @@ type CustomerType = 'individual' | 'company';
                 </div>
                 <div>
                   <label class="block text-[10px] font-bold text-brand-blue dark:text-blue-400 mb-0.5 uppercase tracking-wide">Brand</label>
-                  <input type="text" [(ngModel)]="manualForm.brand" placeholder="e.g. MISUMI, SMC"
+                  <input type="text" [(ngModel)]="manualForm.brand" placeholder="e.g. ZOIENG, SMC"
                     class="w-full border-2 border-brand-blue/40 dark:border-blue-500/40 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue" />
                 </div>
                 <div>

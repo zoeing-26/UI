@@ -99,7 +99,7 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
                 >
                   <!-- Stock dot -->
                   <span class="w-1.5 h-1.5 rounded-full shrink-0 mt-0.5"
-                    [class]="(item.count ?? 0) > 0 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'">
+                    [class]="item.count > 0 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'">
                   </span>
 
                   <!-- Name + code -->

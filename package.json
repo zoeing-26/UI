@@ -1,7 +1,7 @@
 {
-  "name": "misumi-india",
+  "name": "zoieng-ui",
   "version": "1.0.0",
-  "description": "MISUMI India B2B Industrial E-Commerce Platform — Angular 18",
+  "description": "ZOIENG Global B2B Industrial E-Commerce Platform — Angular 18",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",

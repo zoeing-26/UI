@@ -1,21 +1,21 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\" -Directory)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\UI\" -Directory)",
       "Bash(Select-Object -ExpandProperty Name)",
       "Bash(npx tsc *)",
       "Bash(npx ng *)",
-      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\" -Recurse -Filter \"*.ts\" -o -Filter \"*.tsx\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\UI\\\\src\" -Recurse -Filter \"*.ts\" -o -Filter \"*.tsx\")",
       "Bash(Select-Object -First 30 -ExpandProperty FullName)",
-      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\\\\app\\\\features\" -Recurse -Filter \"*.ts\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\UI\\\\src\\\\app\\\\features\" -Recurse -Filter \"*.ts\")",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\\\\src\\\\app\" -Recurse -Filter \"*.ts\" -Name)",
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\UI\\\\src\\\\app\" -Recurse -Filter \"*.ts\" -Name)",
       "Bash(Select-String \"\\(app\\\\.routes|auth\\\\.service|login|register|about\\\\.component\\)\")",
       "Bash(git commit -m ' *)",
       "Bash(git config *)",
       "Bash(git push *)",
       "Bash(dir *)",
-      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\misumi-ng\" -Recurse -Directory)"
+      "Bash(Get-ChildItem -Path \"d:\\\\zoeing\\\\UI\" -Recurse -Directory)"
     ]
   }
 }

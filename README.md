@@ -1,6 +1,6 @@
-# MISUMI India — Angular 18 B2B E-Commerce Platform
+# ZOIENG Global — Angular 18 B2B E-Commerce Platform
 
-> Industrial B2B e-commerce UI replicating MISUMI India (in.misumi-ec.com)  
+> Industrial B2B e-commerce UI for ZOIENG Global  
 > Built with **Angular 18 Standalone Components + Tailwind CSS + Signals**
 
 ---
@@ -56,7 +56,7 @@ src/
 │   │           ├── quick-access/       ← Quote & Order + Need Help
 │   │           ├── promo-banners/      ← 4-column promotional banners
 │   │           ├── popular-brands/     ← Horizontal scroll brand logos
-│   │           ├── misumi-channel/     ← Video thumbnail grid
+│   │           ├── zoieng-channel/     ← Video thumbnail grid
 │   │           ├── economy-series/     ← Product grid with promo card
 │   │           └── automation-components/ ← Product grid + Load More
 │   ├── models/
@@ -66,7 +66,7 @@ src/
 │   └── app.routes.ts                   ← Lazy-loaded routes
 ├── environments/
 │   ├── environment.ts                  ← Dev: http://localhost:8000/api/v1
-│   └── environment.prod.ts             ← Prod: https://api.misumi-india.com/api/v1
+│   └── environment.prod.ts             ← Prod: https://api.zoieng.com
 └── styles/
     └── main.scss                       ← Tailwind + CSS variables + all global styles
 ```
@@ -77,7 +77,7 @@ src/
 
 The app expects a Python backend at:
 - **Dev:** `http://localhost:8000/api/v1`
-- **Prod:** `https://api.misumi-india.com/api/v1`
+- **Prod:** `https://api.zoieng.com`
 
 ### Expected Endpoints
 

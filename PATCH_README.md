@@ -1,6 +1,6 @@
 # ZOEING Branding + Parallax Feature Patch
 
-This patch applies on top of your existing `D:\zoeing\misumi-ng` project.
+This patch applies on top of your existing `D:\zoeing\UI` project.
 
 ## What this patch adds
 
@@ -21,34 +21,34 @@ This patch applies on top of your existing `D:\zoeing\misumi-ng` project.
    - Animated dot grid background
    - Stats row + dual CTAs + trust badges
 
-4. **Rebranded** all "MISUMI" → "ZOEING" with logo `Z` square mark
+4. **Rebranded** the legacy storefront references to **ZOIENG** with the logo `Z` square mark
 
 ---
 
 ## How to apply
 
-Drop these files into your `D:\zoeing\misumi-ng\` project, **overwriting** the existing files:
+Drop these files into your `D:\zoeing\UI\` project, **overwriting** the existing files:
 
 | File in patch | → Goes to |
 |---|---|
-| `tailwind.config.js` | `D:\zoeing\misumi-ng\tailwind.config.js` |
-| `src/styles/main.scss` | `D:\zoeing\misumi-ng\src\styles\main.scss` |
-| `src/app/core/services/language.service.ts` | `D:\zoeing\misumi-ng\src\app\core\services\language.service.ts` |
-| `src/app/features/header/header.component.ts` | `D:\zoeing\misumi-ng\src\app\features\header\header.component.ts` |
-| `src/app/features/footer/footer.component.ts` | `D:\zoeing\misumi-ng\src\app\features\footer\footer.component.ts` |
-| `src/app/features/home/home.component.ts` | `D:\zoeing\misumi-ng\src\app\features\home\home.component.ts` |
+| `tailwind.config.js` | `D:\zoeing\UI\tailwind.config.js` |
+| `src/styles/main.scss` | `D:\zoeing\UI\src\styles\main.scss` |
+| `src/app/core/services/language.service.ts` | `D:\zoeing\UI\src\app\core\services\language.service.ts` |
+| `src/app/features/header/header.component.ts` | `D:\zoeing\UI\src\app\features\header\header.component.ts` |
+| `src/app/features/footer/footer.component.ts` | `D:\zoeing\UI\src\app\features\footer\footer.component.ts` |
+| `src/app/features/home/home.component.ts` | `D:\zoeing\UI\src\app\features\home\home.component.ts` |
 
 **NEW files** (create these — they don't exist yet):
 
 | File in patch | → Create at |
 |---|---|
-| `src/app/shared/directives/parallax.directive.ts` | `D:\zoeing\misumi-ng\src\app\shared\directives\parallax.directive.ts` |
-| `src/app/features/home/sections/brand-hero/brand-hero.component.ts` | `D:\zoeing\misumi-ng\src\app\features\home\sections\brand-hero\brand-hero.component.ts` |
+| `src/app/shared/directives/parallax.directive.ts` | `D:\zoeing\UI\src\app\shared\directives\parallax.directive.ts` |
+| `src/app/features/home/sections/brand-hero/brand-hero.component.ts` | `D:\zoeing\UI\src\app\features\home\sections\brand-hero\brand-hero.component.ts` |
 
 Then:
 
 ```bash
-cd D:\zoeing\misumi-ng
+cd D:\zoeing\UI
 npm start
 ```
 
