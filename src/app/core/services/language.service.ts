@@ -6,10 +6,10 @@ export type Lang = 'en' | 'hi';
 const EN: Record<string, string> = {
   // Brand
   brand_name: 'zoieng',
-  brand_tagline: 'Your Time, Our Priority',
+  brand_tagline: 'Industrial Products for Oil & Gas Industry',
 
   // Header
-  tagline: 'Your Time, Our Priority',
+  tagline: 'Industrial Products for Oil & Gas Industry',
   search_placeholder: 'Keyword, Part Number',
   cart: 'Cart',
   support: 'Support',
@@ -96,9 +96,9 @@ const EN: Record<string, string> = {
 // ─── Hindi Translations ───────────────────────────────────────
 const HI: Record<string, string> = {
   brand_name: 'zoieng',
-  brand_tagline: 'आपका समय, हमारी प्राथमिकता',
+  brand_tagline: 'तेल और गैस उद्योग के लिए औद्योगिक उत्पाद',
 
-  tagline: 'आपका समय, हमारी प्राथमिकता',
+  tagline: 'तेल और गैस उद्योग के लिए औद्योगिक उत्पाद',
   search_placeholder: 'कीवर्ड, पार्ट नंबर',
   cart: 'कार्ट',
   support: 'सहायता',

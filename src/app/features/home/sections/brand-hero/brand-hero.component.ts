@@ -41,12 +41,12 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
 
     <!-- Heading -->
     <div class="absolute bottom-8 left-6 md:left-10">
-      <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color: #F59E0B; opacity: 0.85;">
-        {{ clips[currentIndex()].industry }}
-      </p>
-      <h2 class="font-display font-black text-2xl md:text-4xl leading-tight drop-shadow-lg" style="color: #F59E0B;">
-        {{ clips[currentIndex()].label }}
-      </h2>
+    <h2 class="font-display font-black text-2xl md:text-4xl leading-tight drop-shadow-lg" style="color: #F59E0B;">
+    {{ clips[currentIndex()].label }}
+    </h2>
+    <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color: #F59E0B; opacity: 0.85;">
+    {{ clips[currentIndex()].industry }}
+    </p>
     </div>
 
     <!-- Dot / pill indicators -->
@@ -73,17 +73,17 @@ export class BrandHeroComponent {
   readonly clips: VideoClip[] = [
     {
       src: this.sanitizer.bypassSecurityTrustUrl(
+        '/assets/videos/oil-gas-hero.mp4'
+      ),
+      label: 'Oil & Gas',
+      industry: 'Industrial Products for the Oil & Gas Industry',
+    },
+    {
+      src: this.sanitizer.bypassSecurityTrustUrl(
         '/assets/videos/CNC video.mp4'
       ),
       label: 'CNC Machining & Machine Tool Industry',
       industry: 'Advanced Manufacturing',
-    },
-    {
-      src: this.sanitizer.bypassSecurityTrustUrl(
-        '/assets/videos/From KlickPin CF Pin on Industrial - Royalty Free Video - Pin-1083397254103183183.mp4'
-      ),
-      label: 'Oil & Gas Industrial',
-      industry: 'Energy & Manufacturing',
     },
     {
       src: this.sanitizer.bypassSecurityTrustUrl(
