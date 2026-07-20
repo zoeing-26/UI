@@ -82,16 +82,9 @@ export class BrandHeroComponent {
       src: this.sanitizer.bypassSecurityTrustUrl(
         '/assets/videos/CNC video.mp4'
       ),
-      label: 'CNC Machining & Machine Tool Industry',
-      industry: 'Advanced Manufacturing',
-    },
-    {
-      src: this.sanitizer.bypassSecurityTrustUrl(
-        '/assets/videos/From KlickPin CF Car Engine Assemblage _ Otomotiv mühendisliği Oto tamircisi Motorlar - Pin-176133035422959568.mp4'
-      ),
-      label: 'Automobile Industrial',
-      industry: 'Automotive Engineering',
-    },
+      label: 'CNC & Precision Engineering',
+      industry: 'Industrial Products for CNC & Precision Engineering',
+    }
   ];
 
   next(): void {
