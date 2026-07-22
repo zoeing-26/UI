@@ -4,33 +4,35 @@
 @tailwind utilities;
 
 // ─── Google Fonts fallback ───────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Inter+Tight:wght@500;600;700;800;900&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 // ─── ZOEING CSS Variables — aligned with tailwind.config.js ───
-// 3-color system: Primary (#0D4C6A) · Accent (#D97706) · Neutral gray
 :root {
-  // Primary — Deep Teal
-  --zoeing-navy: #0D4C6A;
-  --zoeing-navy-light: #1A6B8A;
-  --zoeing-navy-dark: #0A3A52;
-  // Accent — Warm Amber
-  --zoeing-gold: #D97706;
-  --zoeing-gold-dark: #B45309;
-  --zoeing-gold-light: #F59E0B;
-  // Surface
-  --zoeing-fog: #EFF7FC;
+  // PRIMARY — Rig Navy
+  --zoeing-navy: #0F2A3D;
+  --zoeing-navy-light: #19475C;
+  --zoeing-navy-dark: #0B2330;
+  --zoeing-steel: #3A6B8A;
+
+  // ACCENT — Machine Amber
+  --zoeing-secondary: #D9721A;
+  --zoeing-secondary-dark: #B05E17;
+  --zoeing-secondary-light: #F2A251;
+
+  // SURFACE — Precision Gray
+  --zoeing-precision: #EDEFF2;
+  --surface-base: var(--zoeing-precision);
+  --surface-card: #FFFFFF;
+  --surface: var(--surface-card);
+  --surface-2: #F8FAFD;
+  --surface-3: #EEF3FA;
 
   // Aliases (back-compat with existing code)
   --brand-blue: var(--zoeing-navy);
   --brand-blue-light: var(--zoeing-navy-light);
   --brand-blue-dark: var(--zoeing-navy-dark);
-  --brand-yellow: var(--zoeing-gold);
-  --brand-yellow-dark: var(--zoeing-gold-dark);
-
-  // Surfaces (light)
-  --surface: #ffffff;
-  --surface-2: #F8FAFD;
-  --surface-3: #EEF3FA;
+  --brand-yellow: var(--zoeing-secondary);
+  --brand-yellow-dark: var(--zoeing-secondary-dark);
 
   // Text (light)
   --text-primary: #0F1729;
@@ -43,20 +45,20 @@
   --border-light: #EEF3FA;
 
   // Status
-  --success: #16A34A;
-  --danger:  #DC2626;
-  --warning: #F59E0B;
-  --info:    #1E5BA8;
+  --zoeing-success: #2E7D5B;
+  --zoeing-danger: #B3401F;
 
-  // Shadows (based on primary #0D4C6A)
-  --shadow-sm: 0 1px 3px rgba(13,76,106,0.06);
-  --shadow-md: 0 4px 16px rgba(13,76,106,0.08);
-  --shadow-lg: 0 8px 32px rgba(13,76,106,0.12);
-  --shadow-brand: 0 4px 24px rgba(13,76,106,0.20);
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(15,42,61,0.06);
+  --shadow-md: 0 4px 16px rgba(15,42,61,0.08);
+  --shadow-lg: 0 8px 32px rgba(15,42,61,0.12);
+  --shadow-brand: 0 4px 24px rgba(15,42,61,0.20);
 }
 
 .dark {
-  --surface: #0A0E18;
+  --surface-base: #0A0E18;
+  --surface-card: #111827;
+  --surface: #111827;
   --surface-2: #131826;
   --surface-3: #1B2236;
   --text-primary: #F0F4FA;
@@ -74,13 +76,13 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  background-color: var(--surface);
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--surface-base);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Inter Tight', 'IBM Plex Sans Condensed', sans-serif;
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -95,19 +97,19 @@ h1, h2, h3, h4, h5, h6 {
 
 // ─── Utilities ────────────────────────────────────────────────
 .section-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Inter Tight', 'IBM Plex Sans Condensed', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--text-primary);
-  border-left: 4px solid var(--zoeing-navy);
+  border-left: 4px solid var(--zoeing-steel);
   padding-left: 0.75rem;
   margin-bottom: 1.25rem;
 }
-.dark .section-title { border-left-color: var(--zoeing-gold); }
+.dark .section-title { border-left-color: var(--zoeing-secondary); }
 
 .btn-primary {
-  background: var(--zoeing-navy);
+  background: var(--zoeing-secondary);
   color: #ffffff;
   font-weight: 600;
   padding: 0.55rem 1.25rem;
@@ -119,12 +121,12 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 0.4rem;
   white-space: nowrap;
-  &:hover { background: var(--zoeing-navy-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  &:hover { background: var(--zoeing-secondary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
   &:active { transform: translateY(0); }
 }
 
 .btn-yellow {
-  background: var(--zoeing-gold);
+  background: var(--zoeing-secondary);
   color: var(--zoeing-navy-dark);
   font-weight: 700;
   padding: 0.55rem 1.25rem;
@@ -135,7 +137,7 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  &:hover { background: var(--zoeing-gold-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  &:hover { background: var(--zoeing-secondary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
 }
 
 .btn-outline {
@@ -150,20 +152,68 @@ h1, h2, h3, h4, h5, h6 {
   &:hover { background: var(--zoeing-navy); color: #fff; }
 }
 .dark .btn-outline {
-  color: var(--zoeing-gold);
-  border-color: var(--zoeing-gold);
-  &:hover { background: var(--zoeing-gold); color: var(--zoeing-navy-dark); }
+  color: var(--zoeing-secondary);
+  border-color: var(--zoeing-secondary);
+  &:hover { background: var(--zoeing-secondary); color: var(--zoeing-navy-dark); }
 }
 
 // ─── Card base ────────────────────────────────────────────────
 .card {
-  background: var(--surface);
+  position: relative;
+  background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: 8px;
   transition: box-shadow 0.2s, transform 0.2s;
   &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 }
 .dark .card { background: var(--surface-2); border-color: var(--border); }
+
+.product-card {
+  position: relative;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  cursor: pointer;
+  &:hover { box-shadow: 0 8px 24px rgba(15,42,61,0.15); transform: translateY(-4px); }
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 2px;
+    background: rgba(58,107,138,0.38);
+    top: 0.75rem;
+  }
+  &::before { left: 0.75rem; }
+  &::after { right: 0.75rem; }
+}
+
+.hero-container {
+  position: relative;
+  border: 1px solid rgba(58,107,138,0.18);
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 2px;
+    background: rgba(58,107,138,0.38);
+    top: 0.75rem;
+  }
+  &:before { left: 0.75rem; }
+  &:after { right: 0.75rem; }
+}
+
+.stock-success {
+  color: var(--zoeing-success) !important;
+}
+.stock-danger {
+  color: var(--zoeing-danger) !important;
+}
+.stock-dot-success {
+  background: var(--zoeing-success) !important;
+}
+.stock-dot-danger {
+  background: var(--zoeing-danger) !important;
+}
 
 // ─── Animations ───────────────────────────────────────────────
 @keyframes ticker {
@@ -226,8 +276,8 @@ h1, h2, h3, h4, h5, h6 {
   transition: background 0.2s;
   letter-spacing: 0.05em;
   &:hover { background: var(--zoeing-navy-light); }
-  &.cart { background: var(--zoeing-gold); }
-  &.economy { background: var(--zoeing-navy-dark); color: var(--zoeing-gold); }
+  &.cart { background: var(--zoeing-secondary); }
+  &.economy { background: var(--zoeing-navy-dark); color: var(--zoeing-secondary); }
 }
 
 // ─── Product / Brand / Video cards ────────────────────────────
@@ -280,7 +330,7 @@ h1, h2, h3, h4, h5, h6 {
     transition: all 0.25s;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
-  &:hover .play-btn { background: var(--zoeing-gold); transform: translate(-50%, -60%) scale(1.15); }
+  &:hover .play-btn { background: var(--zoeing-secondary); transform: translate(-50%, -60%) scale(1.15); }
   .video-title {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -382,7 +432,7 @@ h1, h2, h3, h4, h5, h6 {
   will-change: transform;
 }
 .dark .parallax-dots {
-  background-image: radial-gradient(circle, var(--zoeing-gold) 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--zoeing-secondary) 1px, transparent 1px);
   opacity: 0.08;
 }
 

@@ -6,55 +6,60 @@ module.exports = {
     extend: {
       colors: {
         zoeing: {
-          // ── 1. PRIMARY: Deep Teal ─────────────────────────────
-          primary:         '#0D4C6A',
-          'primary-light': '#1A6B8A',
-          'primary-dark':  '#0A3A52',
+          // ── 1. PRIMARY: Rig Navy ──────────────────────────────
+          primary:         '#0F2A3D',
+          'primary-light': '#19475C',
+          'primary-dark':  '#0B2330',
           'primary-50':    '#EFF7FC',
 
-          // ── 2. ACCENT: Warm Amber ─────────────────────────────
-          accent:          '#D97706',
-          'accent-light':  '#F59E0B',
-          'accent-dark':   '#B45309',
+          // ── 2. ACCENT: Machine Amber ───────────────────────────
+          accent:          '#D9721A',
+          'accent-light':  '#F2A251',
+          'accent-dark':   '#B05E17',
           'accent-50':     '#FFFBEB',
 
           // ── 3. NEUTRAL surface ────────────────────────────────
           fog:             '#EFF7FC',
+          precision:       '#EDEFF2',
+          steel:           '#3A6B8A',
+          success:         '#2E7D5B',
+          danger:          '#B3401F',
 
-          // ── Legacy aliases (all resolve to same 2 brand colors) ──
-          navy:            '#0D4C6A',
-          'navy-light':    '#1A6B8A',
-          'navy-dark':     '#0A3A52',
-          gold:            '#D97706',
-          'gold-light':    '#F59E0B',
-          'gold-dark':     '#B45309',
+          // ── Legacy aliases (all resolve to the new system palette) ──
+          navy:            '#0F2A3D',
+          'navy-light':    '#19475C',
+          'navy-dark':     '#0B2330',
+          gold:            '#D9721A',
+          'gold-light':    '#F2A251',
+          'gold-dark':     '#B05E17',
           // blue was previously #2563EB — merged into primary for consistency
-          blue:            '#0D4C6A',
-          'blue-light':    '#1A6B8A',
-          'blue-dark':     '#0A3A52',
+          blue:            '#0F2A3D',
+          'blue-light':    '#19475C',
+          'blue-dark':     '#0B2330',
           // secondary is the accent (amber CTA color)
-          secondary:          '#D97706',
-          'secondary-light':  '#F59E0B',
-          'secondary-dark':   '#B45309',
+          secondary:          '#D9721A',
+          'secondary-light':  '#F2A251',
+          'secondary-dark':   '#B05E17',
 
           // ── Status (minimal, standard shades) ─────────────────
-          success: '#059669',
+          success: '#2E7D5B',
+          danger:  '#B3401F',
         },
 
         // brand-* aliases keep existing component code working unchanged
         brand: {
-          blue:         '#0D4C6A',
-          'blue-light': '#1A6B8A',
-          'blue-dark':  '#0A3A52',
-          yellow:       '#D97706',
-          'yellow-dark':'#B45309',
+          blue:         '#0F2A3D',
+          'blue-light': '#19475C',
+          'blue-dark':  '#0B2330',
+          yellow:       '#D9721A',
+          'yellow-dark':'#B05E17',
           dark:         '#171717',
         },
       },
       fontFamily: {
-        sans:    ['IBM Plex Sans', 'system-ui', 'sans-serif'],
-        display: ['Barlow Condensed', 'sans-serif'],
-        mono:    ['IBM Plex Mono', 'monospace'],
+        sans:    ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter Tight', 'IBM Plex Sans Condensed', 'sans-serif'],
+        mono:    ['IBM Plex Mono', 'JetBrains Mono', 'monospace'],
       },
       screens: {
         xs: '375px', sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px',

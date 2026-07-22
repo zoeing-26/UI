@@ -161,7 +161,7 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
           </p>
         </div>
         <div class="text-center">
-          <p class="font-display font-black text-2xl text-zoeing-accent">
+          <p class="font-display font-black text-2xl text-zoeing-success">
             {{ inStockCount() }}
           </p>
           <p class="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">

@@ -148,16 +148,16 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
           <!-- Stock status -->
           <div class="flex items-center gap-2">
             @if (inStock()) {
-              <span class="flex items-center gap-1.5 text-sm font-semibold text-green-600 dark:text-green-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="flex items-center gap-1.5 text-sm font-semibold stock-success">
+                <span class="w-2.5 h-2.5 rounded-full stock-dot-success animate-pulse"></span>
                 In Stock
               </span>
               <span class="text-xs text-gray-400 dark:text-gray-500">
                 ({{ material()!.count }} units available)
               </span>
             } @else {
-              <span class="flex items-center gap-1.5 text-sm font-semibold text-red-500 dark:text-red-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              <span class="flex items-center gap-1.5 text-sm font-semibold stock-danger">
+                <span class="w-2.5 h-2.5 rounded-full stock-dot-danger"></span>
                 Out of Stock
               </span>
             }
@@ -204,7 +204,7 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
                          transition-colors"
                   [class]="addedFeedback()
                     ? 'bg-green-600 text-white'
-                    : 'bg-zoeing-primary hover:bg-zoeing-primary-light text-white'">
+                    : 'bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white'">
                   <span class="material-icons text-base">{{ addedFeedback() ? 'check_circle' : 'add_shopping_cart' }}</span>
                   {{ addedFeedback() ? 'Added!' : 'Add to Cart' }}
                 </button>
@@ -346,9 +346,9 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
                 <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Availability</td>
                 <td class="py-2.5">
                   @if (inStock()) {
-                    <span class="text-green-600 dark:text-green-400 font-semibold">In Stock ({{ material()!.count }})</span>
+                    <span class="stock-success font-semibold">In Stock ({{ material()!.count }})</span>
                   } @else {
-                    <span class="text-red-500 dark:text-red-400 font-semibold">Out of Stock</span>
+                    <span class="stock-danger font-semibold">Out of Stock</span>
                   }
                 </td>
               </tr>

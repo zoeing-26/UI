@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.zoieng.com',
-  wsUrl: 'wss://api.zoieng.com/ws',
+  apiBaseUrl: 'https://zoieng-dev-api.zoieng.com',
+  wsUrl: 'wss://zoieng-dev-api.zoieng.com/ws',
   appName: 'Zoieng Global',
 };
