@@ -58,8 +58,8 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
           <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
             <span class="font-bold text-zoeing-primary dark:text-white">{{ materials().length }}</span> total
           </span>
-          <span class="bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full">
-            <span class="font-bold text-green-600 dark:text-green-400">{{ inStockCount() }}</span> in stock
+          <span class="bg-zoeing-success/10 dark:bg-zoeing-success/20 px-3 py-1.5 rounded-full">
+            <span class="font-bold text-zoeing-success">{{ inStockCount() }}</span> in stock
           </span>
           <span class="bg-zoeing-primary/5 dark:bg-zoeing-primary/10 px-3 py-1.5 rounded-full">
             <span class="font-bold text-zoeing-primary dark:text-zoeing-accent">{{ filtered().length }}</span> shown
@@ -175,6 +175,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private route          = inject(ActivatedRoute);
   private router         = inject(Router);
 
+  private pendingCategory = 'All';
+  private pendingSubCategory = 'All';
+
   materials         = signal<ApiMaterial[]>([]);
   loading           = signal(true);
   error             = signal('');
@@ -222,15 +225,42 @@ export class InventoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.routeSub = this.route.queryParamMap.subscribe(params => {
       this.searchQuery.set(params.get('q') ?? '');
+      this.pendingCategory = params.get('category') ?? 'All';
+      this.pendingSubCategory = params.get('subCategory') ?? 'All';
+      this.applyRouteFilters();
     });
 
     this.productService.getAllMaterials().subscribe({
-      next: mats => { this.materials.set(mats); this.loading.set(false); },
+      next: mats => {
+        this.materials.set(mats);
+        this.loading.set(false);
+        this.applyRouteFilters();
+      },
       error: ()   => { this.error.set('Could not load inventory. Please try again.'); this.loading.set(false); },
     });
   }
 
   ngOnDestroy(): void { this.routeSub?.unsubscribe(); }
+
+  private applyRouteFilters(): void {
+    const availableCategories = this.categories();
+    const validCategory = this.pendingCategory && availableCategories.includes(this.pendingCategory)
+      ? this.pendingCategory
+      : 'All';
+
+    this.activeCategory.set(validCategory);
+
+    if (validCategory !== 'All') {
+      const availableSubCategories = this.subCategories();
+      const validSubCategory = this.pendingSubCategory && availableSubCategories.includes(this.pendingSubCategory)
+        ? this.pendingSubCategory
+        : 'All';
+
+      this.activeSubCategory.set(validSubCategory);
+    } else {
+      this.activeSubCategory.set('All');
+    }
+  }
 
   clearFilters(): void {
     this.activeCategory.set('All');

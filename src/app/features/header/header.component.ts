@@ -52,7 +52,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             (keyup.enter)="triggerSearch()"
           />
           <button
-            class="bg-zoeing-navy hover:bg-zoeing-navy-light text-white px-4 py-2 rounded-r-md border border-zoeing-navy transition-colors flex items-center gap-1"
+            class="bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white px-4 py-2 rounded-r-md border border-zoeing-secondary transition-colors flex items-center gap-1"
             (click)="triggerSearch()"
           >
             <span class="material-icons text-sm">search</span>

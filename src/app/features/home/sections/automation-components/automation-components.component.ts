@@ -52,8 +52,9 @@ interface CategoryRow {
   template: `
   <section class="my-8">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="section-title mb-0">{{ lang.t('automation') }}</h2>
+      <h2 class="section-title mb-0">{{ sectionTitle() }}</h2>
       <a routerLink="/inventory"
+         [queryParams]="{ category: sectionTitle() }"
          class="text-xs font-semibold text-brand-blue dark:text-brand-yellow hover:underline flex items-center gap-1">
         View All <span class="material-icons text-sm">arrow_forward</span>
       </a>
@@ -80,7 +81,7 @@ interface CategoryRow {
       <div class="space-y-6">
 
         @for (row of visibleRows(); track row.name) {
-          <div class="flex gap-4 items-stretch">
+            <div class="flex gap-4 items-stretch">
 
             <!-- ── Left promo card ── -->
             <div class="hidden sm:flex w-44 shrink-0 rounded-xl overflow-hidden flex-col"
@@ -206,7 +207,7 @@ interface CategoryRow {
               class="w-full py-1.5 rounded text-[11px] font-semibold transition-colors flex items-center justify-center gap-1"
               [class]="isAdded(item.id)
                 ? 'bg-green-600 text-white'
-                : 'bg-zoeing-primary hover:bg-zoeing-primary-light text-white'"
+                : 'bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white'"
               (click)="addToCart(item)"
             >
               <span class="material-icons text-[13px]">{{ isAdded(item.id) ? 'check' : 'add_shopping_cart' }}</span>
@@ -318,6 +319,7 @@ export class AutomationComponentsComponent implements OnInit {
   );
 
   readonly visibleRows = computed(() => this.rows().slice(0, this.visibleCount()));
+  readonly sectionTitle = computed(() => this.rows()[0]?.name ?? this.lang.t('automation'));
   readonly allVisible  = computed(() => this.visibleCount() >= this.rows().length);
 
   ngOnInit(): void {

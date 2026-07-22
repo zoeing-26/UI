@@ -40,6 +40,7 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
                   [class]="hoveredCategory() === cat.name
                     ? 'bg-brand-blue text-white font-semibold'
                     : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'"
+                  (click)="navigateToCategory(cat.name)"
                 >
                   <span class="truncate leading-snug" [title]="cat.name">{{ cat.name }}</span>
                 </button>
@@ -290,6 +291,10 @@ export class CategorySidebarComponent implements OnInit {
   clearHovered(): void {
     this.hoveredCategory.set(null);
     this.hoveredSubCategory.set(null);
+  }
+
+  navigateToCategory(category: string): void {
+    this.router.navigate(['/inventory'], { queryParams: { category } });
   }
 
   navigateToSubCategory(category: string, subCategory: string): void {
