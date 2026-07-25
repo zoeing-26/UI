@@ -58,8 +58,8 @@ import { MaterialCardComponent } from '../../shared/components/material-card/mat
           <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
             <span class="font-bold text-zoeing-primary dark:text-white">{{ materials().length }}</span> total
           </span>
-          <span class="bg-zoeing-success/10 dark:bg-zoeing-success/20 px-3 py-1.5 rounded-full">
-            <span class="font-bold text-zoeing-success">{{ inStockCount() }}</span> in stock
+          <span class="bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full">
+            <span class="font-bold text-green-600 dark:text-green-400">{{ inStockCount() }}</span> in stock
           </span>
           <span class="bg-zoeing-primary/5 dark:bg-zoeing-primary/10 px-3 py-1.5 rounded-full">
             <span class="font-bold text-zoeing-primary dark:text-zoeing-accent">{{ filtered().length }}</span> shown

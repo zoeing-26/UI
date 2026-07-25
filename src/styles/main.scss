@@ -8,18 +8,19 @@
 
 // ─── ZOEING CSS Variables — aligned with tailwind.config.js ───
 :root {
-  // PRIMARY — Rig Navy
-  --zoeing-navy: #0F2A3D;
-  --zoeing-navy-light: #19475C;
-  --zoeing-navy-dark: #0B2330;
+  // PRIMARY — Deep Teal
+  --zoeing-navy: #0D4C6A;
+  --zoeing-navy-light: #1A6B8A;
+  --zoeing-navy-dark: #0A3A52;
   --zoeing-steel: #3A6B8A;
 
-  // ACCENT — Machine Amber
-  --zoeing-secondary: #D9721A;
-  --zoeing-secondary-dark: #B05E17;
-  --zoeing-secondary-light: #F2A251;
+  // ACCENT — Warm Amber
+  --zoeing-secondary: #D97706;
+  --zoeing-secondary-dark: #B45309;
+  --zoeing-secondary-light: #F59E0B;
 
   // SURFACE — Precision Gray
+  --zoeing-fog: #EFF7FC;
   --zoeing-precision: #EDEFF2;
   --surface-base: var(--zoeing-precision);
   --surface-card: #FFFFFF;
@@ -49,10 +50,10 @@
   --zoeing-danger: #B3401F;
 
   // Shadows
-  --shadow-sm: 0 1px 3px rgba(15,42,61,0.06);
-  --shadow-md: 0 4px 16px rgba(15,42,61,0.08);
-  --shadow-lg: 0 8px 32px rgba(15,42,61,0.12);
-  --shadow-brand: 0 4px 24px rgba(15,42,61,0.20);
+  --shadow-sm: 0 1px 3px rgba(13,76,106,0.06);
+  --shadow-md: 0 4px 16px rgba(13,76,106,0.08);
+  --shadow-lg: 0 8px 32px rgba(13,76,106,0.12);
+  --shadow-brand: 0 4px 24px rgba(13,76,106,0.20);
 }
 
 .dark {
@@ -172,7 +173,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   transition: box-shadow 0.22s ease, transform 0.22s ease;
   cursor: pointer;
-  &:hover { box-shadow: 0 8px 24px rgba(15,42,61,0.15); transform: translateY(-4px); }
+  &:hover { box-shadow: 0 8px 24px rgba(13,76,106,0.15); transform: translateY(-4px); }
   &::before,
   &::after {
     content: '';

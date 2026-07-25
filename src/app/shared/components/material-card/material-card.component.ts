@@ -72,14 +72,14 @@ import { ApiMaterial } from '../../../models/product.model';
           @if (inStock()) {
             <div class="flex gap-1 shrink-0" (click)="$event.stopPropagation()">
               <button
-                class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors"
+                class="w-7 h-7 rounded-full bg-zoeing-primary hover:bg-zoeing-primary-light text-white flex items-center justify-center transition-colors"
                 title="Request Quote"
                 (click)="onQuote()"
               >
                 <span class="material-icons text-sm">description</span>
               </button>
               <button
-                class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors"
+                class="w-7 h-7 rounded-full bg-zoeing-primary hover:bg-zoeing-primary-light text-white flex items-center justify-center transition-colors"
                 title="Add to Cart"
                 (click)="onAddToCart()"
               >
@@ -92,7 +92,7 @@ import { ApiMaterial } from '../../../models/product.model';
         <!-- Stock / request row -->
         <div class="mt-1.5">
           @if (inStock()) {
-            <p class="text-[10px] font-medium stock-success">
+            <p class="text-[10px] font-medium text-green-600 dark:text-green-400">
               ● In Stock ({{ mat().count }})
             </p>
           } @else {

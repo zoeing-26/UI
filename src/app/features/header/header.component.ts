@@ -52,7 +52,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             (keyup.enter)="triggerSearch()"
           />
           <button
-            class="bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white px-4 py-2 rounded-r-md border border-zoeing-secondary transition-colors flex items-center gap-1"
+            class="bg-zoeing-navy hover:bg-zoeing-navy-light text-white px-4 py-2 rounded-r-md border border-zoeing-navy transition-colors flex items-center gap-1"
             (click)="triggerSearch()"
           >
             <span class="material-icons text-sm">search</span>
@@ -73,12 +73,12 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             <span class="text-[10px] hidden md:block">{{ lang.t('cart') }}</span>
           </a>
 
-          <a routerLink="/orders" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
+          <a routerLink="/inventory" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
             <span class="material-icons text-xl">receipt_long</span>
             <span class="text-[10px]">Orders</span>
           </a>
 
-          <a routerLink="/quotes" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
+          <a routerLink="/quote" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
             <span class="material-icons text-xl">request_quote</span>
             <span class="text-[10px]">Quotes</span>
           </a>

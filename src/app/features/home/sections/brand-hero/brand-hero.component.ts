@@ -41,10 +41,10 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
 
     <!-- Heading -->
     <div class="absolute bottom-8 left-6 md:left-10">
-    <h2 class="font-display font-black text-2xl md:text-4xl leading-tight drop-shadow-lg text-zoeing-secondary">
+    <h2 class="font-display font-black text-2xl md:text-4xl leading-tight drop-shadow-lg" style="color: #F59E0B;">
     {{ clips[currentIndex()].label }}
     </h2>
-    <p class="text-xs font-semibold uppercase tracking-widest mb-1 text-zoeing-secondary/90">
+    <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color: #F59E0B; opacity: 0.85;">
     {{ clips[currentIndex()].industry }}
     </p>
     </div>
@@ -80,10 +80,31 @@ export class BrandHeroComponent {
     },
     {
       src: this.sanitizer.bypassSecurityTrustUrl(
-        '/assets/videos/CNC video.mp4'
+        '/assets/videos/coolant.mp4'
+      ),
+      label: 'District Cooling',
+      industry: 'Industrial Supplies for District Cooling Operations',
+    },
+    {
+      src: this.sanitizer.bypassSecurityTrustUrl(
+        '/assets/videos/CNC_video.mp4'
       ),
       label: 'CNC & Precision Engineering',
-      industry: 'Industrial Products for CNC & Precision Engineering',
+      industry: 'Industrial Supplies for CNC & Precision Engineering',
+    },
+    {
+      src: this.sanitizer.bypassSecurityTrustUrl(
+        '/assets/videos/water_treatment.mp4'
+      ),
+      label: 'Water Treatment & Utilities',
+      industry: 'Industrial Supplies for Water Treatment & Utilities',
+    },
+    {
+      src: this.sanitizer.bypassSecurityTrustUrl(
+        '/assets/videos/cement_treatment.mp4'
+      ),
+      label: 'Cement Industry',
+      industry: 'Industrial Supplies for Cement Industry',
     }
   ];
 

@@ -77,7 +77,7 @@ import { Product } from '../../../models/product.model';
           <div class="flex gap-1">
             <!-- Quote button -->
             <button
-              class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors shrink-0"
+              class="w-7 h-7 rounded-full bg-zoeing-primary hover:bg-zoeing-primary-light text-white flex items-center justify-center transition-colors shrink-0"
               (click)="onQuote($event)"
               [title]="lang.t('request_quote')"
             >
@@ -86,7 +86,7 @@ import { Product } from '../../../models/product.model';
 
             <!-- Add to cart -->
             <button
-              class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors shrink-0"
+              class="w-7 h-7 rounded-full bg-zoeing-primary hover:bg-zoeing-primary-light text-white flex items-center justify-center transition-colors shrink-0"
               (click)="onAddToCart($event)"
               [title]="lang.t('add_to_cart')"
             >
@@ -96,7 +96,7 @@ import { Product } from '../../../models/product.model';
         </div>
 
         <!-- Stock -->
-        <p class="text-[10px]" [class]="product().inStock ? 'stock-success' : 'stock-danger'">
+        <p class="text-[10px]" [class]="product().inStock ? 'text-green-600' : 'text-red-500'">
           {{ product().inStock ? lang.t('in_stock') : lang.t('out_of_stock') }}
         </p>
       </div>

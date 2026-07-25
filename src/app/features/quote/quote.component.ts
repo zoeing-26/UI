@@ -8,6 +8,7 @@ import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
+import { UserProfile } from '../../models/product.model';
 
 interface QuoteItem {
   id: number | string;
@@ -56,12 +57,7 @@ type CustomerType = 'individual' | 'company';
         <p class="text-gray-500 dark:text-gray-400 mb-6">
           Thank you! Our team will review your request and contact you within 24 hours.
         </p>
-        @if (apiResponse()) {
-          <div class="text-left bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mb-6 text-xs font-mono text-gray-600 dark:text-gray-300 overflow-auto max-h-48">
-            <p class="text-[10px] font-sans font-semibold uppercase tracking-wide text-gray-400 mb-1">API Response</p>
-            {{ apiResponse() | json }}
-          </div>
-        }
+        <!-- apiResponse debug block removed -->
         <div class="flex gap-3 justify-center">
           <a routerLink="/inventory"
              class="px-5 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
@@ -555,7 +551,7 @@ type CustomerType = 'individual' | 'company';
               <button
                 class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm hover:bg-brand-blue/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 (click)="submitDetails()"
-                [disabled]="submitting()"
+                [disabled]="submitting() || items().length === 0"
               >
                 @if (submitting()) {
                   <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>Submitting…
@@ -563,6 +559,13 @@ type CustomerType = 'individual' | 'company';
                   <span class="material-icons text-base">send</span>Submit Quote Request
                 }
               </button>
+
+              @if (items().length === 0) {
+                <div class="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-2.5 text-xs text-red-600 dark:text-red-400">
+                  <span class="material-icons text-[14px]">error_outline</span>
+                  Please add at least one product before submitting.
+                </div>
+              }
 
             </div>
           }
@@ -609,6 +612,20 @@ export class QuoteComponent implements OnInit {
   detailsForm = { full_name: '', email: '', phone: '', company_name: '', message: '' };
 
   ngOnInit(): void {
+    // Auto-open accordion & pre-fill details based on login state
+    if (this.auth.isLoggedIn()) {
+      // Pre-fill details form with user data and skip straight to details step
+      const u = this.auth.user();
+      if (u) {
+        this.prefillUserDetails(u);
+      } else {
+        // Token exists but user data is missing — fall back to guest flow
+        this.openCard.set('guest');
+      }
+    } else {
+      this.openCard.set('guest');
+    }
+
     if (this.route.snapshot.queryParams['fresh']) {
       this.items.set([]);
       return;
@@ -685,12 +702,8 @@ export class QuoteComponent implements OnInit {
 
   continueAsReturning(): void {
     if (this.auth.isLoggedIn()) {
-      const u = this.auth.user()!;
-      this.detailsForm.full_name    = u.name;
-      this.detailsForm.email        = u.email;
-      this.detailsForm.company_name = u.company ?? '';
-      if (u.company) this.customerType.set('company');
-      this.step.set('details');
+      const u = this.auth.user();
+      if (u) this.prefillUserDetails(u);
       return;
     }
     if (!this.loginForm.email || !this.loginForm.password) {
@@ -702,12 +715,8 @@ export class QuoteComponent implements OnInit {
     this.auth.login({ email: this.loginForm.email, password: this.loginForm.password }).subscribe({
       next: () => {
         const u = this.auth.user();
-        this.detailsForm.full_name    = u?.name ?? '';
-        this.detailsForm.email        = u?.email ?? this.loginForm.email;
-        this.detailsForm.company_name = u?.company ?? '';
-        if (u?.company) this.customerType.set('company');
+        if (u) this.prefillUserDetails(u);
         this.submitting.set(false);
-        this.step.set('details');
       },
       error: (err) => {
         this.submitting.set(false);
@@ -751,10 +760,10 @@ export class QuoteComponent implements OnInit {
     if (Object.keys(e).length > 0) return;
 
     const payload = {
-      user_name:    this.detailsForm.full_name.trim(),
-      email:        this.detailsForm.email.trim(),
-      phone:        this.detailsForm.phone.trim(),
-      company_name: this.detailsForm.company_name.trim() || undefined,
+      user_name:     this.detailsForm.full_name.trim(),
+      email:         this.detailsForm.email.trim(),
+      phone_number:  this.detailsForm.phone.trim(),
+      company_name:  this.detailsForm.company_name.trim() || undefined,
       customer_type: this.customerType(),
       message:      this.detailsForm.message.trim(),
       materials: this.items().map(i => ({
@@ -768,8 +777,7 @@ export class QuoteComponent implements OnInit {
     this.apiError.set(null);
 
     this.productService.createEnquiry(payload).subscribe({
-      next: (res) => {
-        this.apiResponse.set(res);
+      next: () => {
         this.step.set('submitted');
         this.submitting.set(false);
         localStorage.removeItem(STORAGE_KEY);
@@ -830,6 +838,15 @@ export class QuoteComponent implements OnInit {
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
+
+  /** Pre-fill the details form from the user profile and jump to details step */
+  private prefillUserDetails(u: UserProfile): void {
+    this.detailsForm.full_name    = u.name;
+    this.detailsForm.email        = u.email;
+    this.detailsForm.company_name = u.company ?? '';
+    if (u.company) this.customerType.set('company');
+    this.step.set('details');
+  }
 
   inlineInputClass(hasError: boolean | string | null | undefined): string {
     const base = 'w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 ';

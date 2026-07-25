@@ -148,16 +148,16 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
           <!-- Stock status -->
           <div class="flex items-center gap-2">
             @if (inStock()) {
-              <span class="flex items-center gap-1.5 text-sm font-semibold stock-success">
-                <span class="w-2.5 h-2.5 rounded-full stock-dot-success animate-pulse"></span>
+              <span class="flex items-center gap-1.5 text-sm font-semibold text-green-600 dark:text-green-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
                 In Stock
               </span>
               <span class="text-xs text-gray-400 dark:text-gray-500">
                 ({{ material()!.count }} units available)
               </span>
             } @else {
-              <span class="flex items-center gap-1.5 text-sm font-semibold stock-danger">
-                <span class="w-2.5 h-2.5 rounded-full stock-dot-danger"></span>
+              <span class="flex items-center gap-1.5 text-sm font-semibold text-red-500 dark:text-red-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                 Out of Stock
               </span>
             }
@@ -204,7 +204,7 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
                          transition-colors"
                   [class]="addedFeedback()
                     ? 'bg-green-600 text-white'
-                    : 'bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white'">
+                    : 'bg-zoeing-primary hover:bg-zoeing-primary-light text-white'">
                   <span class="material-icons text-base">{{ addedFeedback() ? 'check_circle' : 'add_shopping_cart' }}</span>
                   {{ addedFeedback() ? 'Added!' : 'Add to Cart' }}
                 </button>
@@ -259,19 +259,19 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
       </div>
 
       <!-- Datasheets & Manuals -->
-      @if (material()!.attachment?.length) {
+      @if (attachments().length > 0) {
         <div class="mt-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
           <h2 class="text-base font-bold text-zoeing-navy dark:text-white mb-4 flex items-center gap-2">
             <span class="material-icons text-base text-zoeing-navy dark:text-zoeing-gold">attach_file</span>
             Datasheets &amp; Manuals
           </h2>
           <div class="flex flex-col gap-2">
-            @for (doc of material()!.attachment!; track doc.file) {
-              <a [href]="doc.file" target="_blank" rel="noopener noreferrer"
+            @for (url of attachments(); track url; let i = $index) {
+              <a [href]="url" target="_blank" rel="noopener noreferrer"
                  class="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400
                         hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
                 <span class="material-icons text-[16px] text-red-500">picture_as_pdf</span>
-                {{ doc.name }}
+                Attachment {{ i + 1 }}
               </a>
             }
           </div>
@@ -346,9 +346,9 @@ import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
                 <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Availability</td>
                 <td class="py-2.5">
                   @if (inStock()) {
-                    <span class="stock-success font-semibold">In Stock ({{ material()!.count }})</span>
+                    <span class="text-green-600 dark:text-green-400 font-semibold">In Stock ({{ material()!.count }})</span>
                   } @else {
-                    <span class="stock-danger font-semibold">Out of Stock</span>
+                    <span class="text-red-500 dark:text-red-400 font-semibold">Out of Stock</span>
                   }
                 </td>
               </tr>
@@ -382,6 +382,13 @@ export class MaterialDetailComponent implements OnInit {
   qty = signal(1);
 
   inStock = computed(() => (this.material()?.count ?? 0) > 0);
+
+  readonly attachments = computed(() => {
+    const m = this.material();
+    if (!m) return [];
+    const urls = [m.attachment_1, m.attachment_2, m.attachment_3, m.attachment_4];
+    return urls.filter((u): u is string => !!u);
+  });
 
   ngOnInit(): void {
     const state = history.state as { material?: ApiMaterial };
