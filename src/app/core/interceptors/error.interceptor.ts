@@ -1,20 +1,18 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 import { throwError, catchError } from 'rxjs';
 
 /** Global HTTP error handler */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
+  const auth = inject(AuthService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       switch (error.status) {
         case 401:
-          // Unauthorized — clear token and redirect to home
-          localStorage.removeItem('zoieng_token');
-          localStorage.removeItem('zoieng_user');
-          router.navigate(['/']);
+          // Unauthorized — clear auth state (signals + localStorage) and redirect to home
+          auth.logout();
           break;
         case 403:
           console.error('[Error] 403 Forbidden:', req.url);

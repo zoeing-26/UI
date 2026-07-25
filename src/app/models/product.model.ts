@@ -78,11 +78,6 @@ export interface SubCategory {
 
 // ─── API Category Models (v1/materials response) ──────────────────────────────
 
-export interface ApiMaterialAttachment {
-  name: string;
-  file: string;
-}
-
 export interface ApiMaterial {
   id: number;
   name?: string;
@@ -95,12 +90,11 @@ export interface ApiMaterial {
   category?: string;
   brand?: string | null;
   sub_category?: string;
-  attachment?: ApiMaterialAttachment[];
-}
-
-export interface AllMaterialsResponse {
-  message: string;
-  materials: ApiMaterial[];
+  attachment_1?: string | null;
+  attachment_2?: string | null;
+  attachment_3?: string | null;
+  attachment_4?: string | null;
+  attachment?: never[];
 }
 
 // Shape returned by GET /v1/brand_materials
