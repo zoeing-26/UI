@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
 function passwordMatch(control: AbstractControl): ValidationErrors | null {
   const pwd = control.get('password')?.value;
@@ -14,7 +15,7 @@ function passwordMatch(control: AbstractControl): ValidationErrors | null {
   selector: 'app-register',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LogoComponent],
   template: `
   <div class="min-h-screen flex">
 
@@ -23,9 +24,7 @@ function passwordMatch(control: AbstractControl): ValidationErrors | null {
                 bg-zoeing-primary text-white px-10 py-12">
       <div>
         <a routerLink="/" class="flex items-center gap-3 mb-12">
-          <span class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center
-                       font-display font-black text-xl">Z</span>
-          <span class="font-display font-black text-2xl tracking-tight lowercase">zoieng</span>
+          <app-logo [primaryColor]="'#ffffff'" size="md" class="h-12 w-auto max-w-[210px]"></app-logo>
         </a>
         <h1 class="font-display font-black text-4xl leading-tight mb-4">
           Join 10,000+<br>Engineers &amp;<br>Procurement Teams
@@ -53,10 +52,7 @@ function passwordMatch(control: AbstractControl): ValidationErrors | null {
 
       <!-- Mobile logo -->
       <a routerLink="/" class="flex items-center gap-2 mb-8 lg:hidden">
-        <span class="w-9 h-9 rounded-md bg-zoeing-primary text-white flex items-center justify-center
-                     font-display font-black text-xl">Z</span>
-        <span class="font-display font-black text-2xl tracking-tight text-zoeing-primary
-                     dark:text-white lowercase">zoieng</span>
+        <app-logo [primaryColor]="'#0b2e3b'" size="sm" class="h-10 w-auto max-w-[170px]"></app-logo>
       </a>
 
       <div class="w-full max-w-sm">

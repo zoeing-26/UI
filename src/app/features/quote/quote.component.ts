@@ -8,6 +8,7 @@ import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
+import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
 import { UserProfile } from '../../models/product.model';
 
 interface QuoteItem {
@@ -28,553 +29,354 @@ type CustomerType = 'individual' | 'company';
 @Component({
   selector: 'app-quote',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, InrCurrencyPipe],
+  imports: [CommonModule, RouterModule, FormsModule, InrCurrencyPipe, LayoutWrapperComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <main class="max-w-screen-xl mx-auto px-4 py-8">
-
-    <!-- Breadcrumb -->
-    <nav class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1 mb-4">
-      <a routerLink="/" class="hover:text-brand-blue">Home</a>
-      <span class="material-icons text-[12px]">chevron_right</span>
-      <a routerLink="/inventory" class="hover:text-brand-blue">Products</a>
-      <span class="material-icons text-[12px]">chevron_right</span>
-      <span class="text-gray-600 dark:text-gray-300">Request for Quote</span>
-    </nav>
-
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-zoeing-navy dark:text-white">Request for Quote</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Fill in your details and we'll get back to you with pricing.</p>
-    </div>
-
-    <!-- ══ SUCCESS ═══════════════════════════════════════════════════════════ -->
-    @if (step() === 'submitted') {
-      <div class="max-w-lg mx-auto text-center py-16">
-        <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
-          <span class="material-icons text-3xl text-green-600 dark:text-green-400">check_circle</span>
+  <app-layout-wrapper layoutType="full">
+    <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <aside class="w-80 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col overflow-hidden z-20">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div class="flex items-center gap-2 text-zoeing-gold mb-1">
+            <span class="material-icons text-sm">auto_awesome</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Procurement Guide</span>
+          </div>
+          <h1 class="font-display font-black text-2xl text-zoeing-navy dark:text-white leading-tight">
+            Request for Quote
+          </h1>
         </div>
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Quote Submitted!</h2>
-        <p class="text-gray-500 dark:text-gray-400 mb-6">
-          Thank you! Our team will review your request and contact you within 24 hours.
-        </p>
-        <!-- apiResponse debug block removed -->
-        <div class="flex gap-3 justify-center">
-          <a routerLink="/inventory"
-             class="px-5 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            Continue Shopping
-          </a>
-          <a routerLink="/"
-             class="px-5 py-2 rounded-lg bg-brand-blue text-white text-sm font-semibold hover:bg-brand-blue/90 transition-colors">
-            Go Home
-          </a>
-        </div>
-      </div>
 
-    <!-- ══ MAIN TWO-COLUMN LAYOUT ════════════════════════════════════════════ -->
-    } @else {
-      <div class="grid lg:grid-cols-[1fr_420px] gap-6 items-start">
-
-        <!-- ── LEFT: Quote items (always visible) ─────────────────────────── -->
-        <section class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-gray-800 dark:text-gray-100">
-              Quote Items
-              @if (items().length > 0) {
-                <span class="ml-1.5 text-xs font-normal text-gray-400">({{ items().length }})</span>
-              }
-            </h2>
-            @if (items().length > 0) {
-              <button (click)="clearAll()"
-                class="text-xs text-red-400 hover:text-red-600 transition-colors flex items-center gap-0.5">
-                <span class="material-icons text-[14px]">delete_sweep</span> Clear all
-              </button>
-            }
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-6 h-6 rounded-full bg-zoeing-navy text-white text-[10px] flex items-center justify-center font-bold"
+                   [class.ring-4]="step() === 'method'" [class.ring-zoeing-gold]="step() === 'method'">1</div>
+              <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white">Configuration</h3>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed pl-9">
+              Review your technical requirements and define your procurement method.
+            </p>
           </div>
 
-          @if (formErrors()['items']) {
-            <p class="text-xs text-red-500 flex items-center gap-1">
-              <span class="material-icons text-[14px]">error</span>{{ formErrors()['items'] }}
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 text-white text-[10px] flex items-center justify-center font-bold"
+                   [class.bg-zoeing-navy]="step() === 'details'"
+                   [class.ring-4]="step() === 'details'" [class.ring-zoeing-gold]="step() === 'details'">2</div>
+              <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white">Identity</h3>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed pl-9">
+              Provide corporate details to ensure pricing aligns with your industry sector.
             </p>
-          }
+          </div>
 
-          @if (items().length === 0) {
-            <div class="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-6 text-center">
-              <span class="material-icons text-4xl text-gray-300 dark:text-gray-600 mb-2 block">inventory_2</span>
-              <p class="text-sm text-gray-500 dark:text-gray-400">No products added yet.</p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 text-white text-[10px] flex items-center justify-center font-bold"
+                   [class.bg-zoeing-navy]="step() === 'submitted'">3</div>
+              <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white">Finalization</h3>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed pl-9">
+              Our technical sourcing team will verify specifications and issue your quote.
+            </p>
+          </div>
+
+          <div class="mt-12 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-2 text-zoeing-navy dark:text-zoeing-gold mb-2">
+              <span class="material-icons text-sm">info</span>
+              <span class="text-[11px] font-bold uppercase">Technical Tip</span>
+            </div>
+            <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">
+              Including a Bill of Materials (BOM) or 3D CAD file reduces lead time by up to 40%.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
+          <a routerLink="/" class="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">
+            <span class="material-icons text-sm">arrow_back</span> Back to Home
+          </a>
+        </div>
+      </aside>
+
+      <main class="flex-1 overflow-y-auto relative">
+        <div class="max-w-5xl mx-auto p-6 lg:p-12">
+          @if (step() === 'submitted') {
+            <div class="flex flex-col items-center justify-center min-h-[60vh] text-center">
+              <div class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6">
+                <span class="material-icons text-5xl text-green-600 dark:text-green-400">check_circle</span>
+              </div>
+              <h2 class="text-3xl font-display font-black text-zoeing-navy dark:text-white mb-3">Quote Submitted!</h2>
+              <p class="text-gray-600 dark:text-gray-400 max-w-md mb-8 text-lg">
+                Thank you. Our technical sourcing team will review your requirements and contact you within 24 hours.
+              </p>
+              <div class="flex gap-4">
+                <a routerLink="/inventory" class="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  Continue Shopping
+                </a>
+                <a routerLink="/" class="px-6 py-3 rounded-lg bg-zoeing-navy text-white text-sm font-bold hover:bg-zoeing-navy-light transition-colors">
+                  Return Home
+                </a>
+              </div>
             </div>
           } @else {
-            @for (item of items(); track item.id) {
-              <div class="flex items-center gap-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-2.5">
-                <div class="w-10 h-10 shrink-0 rounded bg-gray-50 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                  @if (item.image) {
-                    <img [src]="item.image" [alt]="item.name" class="w-full h-full object-contain p-0.5" loading="lazy" />
-                  } @else {
-                    <span class="material-icons text-base text-gray-300 dark:text-gray-600">image</span>
+            <div class="grid lg:grid-cols-12 gap-12">
+              <div class="lg:col-span-7 space-y-6">
+                <div class="flex items-center justify-between">
+                  <h2 class="font-display font-black text-xl text-zoeing-navy dark:text-white uppercase tracking-tight">Technical Intake</h2>
+                  @if (items().length > 0) {
+                    <button (click)="clearAll()" class="text-[10px] font-bold text-red-500 hover:text-red-700 uppercase tracking-wider flex items-center gap-1 transition-colors">
+                      <span class="material-icons text-xs">delete_sweep</span> Clear All
+                    </button>
                   }
                 </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-xs font-semibold text-gray-800 dark:text-gray-100 leading-snug line-clamp-1">{{ item.name }}</p>
-                  <p class="text-[10px] text-gray-400 font-mono">{{ item.product_code }}</p>
-                  @if (item.price > 0) {
-                    <p class="text-[10px] text-zoeing-secondary font-semibold">{{ item.price | inrCurrency }} × {{ item.qty }}</p>
-                  }
-                </div>
-                <div class="flex items-center gap-1 shrink-0">
-                  <button class="w-5 h-5 rounded border border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-40"
-                          (click)="updateQty(item.id,-1)" [disabled]="item.qty<=1">−</button>
-                  <span class="w-5 text-center text-xs font-semibold text-gray-800 dark:text-gray-100 select-none">{{ item.qty }}</span>
-                  <button class="w-5 h-5 rounded border border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                          (click)="updateQty(item.id,1)">+</button>
-                </div>
-                <button class="shrink-0 text-gray-300 hover:text-red-500 transition-colors" (click)="removeItem(item.id)">
-                  <span class="material-icons text-sm">close</span>
-                </button>
-              </div>
-            }
-          }
 
-          <!-- Note: product not in catalog -->
-          <div class="flex items-start gap-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 px-3 py-2.5 mt-1">
-            <span class="material-icons text-amber-500 dark:text-amber-400 text-base shrink-0 mt-0.5">lightbulb</span>
-            <p class="text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
-              <span class="font-bold">Can't find your product?</span>
-              You can manually enter the
-              <span class="font-semibold underline decoration-dotted">Product Name</span>,
-              <span class="font-semibold underline decoration-dotted">Brand</span>,
-              <span class="font-semibold underline decoration-dotted">Product ID / Code</span> and
-              <span class="font-semibold underline decoration-dotted">Quantity</span> below,
-              or upload a file (catalogue, BOM, drawing) — our team will source it for you.
-            </p>
-          </div>
-
-          <!-- Add manually — always visible -->
-          <button
-            class="flex items-center justify-center gap-1.5 w-full rounded-lg border text-xs font-semibold py-2 transition-colors"
-            [class]="showManualForm() ? 'border-brand-blue bg-brand-blue text-white' : 'border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white'"
-            (click)="showManualForm.set(!showManualForm())"
-          >
-            <span class="material-icons text-sm">{{ showManualForm() ? 'remove_circle_outline' : 'add_circle_outline' }}</span>
-            {{ showManualForm() ? 'Cancel' : 'Add Products Manually' }}
-          </button>
-
-          @if (showManualForm()) {
-            <div class="border border-brand-blue/30 dark:border-brand-blue/40 rounded-lg p-3 space-y-2.5 bg-blue-50/50 dark:bg-blue-900/10">
-              <p class="text-[11px] font-bold text-brand-blue dark:text-blue-400 uppercase tracking-wide flex items-center gap-1">
-                <span class="material-icons text-sm">edit_note</span>Enter Product Details
-              </p>
-              <div class="grid grid-cols-2 gap-2">
-                <div class="col-span-2">
-                  <label class="block text-[10px] font-bold text-brand-blue dark:text-blue-400 mb-0.5 uppercase tracking-wide">Product Name <span class="text-red-500">*</span></label>
-                  <input type="text" [(ngModel)]="manualForm.name" placeholder="e.g. Linear Guide Rail"
-                    class="w-full border-2 border-brand-blue/40 dark:border-blue-500/40 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue" />
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-brand-blue dark:text-blue-400 mb-0.5 uppercase tracking-wide">Brand</label>
-                  <input type="text" [(ngModel)]="manualForm.brand" placeholder="e.g. ZOIENG, SMC"
-                    class="w-full border-2 border-brand-blue/40 dark:border-blue-500/40 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue" />
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-brand-blue dark:text-blue-400 mb-0.5 uppercase tracking-wide">Product ID / Code</label>
-                  <input type="text" [(ngModel)]="manualForm.product_code" placeholder="e.g. LG-25-500"
-                    class="w-full border-2 border-brand-blue/40 dark:border-blue-500/40 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue" />
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-brand-blue dark:text-blue-400 mb-0.5 uppercase tracking-wide">Quantity <span class="text-red-500">*</span></label>
-                  <input type="number" [(ngModel)]="manualForm.qty" min="1" placeholder="1"
-                    class="w-full border-2 border-brand-blue/40 dark:border-blue-500/40 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue" />
-                </div>
-              </div>
-              @if (manualFormError()) {
-                <p class="text-[11px] text-red-500 flex items-center gap-1">
-                  <span class="material-icons text-[13px]">error</span>{{ manualFormError() }}
-                </p>
-              }
-              <button
-                class="w-full py-1.5 bg-brand-blue text-white text-xs font-semibold rounded hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-1"
-                (click)="addManualItem()"
-              >
-                <span class="material-icons text-sm">add</span>Add to Quote
-              </button>
-            </div>
-          }
-
-          <!-- Browse Products button -->
-          <a routerLink="/inventory"
-             class="flex items-center justify-center gap-1.5 w-full rounded-lg border border-gray-300 dark:border-gray-600 text-xs font-semibold py-2 text-gray-600 dark:text-gray-300 hover:border-brand-blue hover:text-brand-blue dark:hover:border-brand-yellow dark:hover:text-brand-yellow transition-colors">
-            <span class="material-icons text-sm">storefront</span>
-            Browse All Products
-          </a>
-
-          <!-- OR + Upload — always visible -->
-          <div class="flex items-center gap-2 my-2">
-            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
-            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500">OR</span>
-            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
-          </div>
-
-          <div class="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-brand-blue transition-colors"
-               (click)="fileInput.click()">
-            <span class="material-icons text-2xl text-gray-400">cloud_upload</span>
-            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Click to upload files</p>
-            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">PDF, Word, Excel, images, ZIP, EXE and more</p>
-            <input type="file" multiple
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.7z,.exe,.msi,.jpg,.jpeg,.png,.gif,.bmp,.webp,.dwg,.dxf,.step,.stp,.igs,.iges"
-              (change)="onFileSelected($event)" class="hidden" #fileInput />
-          </div>
-
-          @if (selectedFiles().length > 0) {
-            <ul class="space-y-1">
-              @for (f of selectedFiles(); track f.name; let fi = $index) {
-                <li class="flex items-center justify-between text-xs bg-gray-50 dark:bg-gray-800 rounded px-2 py-1.5">
-                  <div class="flex items-center gap-1.5 min-w-0">
-                    <span class="material-icons text-[14px] text-gray-400 shrink-0">insert_drive_file</span>
-                    <span class="truncate text-gray-700 dark:text-gray-300">{{ f.name }}</span>
+                @if (items().length === 0) {
+                  <div class="rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 p-12 text-center bg-white dark:bg-gray-900/50">
+                    <span class="material-icons text-5xl text-gray-300 dark:text-gray-700 mb-4 block">inventory_2</span>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium">No components added to your request.</p>
+                    <a routerLink="/inventory" class="mt-4 inline-block text-sm font-bold text-zoeing-navy dark:text-zoeing-gold hover:underline">Browse Inventory &rarr;</a>
                   </div>
-                  <button (click)="removeFile(fi)" class="ml-2 shrink-0 text-gray-400 hover:text-red-500 transition-colors">
-                    <span class="material-icons text-[13px]">close</span>
+                } @else {
+                  <div class="space-y-3">
+                    @for (item of items(); track item.id) {
+                      <div class="group flex items-center gap-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-3 hover:border-zoeing-gold transition-colors shadow-sm">
+                        <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
+                          @if (item.image) {
+                            <img [src]="item.image" [alt]="item.name" class="w-full h-full object-contain p-1" />
+                          } @else {
+                            <span class="material-icons text-gray-400 text-xl">image</span>
+                          }
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ item.name }}</p>
+                          <p class="text-[10px] font-mono text-gray-400">{{ item.product_code }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1 border border-gray-200 dark:border-gray-700">
+                          <button (click)="updateQty(item.id,-1)" [disabled]="item.qty<=1" class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-zoeing-navy disabled:opacity-30">
+                            <span class="material-icons text-xs">remove</span>
+                          </button>
+                          <span class="text-xs font-bold w-4 text-center">{{ item.qty }}</span>
+                          <button (click)="updateQty(item.id,1)" class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-zoeing-navy">
+                            <span class="material-icons text-xs">add</span>
+                          </button>
+                        </div>
+                        <button (click)="removeItem(item.id)" class="p-2 text-gray-300 hover:text-red-500 transition-colors">
+                          <span class="material-icons text-sm">close</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden shadow-sm">
+                  <button (click)="showManualForm.set(!showManualForm())" class="w-full flex items-center justify-between p-4 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <span class="flex items-center gap-2">
+                      <span class="material-icons text-sm text-zoeing-gold">add_circle</span> Add Custom Component
+                    </span>
+                    <span class="material-icons transition-transform" [class.rotate-180]="showManualForm()">expand_more</span>
                   </button>
-                </li>
-              }
-            </ul>
-          }
 
-          <!-- Pricing summary -->
-          @if (items().length > 0) {
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-1.5 text-xs">
-              <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Price Summary</p>
-
-              @for (item of items(); track item.id) {
-                <div class="flex items-center justify-between text-gray-700 dark:text-gray-300">
-                  <span class="truncate max-w-[60%] text-[11px]">{{ item.name }}</span>
-                  @if (item.price > 0) {
-                    <span class="font-medium shrink-0">{{ item.price * item.qty | inrCurrency }}</span>
-                  } @else {
-                    <span class="italic text-gray-400 shrink-0">On Request</span>
-                  }
-                </div>
-              }
-
-              @if (subtotal() > 0) {
-                <div class="border-t border-gray-100 dark:border-gray-800 pt-1.5 mt-1.5 space-y-1">
-                  <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                    <span>Subtotal</span>
-                    <span class="font-medium">{{ subtotal() | inrCurrency }}</span>
-                  </div>
-                  <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                    <span>GST (18%)</span>
-                    <span class="font-medium">{{ gst() | inrCurrency }}</span>
-                  </div>
-                  <div class="flex justify-between font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700 pt-1.5 mt-1">
-                    <span>Estimated Total</span>
-                    <span class="text-zoeing-secondary">{{ grandTotal() | inrCurrency }}</span>
-                  </div>
-                </div>
-              }
-
-              @if (porCount() > 0) {
-                <p class="text-[10px] text-amber-600 dark:text-amber-400 pt-1">
-                  * {{ porCount() }} item{{ porCount() > 1 ? 's' : '' }} priced on request — final quote may vary.
-                </p>
-              }
-            </div>
-          }
-        </section>
-
-        <!-- ── RIGHT: Method or Details ────────────────────────────────────── -->
-        <aside class="space-y-3 sticky top-24">
-
-          <!-- ════════════ STEP: METHOD ══════════════════════════════════════ -->
-          @if (step() === 'method') {
-            <h2 class="font-bold text-gray-800 dark:text-white text-lg">
-              Choose your preferred checkout method.
-            </h2>
-
-            <!-- ── Card 1: Guest Checkout ── -->
-            <div class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-              <button
-                class="w-full flex items-center justify-between px-5 py-4 text-left"
-                (click)="toggleCard('guest')"
-              >
-                <div>
-                  <p class="font-bold text-gray-800 dark:text-white">Guest Checkout</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">You don't need to sign up to continue.</p>
-                </div>
-                <span class="material-icons text-gray-400 transition-transform"
-                      [class.rotate-180]="openCard() === 'guest'">expand_more</span>
-              </button>
-
-              @if (openCard() === 'guest') {
-                <div class="px-5 pb-5 space-y-3 border-t border-gray-100 dark:border-gray-800 pt-4">
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    <strong class="text-gray-700 dark:text-gray-300">Note:</strong>
-                    You will have the opportunity to sign-up later.
-                  </p>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name <span class="text-red-500">*</span></label>
-                    <input type="text" [(ngModel)]="guestForm.name" placeholder="John Doe" [class]="inlineInputClass(authError() && !guestForm.name)" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email <span class="text-red-500">*</span></label>
-                    <input type="email" [(ngModel)]="guestForm.email" placeholder="john@company.com" [class]="inlineInputClass(authError() && !guestForm.email)" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Phone <span class="text-red-500">*</span></label>
-                    <input type="tel" [(ngModel)]="guestForm.phone" placeholder="+91 98765 43210" [class]="inlineInputClass(authError() && !guestForm.phone)" />
-                  </div>
-                  @if (authError() && openCard() === 'guest') {
-                    <p class="text-xs text-red-500 flex items-center gap-1">
-                      <span class="material-icons text-[13px]">error</span>{{ authError() }}
-                    </p>
-                  }
-                  <button
-                    class="w-full py-2.5 bg-brand-blue text-white text-sm font-semibold rounded-lg hover:bg-brand-blue/90 transition-colors"
-                    (click)="continueAsGuest()"
-                  >Continue without registering</button>
-                </div>
-              }
-            </div>
-
-            <!-- ── Card 2: Returning Customer ── -->
-            <div class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-              <button
-                class="w-full flex items-center justify-between px-5 py-4 text-left"
-                (click)="toggleCard('returning')"
-              >
-                <div>
-                  <p class="font-bold text-gray-800 dark:text-white">Returning Customer</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Already have a web account? Login for a faster experience.</p>
-                </div>
-                <span class="material-icons text-gray-400 transition-transform"
-                      [class.rotate-180]="openCard() === 'returning'">expand_more</span>
-              </button>
-
-              @if (openCard() === 'returning') {
-                <div class="px-5 pb-5 border-t border-gray-100 dark:border-gray-800 pt-4">
-                  @if (auth.isLoggedIn()) {
-                    <!-- Already logged in -->
-                    <div class="flex items-center gap-3 mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                      <span class="material-icons text-green-600 dark:text-green-400">account_circle</span>
-                      <div class="min-w-0">
-                        <p class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{{ auth.user()?.name }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ auth.user()?.email }}</p>
+                  @if (showManualForm()) {
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-4">
+                      <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                          <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Product Name *</label>
+                          <input type="text" [(ngModel)]="manualForm.name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                        </div>
+                        <div>
+                          <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Brand</label>
+                          <input type="text" [(ngModel)]="manualForm.brand" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                        </div>
+                        <div>
+                          <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Product Code</label>
+                          <input type="text" [(ngModel)]="manualForm.product_code" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                        </div>
+                        <div>
+                          <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Quantity *</label>
+                          <input type="number" [(ngModel)]="manualForm.qty" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                        </div>
+                        <div class="flex items-end">
+                          <button (click)="addManualItem()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg hover:bg-zoeing-navy-light transition-colors">
+                            Add to List
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      class="w-full py-2.5 bg-brand-blue text-white text-sm font-semibold rounded-lg hover:bg-brand-blue/90 transition-colors"
-                      (click)="continueAsReturning()"
-                    >Continue as {{ auth.user()?.name }}</button>
-                  } @else {
-                    <div class="space-y-3">
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email <span class="text-red-500">*</span></label>
-                        <input type="email" [(ngModel)]="loginForm.email" placeholder="you@company.com" [class]="inlineInputClass(false)" />
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password <span class="text-red-500">*</span></label>
-                        <input type="password" [(ngModel)]="loginForm.password" placeholder="••••••••" [class]="inlineInputClass(false)" />
-                      </div>
-                      @if (authError() && openCard() === 'returning') {
-                        <p class="text-xs text-red-500 flex items-center gap-1">
-                          <span class="material-icons text-[13px]">error</span>{{ authError() }}
+
+                      @if (manualFormError()) {
+                        <p class="text-[11px] text-red-500 flex items-center gap-1">
+                          <span class="material-icons text-xs">error</span> {{ manualFormError() }}
                         </p>
                       }
-                      <button
-                        class="w-full py-2.5 bg-brand-blue text-white text-sm font-semibold rounded-lg hover:bg-brand-blue/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-                        (click)="continueAsReturning()"
-                        [disabled]="submitting()"
-                      >
-                        @if (submitting() && openCard() === 'returning') {
-                          <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>Logging in…
-                        } @else { Login and Continue }
-                      </button>
                     </div>
                   }
                 </div>
-              }
-            </div>
 
-            <!-- ── Card 3: New Customer ── -->
-            <div class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-              <button
-                class="w-full flex items-center justify-between px-5 py-4 text-left"
-                (click)="toggleCard('new')"
-              >
-                <div>
-                  <p class="font-bold text-gray-800 dark:text-white">New Customer</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                    Sign up to track orders and complete quotes faster.
-                  </p>
-                </div>
-                <span class="material-icons text-gray-400 transition-transform"
-                      [class.rotate-180]="openCard() === 'new'">expand_more</span>
-              </button>
-
-              @if (openCard() === 'new') {
-                <div class="px-5 pb-5 space-y-3 border-t border-gray-100 dark:border-gray-800 pt-4">
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    If you sign up you will be able to view your order history, track your order
-                    progress and complete orders more quickly in future.
-                  </p>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email <span class="text-red-500">*</span></label>
-                    <input type="email" [(ngModel)]="registerForm.email" placeholder="you@company.com" [class]="inlineInputClass(authError() && !registerForm.email)" />
+                <div class="p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-800 text-center cursor-pointer hover:border-zoeing-gold transition-colors group" (click)="fileInput.click()">
+                  <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-icons text-gray-400 group-hover:text-zoeing-gold">cloud_upload</span>
                   </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password <span class="text-red-500">*</span></label>
-                    <input type="password" [(ngModel)]="registerForm.password" placeholder="Min 8 characters" [class]="inlineInputClass(authError() && !registerForm.password)" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password <span class="text-red-500">*</span></label>
-                    <input type="password" [(ngModel)]="registerForm.confirmPassword" placeholder="Re-enter password"
-                      [class]="inlineInputClass(!!(authError() && registerForm.password !== registerForm.confirmPassword))" />
-                  </div>
-                  @if (authError() && openCard() === 'new') {
-                    <p class="text-xs text-red-500 flex items-center gap-1">
-                      <span class="material-icons text-[13px]">error</span>{{ authError() }}
-                    </p>
-                  }
-                  <button
-                    class="w-full py-2.5 bg-brand-blue text-white text-sm font-semibold rounded-lg hover:bg-brand-blue/90 transition-colors"
-                    (click)="continueAsNew()"
-                  >Signup and continue</button>
+                  <p class="text-sm font-bold text-gray-700 dark:text-gray-300">Upload BOM / Drawing</p>
+                  <p class="text-[11px] text-gray-400 mt-1">PDF, Excel, STEP, DXF supported</p>
+                  <input type="file" multiple (change)="onFileSelected($event)" class="hidden" #fileInput />
                 </div>
-              }
-            </div>
 
-          <!-- ════════════ STEP: DETAILS ══════════════════════════════════════ -->
-          } @else {
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 space-y-4">
+                @if (selectedFiles().length > 0) {
+                  <div class="grid grid-cols-2 gap-2">
+                    @for (f of selectedFiles(); track f.name; let fi = $index) {
+                      <div class="flex items-center justify-between p-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-[11px]">
+                        <span class="truncate flex items-center gap-1">
+                          <span class="material-icons text-xs text-gray-400">insert_drive_file</span> {{ f.name }}
+                        </span>
+                        <button (click)="removeFile(fi)" class="text-gray-400 hover:text-red-500">
+                          <span class="material-icons text-xs">close</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
 
-              <!-- Back + heading -->
-              <div class="flex items-center gap-3">
-                <button class="text-gray-400 hover:text-brand-blue transition-colors"
-                        (click)="backToMethod()">
-                  <span class="material-icons text-xl">arrow_back</span>
-                </button>
-                <h2 class="font-semibold text-gray-800 dark:text-gray-100">Your Details</h2>
-              </div>
-
-              <!-- Individual / Company tabs -->
-              <div class="flex border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                <button
-                  class="flex-1 py-2 text-sm font-semibold transition-colors"
-                  [class]="customerType() === 'individual'
-                    ? 'bg-brand-blue text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'"
-                  (click)="customerType.set('individual')"
-                >
-                  <span class="material-icons text-base align-middle mr-1">person</span>Individual
-                </button>
-                <button
-                  class="flex-1 py-2 text-sm font-semibold transition-colors border-l border-gray-200 dark:border-gray-700"
-                  [class]="customerType() === 'company'
-                    ? 'bg-brand-blue text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'"
-                  (click)="customerType.set('company')"
-                >
-                  <span class="material-icons text-base align-middle mr-1">business</span>Company
-                </button>
-              </div>
-
-              <!-- Full Name -->
-              <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Full Name <span class="text-red-500">*</span>
-                </label>
-                <input type="text" [(ngModel)]="detailsForm.full_name" placeholder="John Doe"
-                  [class]="fieldClass('full_name')" />
-                @if (formErrors()['full_name']) {
-                  <p class="text-[11px] text-red-500 mt-1">{{ formErrors()['full_name'] }}</p>
+                @if (items().length > 0) {
+                  <div class="p-6 rounded-2xl bg-zoeing-navy text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
+                    <div class="relative z-10">
+                      <p class="text-[10px] font-bold uppercase tracking-widest text-zoeing-gold mb-4">Estimated Value</p>
+                      <div class="flex items-end justify-between">
+                        <div>
+                          <p class="text-3xl font-display font-black">{{ grandTotal() | inrCurrency }}</p>
+                          <p class="text-[10px] text-gray-400 uppercase mt-1">Incl. GST (18%)</p>
+                        </div>
+                        <div class="text-right">
+                          <p class="text-xs font-bold">Items: {{ items().length }}</p>
+                          <p class="text-xs text-gray-400">POR: {{ porCount() }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 }
               </div>
 
-              <!-- Email -->
-              <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email <span class="text-red-500">*</span>
-                </label>
-                <input type="email" [(ngModel)]="detailsForm.email" placeholder="john@company.com"
-                  [class]="fieldClass('email')" />
-                @if (formErrors()['email']) {
-                  <p class="text-[11px] text-red-500 mt-1">{{ formErrors()['email'] }}</p>
-                }
-              </div>
+              <div class="lg:col-span-5">
+                @if (step() === 'method') {
+                  <div class="space-y-4 sticky top-12">
+                    <h3 class="text-lg font-bold text-zoeing-navy dark:text-white">Identity Method</h3>
 
-              <!-- Phone -->
-              <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Phone <span class="text-red-500">*</span>
-                </label>
-                <input type="tel" [(ngModel)]="detailsForm.phone" placeholder="+91 98765 43210"
-                  [class]="fieldClass('phone')" />
-                @if (formErrors()['phone']) {
-                  <p class="text-[11px] text-red-500 mt-1">{{ formErrors()['phone'] }}</p>
-                }
-              </div>
+                    <div class="space-y-3">
+                      @for (m of methodCards; track m) {
+                        <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden transition-all" [class.ring-2]="openCard() === m" [class.ring-zoeing-gold]="openCard() === m">
+                          <button (click)="toggleCard(m)" class="w-full flex items-center justify-between p-4 text-left">
+                            <div>
+                              <p class="font-bold text-sm text-gray-900 dark:text-white uppercase tracking-tight">
+                                {{ m === 'guest' ? 'Guest Checkout' : (m === 'returning' ? 'Returning Customer' : 'New Customer') }}
+                              </p>
+                              <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ m === 'guest' ? 'Continue without an account' : (m === 'returning' ? 'Login for faster experience' : 'Track orders and history') }}
+                              </p>
+                            </div>
+                            <span class="material-icons text-gray-400 transition-transform" [class.rotate-180]="openCard() === m">expand_more</span>
+                          </button>
 
-              <!-- Company Name — required for company, optional for individual -->
-              <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Company Name
-                  @if (customerType() === 'company') {
-                    <span class="text-red-500"> *</span>
-                  } @else {
-                    <span class="text-gray-400 font-normal"> (optional)</span>
-                  }
-                </label>
-                <input type="text" [(ngModel)]="detailsForm.company_name" placeholder="ACME Corp"
-                  [class]="fieldClass('company_name')" />
-                @if (formErrors()['company_name']) {
-                  <p class="text-[11px] text-red-500 mt-1">{{ formErrors()['company_name'] }}</p>
-                }
-              </div>
+                          @if (openCard() === m) {
+                            <div class="p-4 pt-0 space-y-3 border-t border-gray-100 dark:border-gray-800">
+                              @if (m === 'guest') {
+                                <div class="space-y-2">
+                                  <input type="text" [(ngModel)]="guestForm.name" placeholder="Full Name *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="email" [(ngModel)]="guestForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="tel" [(ngModel)]="guestForm.phone" placeholder="Phone *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <button (click)="continueAsGuest()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg hover:bg-zoeing-navy-light transition-colors">Continue</button>
+                                </div>
+                              } @else if (m === 'returning') {
+                                <div class="space-y-2">
+                                  @if (auth.isLoggedIn()) {
+                                    <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center gap-3 mb-3">
+                                      <span class="material-icons text-green-600 text-sm">account_circle</span>
+                                      <span class="text-xs font-bold text-green-800 dark:text-green-400">{{ auth.user()?.name }}</span>
+                                    </div>
+                                    <button (click)="continueAsReturning()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg">Continue as {{ auth.user()?.name }}</button>
+                                  } @else {
+                                    <input type="email" [(ngModel)]="loginForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                    <input type="password" [(ngModel)]="loginForm.password" placeholder="Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                    <button (click)="continueAsReturning()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg disabled:opacity-50" [disabled]="submitting()">
+                                      {{ submitting() ? 'Logging in...' : 'Login and Continue' }}
+                                    </button>
+                                  }
+                                </div>
+                              } @else {
+                                <div class="space-y-2">
+                                  <input type="email" [(ngModel)]="registerForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="password" [(ngModel)]="registerForm.password" placeholder="Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="password" [(ngModel)]="registerForm.confirmPassword" placeholder="Confirm Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <button (click)="continueAsNew()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg">Sign up and Continue</button>
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
 
-              <!-- Message -->
-              <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Requirements / Message
-                </label>
-                <textarea [(ngModel)]="detailsForm.message" rows="3"
-                  placeholder="Describe your requirements, delivery timeline, etc."
-                  class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue resize-none">
-                </textarea>
-              </div>
-
-              <!-- API error -->
-              @if (apiError()) {
-                <div class="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-2 text-xs text-red-600 dark:text-red-400">
-                  <span class="material-icons text-[14px]">error</span>{{ apiError() }}
-                </div>
-              }
-
-              <!-- Submit -->
-              <button
-                class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm hover:bg-brand-blue/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                (click)="submitDetails()"
-                [disabled]="submitting() || items().length === 0"
-              >
-                @if (submitting()) {
-                  <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>Submitting…
+                    @if (authError()) {
+                      <div class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs flex items-center gap-2">
+                        <span class="material-icons text-sm">error</span> {{ authError() }}
+                      </div>
+                    }
+                  </div>
                 } @else {
-                  <span class="material-icons text-base">send</span>Submit Quote Request
+                  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm space-y-6 sticky top-12">
+                    <div class="flex items-center gap-3">
+                      <button (click)="backToMethod()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors">
+                        <span class="material-icons text-xl">arrow_back</span>
+                      </button>
+                      <h3 class="font-display font-black text-xl text-zoeing-navy dark:text-white uppercase tracking-tight">Corporate Identity</h3>
+                    </div>
+                    <div class="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                      <button (click)="customerType.set('individual')" [class]="customerType() === 'individual' ? 'bg-white dark:bg-gray-700 text-zoeing-navy dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all">Individual</button>
+                      <button (click)="customerType.set('company')" [class]="customerType() === 'company' ? 'bg-white dark:bg-gray-700 text-zoeing-navy dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all">Company</button>
+                    </div>
+                    <div class="space-y-4">
+                      <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Full Name *</label>
+                        <input type="text" [(ngModel)]="detailsForm.full_name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['full_name']" />
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Email *</label>
+                        <input type="email" [(ngModel)]="detailsForm.email" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['email']" />
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Phone *</label>
+                        <input type="tel" [(ngModel)]="detailsForm.phone" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['phone']" />
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Company Name {{ customerType() === 'company' ? '*' : '(Optional)' }}</label>
+                        <input type="text" [(ngModel)]="detailsForm.company_name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['company_name']" />
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Requirements / Message</label>
+                        <textarea [(ngModel)]="detailsForm.message" rows="3" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold resize-none"></textarea>
+                      </div>
+                    </div>
+
+                    <button (click)="submitDetails()" [disabled]="submitting() || items().length === 0" class="w-full py-3 bg-zoeing-navy text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-zoeing-navy-light transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                      @if (submitting()) {
+                        <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+                      } @else {
+                        <span class="material-icons text-sm">send</span> Submit Request
+                      }
+                    </button>
+
+                    @if (items().length === 0) {
+                      <p class="text-center text-[10px] text-red-500 font-bold uppercase">Add at least one product to continue</p>
+                    }
+                  </div>
                 }
-              </button>
-
-              @if (items().length === 0) {
-                <div class="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-2.5 text-xs text-red-600 dark:text-red-400">
-                  <span class="material-icons text-[14px]">error_outline</span>
-                  Please add at least one product before submitting.
-                </div>
-              }
-
+              </div>
             </div>
           }
-
-        </aside>
-      </div>
-    }
-  </main>
+        </div>
+      </main>
+    </div>
+  </app-layout-wrapper>
   `,
+
 })
 export class QuoteComponent implements OnInit {
   private productService = inject(ProductService);
@@ -585,6 +387,7 @@ export class QuoteComponent implements OnInit {
   step         = signal<Step>('method');
   openCard     = signal<MethodCard>(null);
   customerType = signal<CustomerType>('individual');
+  methodCards: MethodCard[] = ['guest', 'returning', 'new'];
 
   items         = signal<QuoteItem[]>([]);
   selectedFiles = signal<File[]>([]);
@@ -603,23 +406,17 @@ export class QuoteComponent implements OnInit {
   manualFormError = signal<string | null>(null);
   manualForm = { name: '', brand: '', product_code: '', qty: 1 };
 
-  // Auth forms for method step
   guestForm    = { name: '', email: '', phone: '' };
   loginForm    = { email: '', password: '' };
   registerForm = { email: '', password: '', confirmPassword: '' };
-
-  // Details form (pre-filled after method)
   detailsForm = { full_name: '', email: '', phone: '', company_name: '', message: '' };
 
   ngOnInit(): void {
-    // Auto-open accordion & pre-fill details based on login state
     if (this.auth.isLoggedIn()) {
-      // Pre-fill details form with user data and skip straight to details step
       const u = this.auth.user();
       if (u) {
         this.prefillUserDetails(u);
       } else {
-        // Token exists but user data is missing — fall back to guest flow
         this.openCard.set('guest');
       }
     } else {
@@ -657,7 +454,6 @@ export class QuoteComponent implements OnInit {
       qty: i.qty,
     }));
 
-    // Always read localStorage items (Request by Mail / Request Quote from detail page)
     let fromStorage: QuoteItem[] = [];
     try {
       const raw: unknown[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -671,7 +467,6 @@ export class QuoteComponent implements OnInit {
       );
     } catch { /* ignore */ }
 
-    // Merge all sources, deduplicate by id (cart takes priority over localStorage)
     const cartIds = new Set([
       ...fromMatCart.map(i => String(i.id)),
       ...fromProductCart.map(i => String(i.id)),
@@ -680,8 +475,6 @@ export class QuoteComponent implements OnInit {
 
     this.items.set([...fromMatCart, ...fromProductCart, ...uniqueStorage]);
   }
-
-  // ── Method step navigation ─────────────────────────────────────────────────
 
   toggleCard(card: MethodCard): void {
     this.openCard.set(this.openCard() === card ? null : card);
@@ -720,7 +513,7 @@ export class QuoteComponent implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.authError.set(err?.error?.message ?? 'Login failed. Please check your credentials.');
+        this.authError.set(err?.error?.message ?? err?.message ?? 'Login failed. Please check your credentials.');
       },
     });
   }
@@ -744,8 +537,6 @@ export class QuoteComponent implements OnInit {
     this.apiError.set(null);
     this.formErrors.set({});
   }
-
-  // ── Details step submit ────────────────────────────────────────────────────
 
   submitDetails(): void {
     const e: Record<string, string> = {};
@@ -790,8 +581,6 @@ export class QuoteComponent implements OnInit {
     });
   }
 
-  // ── Item management ────────────────────────────────────────────────────────
-
   updateQty(id: number | string, delta: number): void {
     this.items.update(l => l.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i));
     this.persist();
@@ -806,8 +595,6 @@ export class QuoteComponent implements OnInit {
     this.items.set([]);
     localStorage.removeItem(STORAGE_KEY);
   }
-
-  // ── Manual item entry ──────────────────────────────────────────────────────
 
   addManualItem(): void {
     if (!this.manualForm.name.trim()) {
@@ -837,29 +624,12 @@ export class QuoteComponent implements OnInit {
     this.showManualForm.set(false);
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  /** Pre-fill the details form from the user profile and jump to details step */
   private prefillUserDetails(u: UserProfile): void {
     this.detailsForm.full_name    = u.name;
     this.detailsForm.email        = u.email;
     this.detailsForm.company_name = u.company ?? '';
     if (u.company) this.customerType.set('company');
     this.step.set('details');
-  }
-
-  inlineInputClass(hasError: boolean | string | null | undefined): string {
-    const base = 'w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 ';
-    return hasError
-      ? base + 'border-red-400 focus:ring-red-400'
-      : base + 'border-gray-300 dark:border-gray-600 focus:ring-brand-blue';
-  }
-
-  fieldClass(field: string): string {
-    const base = 'w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 ';
-    return this.formErrors()[field]
-      ? base + 'border-red-400 focus:ring-red-400'
-      : base + 'border-gray-300 dark:border-gray-600 focus:ring-brand-blue';
   }
 
   onFileSelected(event: Event): void {

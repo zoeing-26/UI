@@ -1,0 +1,179 @@
+import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
+
+interface Resource {
+  title: string;
+  type: 'APP NOTE' | 'SPEC SHEET' | 'GUIDE' | 'MANUAL';
+  refId: string;
+  url: string;
+}
+
+interface Domain {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  resources: Resource[];
+}
+
+@Component({
+  selector: 'app-technical',
+  standalone: true,
+  imports: [CommonModule, LayoutWrapperComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+  <app-layout-wrapper layoutType="full">
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+
+      <!-- TECHNICAL HEADER -->
+      <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-8 sticky top-0 z-10">
+        <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <span class="text-zoeing-gold text-[10px] font-bold uppercase tracking-widest">Engineering Support</span>
+            <h1 class="text-3xl font-display font-black text-zoeing-navy dark:text-white tracking-tight">
+              Technical Knowledge Hub
+            </h1>
+          </div>
+
+          <!-- Integrated Technical Search -->
+          <div class="relative w-full md:w-96">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 material-icons text-gray-400 text-sm">search</span>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              placeholder="Search technical documents..."
+              class="w-full pl-10 pr-4 py-2 text-sm font-mono border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-zoeing-gold transition-all"
+            />
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="max-w-screen-2xl mx-auto p-6 lg:p-12">
+
+        <!-- Domain Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (domain of filteredDomains(); track domain.id) {
+            <div class="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden shadow-sm flex flex-col">
+
+              <!-- Domain Header -->
+              <div class="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="material-icons text-zoeing-navy dark:text-zoeing-gold text-2xl">{{ domain.icon }}</span>
+                  <h2 class="text-lg font-display font-bold text-zoeing-navy dark:text-white">{{ domain.title }}</h2>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed pl-8">
+                  {{ domain.description }}
+                </p>
+              </div>
+
+              <!-- Resource List -->
+              <div class="p-6 flex-1 space-y-4">
+                @for (res of domain.resources; track res.title) {
+                  <div class="group flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <span class="material-icons text-gray-400 group-hover:text-zoeing-gold transition-colors text-sm">description</span>
+                      <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 truncate group-hover:text-zoeing-navy dark:group-hover:text-white transition-colors">{{ res.title }}</p>
+                        <div class="flex items-center gap-2 mt-0.5">
+                          <span class="text-[9px] font-mono text-gray-400 uppercase tracking-tighter">{{ res.refId }}</span>
+                          <span class="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">{{ res.type }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="material-icons text-gray-300 group-hover:text-zoeing-gold transition-colors text-sm">chevron_right</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Domain Footer -->
+              <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-900/30 text-center">
+                <button class="text-[10px] font-bold uppercase tracking-widest text-zoeing-navy dark:text-zoeing-gold hover:underline">
+                  View All {{ domain.title }} Docs
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Empty state -->
+        @if (filteredDomains().length === 0) {
+          <div class="py-24 text-center text-gray-400">
+            <span class="material-icons text-6xl mb-4 block">search_off</span>
+            <p class="text-lg font-medium">No technical resources match your search.</p>
+          </div>
+        }
+      </main>
+    </div>
+  </app-layout-wrapper>
+  `,
+})
+export class TechnicalComponent {
+  searchQuery = signal('');
+
+  readonly knowledgeDomains = signal<Domain[]>([
+    {
+      id: 'automation',
+      title: 'Automation & Control',
+      icon: 'settings_input_component',
+      description: 'Precision motion control, PLC integration and sensor synchronization.',
+      resources: [
+        { title: 'Linear Actuator Selection Guide', type: 'GUIDE', refId: 'ZNG-APP-01', url: '#' },
+        { title: 'Servo Motor Tuning Manual', type: 'MANUAL', refId: 'ZNG-MAN-04', url: '#' },
+        { title: 'Industrial Protocol Matrix', type: 'SPEC SHEET', refId: 'ZNG-SPEC-12', url: '#' },
+      ]
+    },
+    {
+      id: 'fluid',
+      title: 'Fluid Power & Pneumatics',
+      icon: 'opacity',
+      description: 'Pneumatic circuitry, valve manifolds and pressure regulation.',
+      resources: [
+        { title: 'Air Preparation Standards', type: 'APP NOTE', refId: 'ZNG-APP-08', url: '#' },
+        { title: 'Cylinder Bore Calculation Tool', type: 'GUIDE', refId: 'ZNG-GUIDE-02', url: '#' },
+        { title: 'Valve Manifold Compatibility', type: 'SPEC SHEET', refId: 'ZNG-SPEC-09', url: '#' },
+      ]
+    },
+    {
+      id: 'mech',
+      title: 'Mechanical Design',
+      icon: 'architecture',
+      description: 'Structural framing, bearing tolerances and precision guiding.',
+      resources: [
+        { title: 'Aluminum Extrusion Load Tables', type: 'SPEC SHEET', refId: 'ZNG-SPEC-21', url: '#' },
+        { title:, title: 'Precision Rail Installation', type: 'GUIDE', refId: 'ZNG-GUIDE-05', url: '#' },
+        { title: 'Bearing Life Estimation', type: 'APP NOTE', refId: 'ZNG-APP-15', url: '#' },
+      ]
+    },
+    {
+      id: 'procurement',
+      title: 'Procurement & Quality',
+      icon: 'verified',
+      description: 'Compliance standards, material certifications and lead-time optimization.',
+      resources: [
+        { title: 'Industrial Quality Framework', type: 'GUIDE', refId: 'ZNG-QUAL-01', url: '#' },
+        { title: 'Material Certification Matrix', type: 'SPEC SHEET', refId: 'ZNG-SPEC-44', url: '#' },
+        { title: 'Lead Time Reduction Strategy', type: 'APP NOTE', refId: 'ZNG-APP-22', url: '#' },
+      ]
+    }
+  ]);
+
+  readonly filteredDomains = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    if (!q) return this.knowledgeDomains();
+
+    return this.knowledgeDomains().map(domain => {
+      const filteredResources = domain.resources.filter(res =>
+        res.title.toLowerCase().includes(q) ||
+        res.refId.toLowerCase().includes(q) ||
+        domain.title.toLowerCase().includes(q)
+      );
+
+      return {
+        ...domain,
+        resources: filteredResources
+      };
+    }).filter(domain => domain.resources.length > 0 || domain.title.toLowerCase().includes(q));
+  });
+}

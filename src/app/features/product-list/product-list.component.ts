@@ -6,78 +6,101 @@ import { Product, ProductFilter, ApiMaterial } from '../../models/product.model'
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
 import { LanguageService } from '../../core/services/language.service';
+import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductCardComponent, MaterialCardComponent],
+  imports: [CommonModule, RouterModule, ProductCardComponent, MaterialCardComponent, LayoutWrapperComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <main class="max-w-screen-xl mx-auto px-4 py-10">
+  <app-layout-wrapper layoutType="full">
+    <div class="flex flex-col h-screen bg-gray-50 dark:bg-gray-950">
 
-    <!-- Header -->
-    <div class="mb-8 space-y-1">
-      <!-- Breadcrumb -->
-      @if (filter().category) {
-        <p class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
-          <span>Products</span>
-          <span class="material-icons text-[12px]">chevron_right</span>
-          <span>{{ filter().category }}</span>
-          @if (filter().subCategory) {
-            <span class="material-icons text-[12px]">chevron_right</span>
-            <span class="text-gray-600 dark:text-gray-300">{{ filter().subCategory }}</span>
+      <!-- TECHNICAL HEADER -->
+      <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-6 sticky top-0 z-10">
+        <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
+
+          <div class="space-y-2">
+            <!-- Breadcrumb -->
+            @if (filter().category) {
+              <nav class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                <span>Products</span>
+                <span class="material-icons text-[12px]">chevron_right</span>
+                <span>{{ filter().category }}</span>
+                @if (filter().subCategory) {
+                  <span class="material-icons text-[12px]">chevron_right</span>
+                  <span class="text-gray-600 dark:text-gray-300">{{ filter().subCategory }}</span>
+                }
+              </nav>
+            }
+            <div class="flex items-baseline gap-3">
+              <h1 class="text-3xl font-display font-black text-zoeing-navy dark:text-white tracking-tight uppercase">
+                {{ heading() }}
+              </h1>
+              <span class="font-mono text-xs text-gray-500 dark:text-gray-400">
+                {{ productCount() }}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+             <div class="px-3 py-1 rounded-full bg-zoeing-gold/10 text-zoeing-gold text-[10px] font-bold uppercase tracking-widest border border-zoeing-gold/20">
+               Industrial Grade
+             </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- GALLERY VIEWPORT -->
+      <main class="flex-1 overflow-y-auto p-6 lg:p-12">
+        <div class="max-w-screen-2xl mx-auto">
+
+          @if (loading()) {
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              @for (_ of skeletons; track $index) {
+                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 animate-pulse h-72"></div>
+              }
+            </div>
+          } @else {
+
+            <!-- Materials Gallery (High Density) -->
+            @if (materialsMode()) {
+              @if (materials().length === 0) {
+                <div class="rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-20 text-center text-gray-500 dark:text-gray-400">
+                  <span class="material-icons text-6xl mb-4 block">inventory_2</span>
+                  <p class="text-lg font-medium">No materials found for <strong class="text-zoeing-navy dark:text-white">{{ filter().subCategory }}</strong>.</p>
+                  <a routerLink="/inventory" class="mt-6 inline-block px-6 py-2 bg-zoeing-navy text-white rounded-lg text-sm font-bold hover:bg-zoeing-navy-light transition-colors">Browse All Inventory</a>
+                </div>
+              } @else {
+                <div class="grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                  @for (item of materials(); track item.id) {
+                    <app-material-card [mat]="item" />
+                  }
+                </div>
+              }
+
+            <!-- Products Gallery (Catalog Mode) -->
+            } @else {
+              @if (products().length === 0) {
+                <div class="rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-20 text-center text-gray-500 dark:text-gray-400">
+                  <span class="material-icons text-6xl mb-4 block">search_off</span>
+                  <p class="text-lg font-medium">No products found for the selected filters.</p>
+                  <a routerLink="/inventory" class="mt-6 inline-block px-6 py-2 bg-zoeing-navy text-white rounded-lg text-sm font-bold hover:bg-zoeing-navy-light transition-colors">Return to Inventory</a>
+                </div>
+              } @else {
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  @for (item of products(); track item.id) {
+                    <app-product-card [product]="item" />
+                  }
+                </div>
+              }
+            }
           }
-        </p>
-      }
-      <h1 class="text-2xl font-bold text-zoeing-navy dark:text-white">{{ heading() }}</h1>
-      @if (materialsMode()) {
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-          {{ materials().length }} product{{ materials().length !== 1 ? 's' : '' }} found
-        </p>
-      }
+        </div>
+      </main>
     </div>
-
-    @if (loading()) {
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        @for (_ of skeletons; track $index) {
-          <div class="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 animate-pulse h-64"></div>
-        }
-      </div>
-    } @else {
-
-      <!-- Materials mode (from category sidebar) -->
-      @if (materialsMode()) {
-        @if (materials().length === 0) {
-          <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-10 text-center text-gray-500 dark:text-gray-400">
-            <span class="material-icons text-4xl mb-2 block">inventory_2</span>
-            No materials found for <strong>{{ filter().subCategory }}</strong>.
-          </div>
-        } @else {
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            @for (item of materials(); track item.id) {
-              <app-material-card [mat]="item" />
-            }
-          </div>
-        }
-
-      <!-- Products mode (generic filters / brand) -->
-      } @else {
-        @if (products().length === 0) {
-          <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-10 text-center text-gray-500 dark:text-gray-400">
-            <span class="material-icons text-4xl mb-2 block">search_off</span>
-            No products found for the selected filters.
-          </div>
-        } @else {
-          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            @for (item of products(); track item.id) {
-              <app-product-card [product]="item" />
-            }
-          </div>
-        }
-      }
-    }
-
-  </main>
+  </app-layout-wrapper>
   `,
 })
 export class ProductListComponent implements OnInit {
@@ -92,6 +115,11 @@ export class ProductListComponent implements OnInit {
   filter = signal<ProductFilter>({});
 
   readonly skeletons = Array(8);
+
+  readonly productCount = computed(() => {
+    const count = this.materialsMode() ? this.materials().length : this.products().length;
+    return `${count} Components Identified`;
+  });
 
   readonly heading = computed(() => {
     const { subCategory, category, brand } = this.filter();

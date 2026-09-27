@@ -30,7 +30,7 @@ import { Product } from '../../../models/product.model';
           style="max-height: 140px;"
         />
         @if (product().series === 'economy') {
-          <span class="absolute top-2 left-2 bg-brand-yellow text-brand-blue-dark text-[10px] font-bold px-1.5 py-0.5 rounded">
+          <span class="absolute top-2 left-2 bg-zoeing-secondary text-zoeing-navy-dark text-[10px] font-bold px-1.5 py-0.5 rounded">
             ECO
           </span>
         }
