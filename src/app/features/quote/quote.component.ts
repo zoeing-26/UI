@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { SafeStorageService } from '../../core/services/safe-storage.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
 import { UserProfile } from '../../models/product.model';
@@ -33,8 +34,10 @@ type CustomerType = 'individual' | 'company';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <app-layout-wrapper layoutType="full">
-    <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
-      <aside class="w-80 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col overflow-hidden z-20">
+    <!-- Mobile: single column, natural page scroll; lg+: fixed-height app shell -->
+    <div class="flex flex-col lg:flex-row lg:h-screen lg:overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <!-- Desktop guide rail: hidden on mobile (steps shown inline below) -->
+      <aside class="hidden lg:flex w-80 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex-col overflow-hidden z-20">
         <div class="p-6 border-b border-gray-200 dark:border-gray-800">
           <div class="flex items-center gap-2 text-zoeing-gold mb-1">
             <span class="material-icons text-sm">auto_awesome</span>
@@ -98,8 +101,26 @@ type CustomerType = 'individual' | 'company';
         </div>
       </aside>
 
-      <main class="flex-1 overflow-y-auto relative">
-        <div class="max-w-5xl mx-auto p-6 lg:p-12">
+      <main class="flex-1 relative">
+        <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-12">
+          <!-- Mobile step indicator (replaces the desktop side rail) -->
+          <div class="lg:hidden mb-6 flex items-center gap-2">
+            @for (s of ['method', 'details', 'submitted']; track s; let i = $index) {
+              <div class="flex items-center gap-2" [class.opacity-40]="step() !== s">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+                     [class]="step() === s ? 'bg-zoeing-navy text-white' : 'bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200'">
+                  {{ i + 1 }}
+                </div>
+                @if (i < 2) {
+                  <div class="w-6 h-px bg-gray-300 dark:bg-gray-700"></div>
+                }
+              </div>
+            }
+            <span class="ml-2 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              {{ step() === 'method' ? 'Identity Method' : (step() === 'details' ? 'Corporate Identity' : 'Submitted') }}
+            </span>
+          </div>
+
           @if (step() === 'submitted') {
             <div class="flex flex-col items-center justify-center min-h-[60vh] text-center">
               <div class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6">
@@ -151,16 +172,16 @@ type CustomerType = 'individual' | 'company';
                           <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ item.name }}</p>
                           <p class="text-[10px] font-mono text-gray-400">{{ item.product_code }}</p>
                         </div>
-                        <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1 border border-gray-200 dark:border-gray-700">
-                          <button (click)="updateQty(item.id,-1)" [disabled]="item.qty<=1" class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-zoeing-navy disabled:opacity-30">
-                            <span class="material-icons text-xs">remove</span>
+                        <div class="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 rounded-lg px-1 py-0.5 border border-gray-200 dark:border-gray-700">
+                          <button (click)="updateQty(item.id,-1)" [disabled]="item.qty<=1" class="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-zoeing-navy disabled:opacity-30" [attr.aria-label]="'Decrease quantity of ' + item.name">
+                            <span class="material-icons text-base">remove</span>
                           </button>
-                          <span class="text-xs font-bold w-4 text-center">{{ item.qty }}</span>
-                          <button (click)="updateQty(item.id,1)" class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-zoeing-navy">
-                            <span class="material-icons text-xs">add</span>
+                          <span class="text-sm font-bold w-6 text-center">{{ item.qty }}</span>
+                          <button (click)="updateQty(item.id,1)" class="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-zoeing-navy" [attr.aria-label]="'Increase quantity of ' + item.name">
+                            <span class="material-icons text-base">add</span>
                           </button>
                         </div>
-                        <button (click)="removeItem(item.id)" class="p-2 text-gray-300 hover:text-red-500 transition-colors">
+                        <button (click)="removeItem(item.id)" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors" [attr.aria-label]="'Remove ' + item.name">
                           <span class="material-icons text-sm">close</span>
                         </button>
                       </div>
@@ -178,25 +199,25 @@ type CustomerType = 'individual' | 'company';
 
                   @if (showManualForm()) {
                     <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-4">
-                      <div class="grid grid-cols-2 gap-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="col-span-2">
                           <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Product Name *</label>
-                          <input type="text" [(ngModel)]="manualForm.name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                          <input type="text" [(ngModel)]="manualForm.name" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
                         </div>
                         <div>
                           <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Brand</label>
-                          <input type="text" [(ngModel)]="manualForm.brand" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                          <input type="text" [(ngModel)]="manualForm.brand" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
                         </div>
                         <div>
                           <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Product Code</label>
-                          <input type="text" [(ngModel)]="manualForm.product_code" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                          <input type="text" [(ngModel)]="manualForm.product_code" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
                         </div>
                         <div>
                           <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Quantity *</label>
-                          <input type="number" [(ngModel)]="manualForm.qty" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
+                          <input type="number" inputmode="numeric" min="1" [(ngModel)]="manualForm.qty" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-zoeing-gold outline-none" />
                         </div>
                         <div class="flex items-end">
-                          <button (click)="addManualItem()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg hover:bg-zoeing-navy-light transition-colors">
+                          <button (click)="addManualItem()" class="w-full min-h-[44px] py-2.5 bg-zoeing-navy text-white text-xs font-bold rounded-lg hover:bg-zoeing-navy-light transition-colors">
                             Add to List
                           </button>
                         </div>
@@ -257,7 +278,7 @@ type CustomerType = 'individual' | 'company';
 
               <div class="lg:col-span-5">
                 @if (step() === 'method') {
-                  <div class="space-y-4 sticky top-12">
+                  <div class="space-y-4 lg:sticky lg:top-12">
                     <h3 class="text-lg font-bold text-zoeing-navy dark:text-white">Identity Method</h3>
 
                     <div class="space-y-3">
@@ -279,9 +300,9 @@ type CustomerType = 'individual' | 'company';
                             <div class="p-4 pt-0 space-y-3 border-t border-gray-100 dark:border-gray-800">
                               @if (m === 'guest') {
                                 <div class="space-y-2">
-                                  <input type="text" [(ngModel)]="guestForm.name" placeholder="Full Name *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
-                                  <input type="email" [(ngModel)]="guestForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
-                                  <input type="tel" [(ngModel)]="guestForm.phone" placeholder="Phone *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="text" [(ngModel)]="guestForm.name" placeholder="Full Name *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="email" [(ngModel)]="guestForm.email" placeholder="Email *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="tel" [(ngModel)]="guestForm.phone" placeholder="Phone *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
                                   <button (click)="continueAsGuest()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg hover:bg-zoeing-navy-light transition-colors">Continue</button>
                                 </div>
                               } @else if (m === 'returning') {
@@ -293,8 +314,8 @@ type CustomerType = 'individual' | 'company';
                                     </div>
                                     <button (click)="continueAsReturning()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg">Continue as {{ auth.user()?.name }}</button>
                                   } @else {
-                                    <input type="email" [(ngModel)]="loginForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
-                                    <input type="password" [(ngModel)]="loginForm.password" placeholder="Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                    <input type="email" [(ngModel)]="loginForm.email" placeholder="Email *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                    <input type="password" [(ngModel)]="loginForm.password" placeholder="Password *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
                                     <button (click)="continueAsReturning()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg disabled:opacity-50" [disabled]="submitting()">
                                       {{ submitting() ? 'Logging in...' : 'Login and Continue' }}
                                     </button>
@@ -302,9 +323,9 @@ type CustomerType = 'individual' | 'company';
                                 </div>
                               } @else {
                                 <div class="space-y-2">
-                                  <input type="email" [(ngModel)]="registerForm.email" placeholder="Email *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
-                                  <input type="password" [(ngModel)]="registerForm.password" placeholder="Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
-                                  <input type="password" [(ngModel)]="registerForm.confirmPassword" placeholder="Confirm Password *" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="email" [(ngModel)]="registerForm.email" placeholder="Email *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="password" [(ngModel)]="registerForm.password" placeholder="Password *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
+                                  <input type="password" [(ngModel)]="registerForm.confirmPassword" placeholder="Confirm Password *" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" />
                                   <button (click)="continueAsNew()" class="w-full py-2 bg-zoeing-navy text-white text-xs font-bold rounded-lg">Sign up and Continue</button>
                                 </div>
                               }
@@ -321,7 +342,7 @@ type CustomerType = 'individual' | 'company';
                     }
                   </div>
                 } @else {
-                  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm space-y-6 sticky top-12">
+                  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-4 sm:p-6 shadow-sm space-y-6 lg:sticky lg:top-12">
                     <div class="flex items-center gap-3">
                       <button (click)="backToMethod()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors">
                         <span class="material-icons text-xl">arrow_back</span>
@@ -335,23 +356,23 @@ type CustomerType = 'individual' | 'company';
                     <div class="space-y-4">
                       <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Full Name *</label>
-                        <input type="text" [(ngModel)]="detailsForm.full_name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['full_name']" />
+                        <input type="text" [(ngModel)]="detailsForm.full_name" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['full_name']" />
                       </div>
                       <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Email *</label>
-                        <input type="email" [(ngModel)]="detailsForm.email" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['email']" />
+                        <input type="email" [(ngModel)]="detailsForm.email" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['email']" />
                       </div>
                       <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Phone *</label>
-                        <input type="tel" [(ngModel)]="detailsForm.phone" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['phone']" />
+                        <input type="tel" [(ngModel)]="detailsForm.phone" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['phone']" />
                       </div>
                       <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Company Name {{ customerType() === 'company' ? '*' : '(Optional)' }}</label>
-                        <input type="text" [(ngModel)]="detailsForm.company_name" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['company_name']" />
+                        <input type="text" [(ngModel)]="detailsForm.company_name" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold" [class.border-red-400]="formErrors()['company_name']" />
                       </div>
                       <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Requirements / Message</label>
-                        <textarea [(ngModel)]="detailsForm.message" rows="3" class="w-full px-3 py-2 text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold resize-none"></textarea>
+                        <textarea [(ngModel)]="detailsForm.message" rows="3" class="w-full px-3.5 py-2.5 text-base sm:text-sm border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-white outline-none focus:ring-1 focus:ring-zoeing-gold resize-none"></textarea>
                       </div>
                     </div>
 
@@ -383,6 +404,7 @@ export class QuoteComponent implements OnInit {
   private route          = inject(ActivatedRoute);
   private cart           = inject(CartService);
   protected auth         = inject(AuthService);
+  private storage        = inject(SafeStorageService);
 
   step         = signal<Step>('method');
   openCard     = signal<MethodCard>(null);
@@ -428,11 +450,11 @@ export class QuoteComponent implements OnInit {
       return;
     }
 
-    const searchTerm = localStorage.getItem('quoteSearch');
+    const searchTerm = this.storage.getItem('quoteSearch');
     if (searchTerm) {
       this.manualForm.name = searchTerm;
       this.showManualForm.set(true);
-      localStorage.removeItem('quoteSearch');
+      this.storage.removeItem('quoteSearch');
     }
 
     const fromMatCart: QuoteItem[] = this.cart.matItems().map(i => ({
@@ -456,7 +478,7 @@ export class QuoteComponent implements OnInit {
 
     let fromStorage: QuoteItem[] = [];
     try {
-      const raw: unknown[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const raw: unknown[] = JSON.parse(this.storage.getItem(STORAGE_KEY) || '[]');
       fromStorage = raw.map((item: any) => item?.product
         ? { id: item.product.id, name: item.product.name,
             product_code: item.product.partNumber ?? String(item.product.id),
@@ -571,7 +593,7 @@ export class QuoteComponent implements OnInit {
       next: () => {
         this.step.set('submitted');
         this.submitting.set(false);
-        localStorage.removeItem(STORAGE_KEY);
+        this.storage.removeItem(STORAGE_KEY);
         this.cart.clear();
       },
       error: (err) => {
@@ -593,7 +615,7 @@ export class QuoteComponent implements OnInit {
 
   clearAll(): void {
     this.items.set([]);
-    localStorage.removeItem(STORAGE_KEY);
+    this.storage.removeItem(STORAGE_KEY);
   }
 
   addManualItem(): void {
@@ -642,6 +664,6 @@ export class QuoteComponent implements OnInit {
   }
 
   private persist(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items()));
+    this.storage.setItem(STORAGE_KEY, JSON.stringify(this.items()));
   }
 }

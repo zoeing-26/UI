@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy, HostListener,
+  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy, HostListener, afterNextRender,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -269,10 +269,17 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   private updateMobileState(): void {
+    // SSR guard: window is undefined during server rendering
+    if (typeof window === 'undefined') return;
     this.isMobile.set(window.innerWidth < 768);
     if (this.isMobile()) {
       this.sidebarOpen.set(false);
     }
+  }
+
+  constructor() {
+    // Browser-only: re-evaluate mobile layout after hydration
+    afterNextRender(() => this.updateMobileState());
   }
 
   ngOnInit(): void {

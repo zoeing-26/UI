@@ -538,3 +538,9 @@ textarea:focus-visible {
   // brand marquee (inline animation name)
   * { animation-name: none !important; }
 }
+
+// Guard against horizontal page overflow (ticker tracks, long codes, shadows).
+// `clip` (not `hidden`) keeps position: sticky working for header/aside rails.
+html, body {
+  overflow-x: clip;
+}

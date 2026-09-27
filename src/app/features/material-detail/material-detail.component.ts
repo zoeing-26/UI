@@ -282,11 +282,18 @@ export class MaterialDetailComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const state = history.state as { material?: ApiMaterial };
-    if (state?.material?.id) {
-      this.material.set(state.material);
-      this.loading.set(false);
-    } else {
+    // SSR guard: `history` is browser-only. On the server we skip the
+    // navigation-state shortcut and fetch from the API, so product pages are
+    // server-rendered with real data (good for SEO) and cached in ng-state.
+    if (typeof history !== 'undefined') {
+      const state = history.state as { material?: ApiMaterial };
+      if (state?.material?.id) {
+        this.material.set(state.material);
+        this.loading.set(false);
+        return;
+      }
+    }
+    {
       const id = Number(this.route.snapshot.paramMap.get('id'));
       this.productService.getMaterialById(id).subscribe({
         next: mat => {
@@ -305,7 +312,7 @@ export class MaterialDetailComponent implements OnInit {
     }
   }
 
-  goBack(): void { history.back(); }
+  goBack(): void { if (typeof history !== 'undefined') history.back(); }
   increaseQty(): void { this.qty.update(q => q + 1); }
   decreaseQty(): void { this.qty.update(q => Math.max(1, q - 1)); }
 

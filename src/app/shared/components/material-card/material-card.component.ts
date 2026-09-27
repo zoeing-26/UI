@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 import { CartService } from '../../../core/services/cart.service';
+import { SafeStorageService } from '../../../core/services/safe-storage.service';
 import { ApiMaterial } from '../../../models/product.model';
 
 @Component({
@@ -90,8 +91,9 @@ import { ApiMaterial } from '../../../models/product.model';
 export class MaterialCardComponent {
   mat = input.required<ApiMaterial>();
 
-  private cart   = inject(CartService);
-  private router = inject(Router);
+  private cart    = inject(CartService);
+  private router  = inject(Router);
+  private storage = inject(SafeStorageService);
 
   protected inStock       = computed(() => (this.mat().count ?? 0) > 0);
   protected addedFeedback = signal(false);
@@ -103,19 +105,24 @@ export class MaterialCardComponent {
   onAddToCart(): void {
     this.cart.addMaterial(this.mat());
     this.addedFeedback.set(true);
+    // User-triggered → browser-only; timeout runs only after hydration
     setTimeout(() => this.addedFeedback.set(false), 1500);
   }
 
   onQuote(): void {
     const m = this.mat();
-    const items: unknown[] = JSON.parse(localStorage.getItem('quoteItems') || '[]');
-    const exists = (items as { id: number }[]).find(i => i.id === m.id);
+    const storage = this.storage;
+    let items: Array<Record<string, unknown>> = [];
+    try {
+      items = JSON.parse(storage.getItem('quoteItems') || '[]') as Array<Record<string, unknown>>;
+    } catch { items = []; }
+    const exists = items.find(i => i['id'] === m.id);
     if (!exists) {
       items.push({
         id: m.id, name: m.name, product_code: m.product_code,
         image: m.image, price: m.price ?? 0, qty: 1, industry: m.industry,
       });
-      localStorage.setItem('quoteItems', JSON.stringify(items));
+      storage.setItem('quoteItems', JSON.stringify(items));
     }
     this.router.navigate(['/quote']);
   }

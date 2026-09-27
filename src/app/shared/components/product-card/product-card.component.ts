@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 import { LazyImageDirective } from '../../directives/lazy-image.directive';
 import { CartService } from '../../../core/services/cart.service';
+import { SafeStorageService } from '../../../core/services/safe-storage.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { Product } from '../../../models/product.model';
 
@@ -107,9 +108,10 @@ export class ProductCardComponent {
   product = input.required<Product>();
   cardClicked = output<Product>();
 
-  protected cart = inject(CartService);
-  protected lang = inject(LanguageService);
-  private router = inject(Router);
+  protected cart    = inject(CartService);
+  protected lang    = inject(LanguageService);
+  private router    = inject(Router);
+  private storage   = inject(SafeStorageService);
 
   onAddToCart(event: Event): void {
     event.stopPropagation();
@@ -118,9 +120,13 @@ export class ProductCardComponent {
 
   onQuote(event: Event): void {
     event.stopPropagation();
-    // Store the product in localStorage or a service for the quote page
-    const quoteItems = JSON.parse(localStorage.getItem('quoteItems') || '[]');
-    const existingItem = quoteItems.find((item: any) => item.product.id === this.product().id);
+    // Store the product for the quote page (browser-only — user-triggered)
+    let quoteItems: Array<Record<string, unknown>> = [];
+    try {
+      quoteItems = JSON.parse(this.storage.getItem('quoteItems') || '[]') as Array<Record<string, unknown>>;
+    } catch { quoteItems = []; }
+    const existingItem = quoteItems.find(item =>
+      (item['product'] as Product | undefined)?.id === this.product().id);
 
     if (!existingItem) {
       quoteItems.push({
@@ -128,7 +134,7 @@ export class ProductCardComponent {
         quantity: 1,
         notes: ''
       });
-      localStorage.setItem('quoteItems', JSON.stringify(quoteItems));
+      this.storage.setItem('quoteItems', JSON.stringify(quoteItems));
     }
 
     // Navigate to quote page

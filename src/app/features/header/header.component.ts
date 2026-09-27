@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, HostListener, OnInit, OnDestroy,
+  Component, ChangeDetectionStrategy, inject, signal, HostListener, OnInit, OnDestroy, afterNextRender,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +20,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
   template: `
   <header class="sticky-header shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-md" [class.scrolled]="isScrolled()">
 
-    <div class="border-b border-[#dfeaf1] bg-[#f4f6f8] px-3 py-2.5 sm:px-4">
+    <div class="border-b border-[#dfeaf1] bg-[#f4f6f8] px-3 py-2.5 sm:px-4 dark:border-gray-800 dark:bg-gray-900">
       <div class="mx-auto flex max-w-[1420px] flex-wrap items-center gap-2 sm:gap-3 md:flex-nowrap md:gap-4">
 
         <a routerLink="/" class="shrink-0" aria-label="ZOIENG Home">
@@ -34,7 +34,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
         <div class="relative min-w-0 flex-1">
           <input
             type="text"
-            class="w-full rounded-full border border-[#dfe5ec] bg-[#eef3f7] py-2 pl-3 pr-10 text-xs text-gray-900 placeholder:text-gray-500 focus:border-[#0b4d69] focus:outline-none focus:ring-2 focus:ring-[#0b4d69]/10 sm:py-2.5 sm:pl-4 sm:pr-12 sm:text-sm"
+            class="w-full rounded-full border border-[#dfe5ec] bg-[#eef3f7] py-2 pl-3 pr-10 text-xs text-gray-900 placeholder:text-gray-500 focus:border-[#0b4d69] focus:outline-none focus:ring-2 focus:ring-[#0b4d69]/10 sm:py-2.5 sm:pl-4 sm:pr-12 sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-zoeing-gold dark:focus:ring-zoeing-gold/20"
             [placeholder]="lang.t('search_placeholder')"
             [(ngModel)]="searchQuery"
             (keyup.enter)="triggerSearch()"
@@ -51,7 +51,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
 
         <div class="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           <button
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white dark:bg-white/10 dark:text-amber-300 dark:hover:bg-white/20"
             (click)="theme.toggle()"
             [title]="theme.isDark() ? 'Light Mode' : 'Dark Mode'"
             type="button"
@@ -64,7 +64,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             }
           </button>
 
-          <a routerLink="/cart" class="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#1d2b36] shadow-sm transition hover:bg-white">
+          <a routerLink="/cart" class="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#1d2b36] shadow-sm transition hover:bg-white dark:bg-white/10 dark:text-gray-100 dark:hover:bg-white/20">
             <span class="material-icons text-lg">shopping_cart</span>
             @if (cartCount() > 0) {
               <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#d95431] text-[9px] font-bold text-white">
@@ -79,7 +79,7 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
           </a>
 
           <button
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white md:hidden"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white md:hidden dark:bg-white/10 dark:text-gray-100 dark:hover:bg-white/20"
             (click)="toggleMobileMenu()"
             type="button"
             [attr.aria-expanded]="mobileMenuOpen()"
@@ -88,13 +88,13 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             <span class="material-icons">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
           </button>
 
-          <div class="hidden items-center gap-1 rounded-full border border-[#dfe5ec] bg-white/80 px-1.5 py-1 text-[11px] font-semibold text-[#1d2b36] md:flex">
-            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'en'" (click)="setLang('en')">EN</button>
-            <span class="text-gray-300">|</span>
-            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'hi'" (click)="setLang('hi')">हि</button>
+          <div class="hidden items-center gap-1 rounded-full border border-[#dfe5ec] bg-white/80 px-1.5 py-1 text-[11px] font-semibold text-[#1d2b36] md:flex dark:border-gray-700 dark:bg-white/10 dark:text-gray-100">
+            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'en' && !theme.isDark()" [class.text-amber-300]="lang.lang() === 'en' && theme.isDark()" (click)="setLang('en')">EN</button>
+            <span class="text-gray-300 dark:text-gray-600">|</span>
+            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'hi' && !theme.isDark()" [class.text-amber-300]="lang.lang() === 'hi' && theme.isDark()" (click)="setLang('hi')">हि</button>
           </div>
 
-          <button class="hidden items-center gap-1 rounded-full px-2.5 py-1.5 text-[#1d2b36] hover:bg-white/80 transition-colors md:flex">
+          <button class="hidden items-center gap-1 rounded-full px-2.5 py-1.5 text-[#1d2b36] hover:bg-white/80 transition-colors md:flex dark:text-gray-100 dark:hover:bg-white/10">
             {{ lang.t('other') }}
             <span class="material-icons text-sm">expand_more</span>
           </button>
@@ -182,6 +182,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private navSub?: Subscription;
 
+  constructor() {
+    // Browser-only: correct mobile layout after hydration (ngOnInit does not
+    // re-run for hydrated components, so resize alone would miss the initial state).
+    afterNextRender(() => this.updateMobileState());
+  }
+
   readonly navItems: NavItem[] = [
     { label: 'Manufacturers', key: 'manufacturers', link: '/manufacturers' },
     { label: 'Inventory',     key: 'inventory',     link: '/inventory' },
@@ -207,6 +213,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @HostListener('window:resize') onResize(): void { this.updateMobileState(); }
 
   private updateMobileState(): void {
+    // SSR guard: window is undefined during server rendering
+    if (typeof window === 'undefined') return;
     this.isMobile.set(window.innerWidth < 1024);
     if (!this.isMobile()) {
       this.mobileMenuOpen.set(false);

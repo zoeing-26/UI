@@ -4,6 +4,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subject, interval, takeUntil } from 'rxjs';
+import { SafeStorageService } from '../../../../core/services/safe-storage.service';
 
 interface VideoClip { src: SafeUrl; label: string; industry: string; }
 
@@ -116,6 +117,7 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
 })
 export class BrandHeroComponent implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
+  private browser = inject(SafeStorageService);
   private destroy$ = new Subject<void>();
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -152,6 +154,8 @@ export class BrandHeroComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nextIndex.set(this.currentIndex());
+    // SSR: autoplay timer + document access are browser-only
+    if (!this.browser.inBrowser) return;
     interval(2000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.goToNext());

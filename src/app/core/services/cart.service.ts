@@ -1,8 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { SafeStorageService } from './safe-storage.service';
 import { CartItem, MaterialCartItem, Product, ApiMaterial } from '../../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  private readonly storage = inject(SafeStorageService);
   private readonly PRODUCT_KEY  = 'zoieng_cart';
   private readonly MATERIAL_KEY = 'zoieng_material_cart';
 
@@ -84,20 +86,21 @@ export class CartService {
   clear(): void {
     this._items.set([]);
     this._matItems.set([]);
-    localStorage.removeItem(this.PRODUCT_KEY);
-    localStorage.removeItem(this.MATERIAL_KEY);
+    this.storage.removeItem(this.PRODUCT_KEY);
+    this.storage.removeItem(this.MATERIAL_KEY);
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   private persist(key: string, data: unknown): void {
-    localStorage.setItem(key, JSON.stringify(data));
+    this.storage.setItem(key, JSON.stringify(data));
   }
 
   private load<T>(key: string): T {
+    const raw = this.storage.getItem(key);
+    if (!raw) return [] as T;
     try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : [];
+      return JSON.parse(raw) as T;
     } catch {
       return [] as T;
     }

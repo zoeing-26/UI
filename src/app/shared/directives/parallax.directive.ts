@@ -1,5 +1,5 @@
 import {
-  Directive, ElementRef, OnInit, OnDestroy, NgZone, inject, input,
+  Directive, ElementRef, OnDestroy, NgZone, inject, input, afterNextRender,
 } from '@angular/core';
 
 /**
@@ -15,12 +15,15 @@ import {
  *   - Only runs when element is in viewport
  *   - Auto-disables on mobile (<= 768px) and prefers-reduced-motion
  *   - Listens to passive scroll events for smooth performance
+ *
+ * SSR-safe: setup runs in afterNextRender (browser-only, after hydration),
+ * never on the server where window/IntersectionObserver are undefined.
  */
 @Directive({
   selector: '[appParallax]',
   standalone: true,
 })
-export class ParallaxDirective implements OnInit, OnDestroy {
+export class ParallaxDirective implements OnDestroy {
   /** Parallax speed: 1 = same as scroll, 0.3 = slower (background), -0.3 = opposite */
   speed = input<number>(0.3);
 
@@ -41,7 +44,11 @@ export class ParallaxDirective implements OnInit, OnDestroy {
   private isMobile = false;
   private reduceMotion = false;
 
-  ngOnInit(): void {
+  constructor() {
+    afterNextRender(() => this.setup());
+  }
+
+  private setup(): void {
     this.checkConstraints();
 
     // Don't run parallax on mobile or when user prefers reduced motion

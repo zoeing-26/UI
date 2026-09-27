@@ -4,6 +4,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
 import { LanguageService } from '../../../../core/services/language.service';
+import { SafeStorageService } from '../../../../core/services/safe-storage.service';
 
 interface Slide {
   id: number;
@@ -30,13 +31,20 @@ interface Slide {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, InrCurrencyPipe],
   template: `
-  <div class="relative overflow-hidden rounded-none w-full min-h-96"
-       (mouseenter)="pauseAuto()" (mouseleave)="resumeAuto()">
+  <div
+    class="relative overflow-hidden w-full aspect-video bg-gray-100 dark:bg-gray-800"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label="Featured products"
+    (mouseenter)="pauseAuto()" (mouseleave)="resumeAuto()">
 
-    <!-- Slides -->
+    <!-- Slides — container keeps the source images' 16:9 ratio so nothing is cropped -->
     @for (slide of slides; track slide.id; let i = $index) {
       <div
-        class="absolute inset-0 transition-opacity duration-700 w-full h-full bg-cover bg-center bg-no-repeat shadow-[0_12px_30px_rgba(15,23,42,0.12)]"
+        class="absolute inset-0 transition-opacity duration-700 w-full h-full bg-cover bg-center bg-no-repeat"
+        role="group"
+        [attr.aria-label]="'Slide ' + (i + 1) + ' of ' + slides.length"
+        [attr.aria-hidden]="current() !== i"
         [class.opacity-100]="current() === i"
         [class.opacity-0]="current() !== i"
         [class.pointer-events-none]="current() !== i"
@@ -61,28 +69,35 @@ interface Slide {
         }
       </div>
     }
-    <!-- Dot navigation -->
-    <div class="absolute bottom-4 right-4 flex gap-2 z-10">
+    <!-- Dot navigation — 32px tap targets with the small visual dot inside -->
+    <div class="absolute bottom-2 right-2 flex gap-1 z-10">
       @for (slide of slides; track slide.id; let i = $index) {
         <button
-          class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-          [class]="current() === i ? 'bg-zoeing-secondary scale-125' : 'bg-white/40 hover:bg-white/70'"
+          class="w-8 h-8 flex items-center justify-center"
           (click)="goTo(i)"
-          [attr.aria-label]="'Slide ' + (i+1)"
-        ></button>
+          [attr.aria-label]="'Go to slide ' + (i+1)"
+          [attr.aria-current]="current() === i"
+        >
+          <span
+            class="w-2.5 h-2.5 rounded-full transition-all duration-300"
+            [class]="current() === i ? 'bg-zoeing-secondary scale-125' : 'bg-white/40 hover:bg-white/70'"
+          ></span>
+        </button>
       }
     </div>
 
-    <!-- Prev/Next arrows -->
+    <!-- Prev/Next arrows — 44px touch targets -->
     <button
-      class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors z-10"
+      class="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors z-10"
       (click)="prev()"
+      aria-label="Previous slide"
     >
       <span class="material-icons text-lg">chevron_left</span>
     </button>
     <button
-      class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors z-10"
+      class="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors z-10"
       (click)="next()"
+      aria-label="Next slide"
     >
       <span class="material-icons text-lg">chevron_right</span>
     </button>
@@ -91,6 +106,7 @@ interface Slide {
 })
 export class HeroCarouselComponent implements OnInit, OnDestroy {
   protected lang = inject(LanguageService);
+  private browser = inject(SafeStorageService);
   current = signal(0);
   private timer?: ReturnType<typeof setInterval>;
 
@@ -177,10 +193,15 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     },
   ];
 
-  ngOnInit(): void { this.startAuto(); }
+  ngOnInit(): void {
+    // SSR: timers are browser-only — the interval is purely visual
+    if (!this.browser.inBrowser) return;
+    this.startAuto();
+  }
   ngOnDestroy(): void { clearInterval(this.timer); }
 
   startAuto(): void {
+    if (!this.browser.inBrowser) return;
     this.timer = setInterval(() => this.next(), 5000);
   }
 

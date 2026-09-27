@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { SafeStorageService } from './safe-storage.service';
 
 export type Lang = 'en' | 'hi';
 
@@ -179,6 +180,7 @@ const HI: Record<string, string> = {
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
+  private readonly storage = inject(SafeStorageService);
   private readonly STORAGE_KEY = 'zoeing_lang';
   private _lang = signal<Lang>('en');
 
@@ -188,7 +190,7 @@ export class LanguageService {
   );
 
   constructor() {
-    const saved = localStorage.getItem(this.STORAGE_KEY) as Lang | null;
+    const saved = this.storage.getItem(this.STORAGE_KEY) as Lang | null;
     if (saved === 'en' || saved === 'hi') this._lang.set(saved);
   }
 
@@ -198,8 +200,9 @@ export class LanguageService {
 
   setLanguage(lang: Lang): void {
     this._lang.set(lang);
-    localStorage.setItem(this.STORAGE_KEY, lang);
-    document.documentElement.setAttribute('lang', lang === 'hi' ? 'hi' : 'en');
+    this.storage.setItem(this.STORAGE_KEY, lang);
+    const doc = this.storage.doc;
+    doc?.documentElement.setAttribute('lang', lang === 'hi' ? 'hi' : 'en');
   }
 
   toggle(): void {

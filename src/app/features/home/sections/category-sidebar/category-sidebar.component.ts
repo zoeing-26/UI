@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, computed, OnInit,
+  Component, ChangeDetectionStrategy, inject, signal, computed, model, OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,15 +14,88 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, InrCurrencyPipe],
   template: `
-  <aside class="relative w-full lg:w-[36rem] shrink-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900">
+  <aside class="relative w-full">
 
-    <!-- Header -->
-    <div class="bg-brand-blue text-white px-4 py-2.5 flex items-center gap-2">
-      <span class="material-icons text-sm text-brand-yellow">grid_view</span>
+    <!-- Collapsed-first header — doubles as the expand/collapse toggle.
+         The expanded panel is an absolute dropdown overlay: it never pushes
+         page content down, so the bar is all the space it ever takes. -->
+    <button
+      type="button"
+      (click)="toggleOpen()"
+      class="w-full relative z-30 rounded-xl bg-gradient-to-r from-[#0b506d] via-brand-blue to-[#1f6d8e] px-4 py-3 flex items-center gap-2.5 text-white shadow-md transition-shadow"
+      [ngClass]="open() ? 'shadow-lg ring-1 ring-amber-400/60' : 'hover:shadow-lg'"
+      [attr.aria-expanded]="open()"
+      aria-controls="category-browser-panel"
+    >
+      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15">
+        <span class="material-icons text-base text-brand-yellow">grid_view</span>
+      </span>
       <span class="text-sm font-bold tracking-wide">{{ lang.t('search_by_category') }}</span>
+      @if (!loading()) {
+        <span class="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold">{{ categories().length }}</span>
+      }
+      <span class="material-icons ml-auto text-lg transition-transform duration-300" [class.rotate-180]="open()">expand_more</span>
+    </button>
+
+    <!-- Expanded panel: IN-FLOW when open (desktop: column grows, carousel
+         shrinks 75% → 50%; mobile: drops under the bar). Hidden state is an
+         absolute dropdown so the bar stays the only footprint. -->
+    <div
+      id="category-browser-panel"
+      class="absolute top-full left-0 mt-2 z-20 w-full origin-top transition-all duration-300 ease-out"
+      [ngClass]="open()
+        ? 'opacity-100 scale-y-100 visible pointer-events-auto lg:static lg:mt-0 max-lg:relative max-lg:top-0 max-lg:mt-2'
+        : 'opacity-0 scale-y-95 invisible pointer-events-none'"
+    >
+      <div class="max-h-[70vh] overflow-y-auto lg:max-h-[24rem] lg:overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl lg:shadow-md ring-1 ring-amber-400/40 overflow-hidden">
+
+    <!-- ── Mobile: touch-friendly accordion (hover columns don't work on touch) ── -->
+    <div class="lg:hidden">
+        <ul class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (cat of categories(); track cat.name) {
+            <li>
+              <div class="flex items-center">
+                <button
+                  type="button"
+                  (click)="navigateToCategory(cat.name)"
+                  class="flex-1 min-h-[44px] px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 active:bg-gray-100 dark:active:bg-gray-800"
+                >
+                  {{ cat.name }}
+                </button>
+                @if (cat.sub_category.length > 0) {
+                  <button
+                    type="button"
+                    (click)="toggleMobileCategory(cat.name)"
+                    class="w-11 h-11 flex items-center justify-center text-gray-400 shrink-0"
+                    [attr.aria-label]="'Show subcategories of ' + cat.name"
+                  >
+                    <span class="material-icons transition-transform" [class.rotate-180]="expandedCategory() === cat.name">expand_more</span>
+                  </button>
+                }
+              </div>
+              @if (expandedCategory() === cat.name) {
+                <ul class="pb-2 bg-gray-50 dark:bg-gray-800/40">
+                  @for (sub of cat.sub_category; track sub.name) {
+                    <li>
+                      <button
+                        type="button"
+                        (click)="navigateToSubCategory(cat.name, sub.name)"
+                        class="w-full min-h-[40px] px-6 py-2 text-left text-xs text-gray-600 dark:text-gray-300 active:bg-gray-100 dark:active:bg-gray-800 flex items-center justify-between"
+                      >
+                        <span>{{ sub.name }}</span>
+                        <span class="text-gray-400">{{ sub.materials.length }}</span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </li>
+          }
+        </ul>
     </div>
 
-    <div class="lg:flex h-72" (mouseleave)="clearHovered()">
+    <!-- ── Desktop: 3-column hover browser ── -->
+    <div class="hidden lg:flex h-72" (mouseleave)="clearHovered()">
 
       <!-- ── Column 1: Categories ── -->
       <div class="lg:w-40 shrink-0 border-b border-gray-100 dark:border-gray-800 lg:border-b-0 lg:border-r h-full overflow-y-auto">
@@ -36,12 +109,16 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
             @for (cat of categories(); track cat.name; let ci = $index) {
               <li (mouseenter)="setHoveredCategory(cat.name)">
                 <button
-                  class="w-full flex items-center justify-between px-3 py-2.5 text-sm transition-colors text-left group"
+                  class="w-full flex items-center gap-2 px-3 py-2.5 text-sm transition-colors text-left group"
                   [class]="hoveredCategory() === cat.name
                     ? 'bg-brand-blue text-white font-semibold'
                     : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'"
                   (click)="navigateToCategory(cat.name)"
                 >
+                  <span
+                    class="material-icons text-base shrink-0"
+                    [ngClass]="hoveredCategory() === cat.name ? 'text-brand-yellow' : getCategoryIconColor(ci)"
+                  >{{ getCategoryIcon(cat.name, ci) }}</span>
                   <span class="truncate leading-snug" [title]="cat.name">{{ cat.name }}</span>
                 </button>
               </li>
@@ -150,7 +227,9 @@ import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
         }
       </div>
 
-    </div>
+      </div>
+      </div>
+      </div>
   </aside>
   `,
 })
@@ -163,6 +242,17 @@ export class CategorySidebarComponent implements OnInit {
   loading = signal(true);
   hoveredCategory = signal<string | null>(null);
   hoveredSubCategory = signal<string | null>(null);
+
+  // Collapsed-first panel state (the header bar toggles on all viewports).
+  // model() so the home layout can read it and re-split columns 25/75 → 50/50.
+  open = model(false);
+  expandedCategory = signal<string | null>(null);
+
+  toggleOpen(): void { this.open.update(v => !v); }
+
+  toggleMobileCategory(name: string): void {
+    this.expandedCategory.update(cur => (cur === name ? null : name));
+  }
 
   hoveredSubCategories = computed(() =>
     this.categories().find(c => c.name === this.hoveredCategory())?.sub_category ?? []
@@ -294,14 +384,17 @@ export class CategorySidebarComponent implements OnInit {
   }
 
   navigateToCategory(category: string): void {
+    this.open.set(false); // dropdown closes on navigation
     this.router.navigate(['/inventory'], { queryParams: { category } });
   }
 
   navigateToSubCategory(category: string, subCategory: string): void {
+    this.open.set(false);
     this.router.navigate(['/product-list'], { queryParams: { category, subCategory } });
   }
 
   navigateToMaterial(item: ApiMaterial): void {
+    this.open.set(false);
     this.router.navigate(['/material', item.id], { state: { material: item } });
   }
 }
