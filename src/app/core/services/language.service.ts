@@ -6,10 +6,10 @@ export type Lang = 'en' | 'hi';
 const EN: Record<string, string> = {
   // Brand
   brand_name: 'zoieng',
-  brand_tagline: 'Industrial Products for Oil & Gas Industry',
+  brand_tagline: 'Reliable Industrial Products Powering Oil & Gas Operations',
 
   // Header
-  tagline: 'Industrial Products for Oil & Gas Industry',
+  tagline: 'Reliable Industrial Products Powering Oil & Gas Operations',
   search_placeholder: 'Keyword, Part Number',
   cart: 'Cart',
   support: 'Support',
@@ -96,9 +96,9 @@ const EN: Record<string, string> = {
 // ─── Hindi Translations ───────────────────────────────────────
 const HI: Record<string, string> = {
   brand_name: 'zoieng',
-  brand_tagline: 'तेल और गैस उद्योग के लिए औद्योगिक उत्पाद',
+  brand_tagline: 'तेल और गैस संचालन को शक्ति देने वाले भरोसेमंद औद्योगिक उत्पाद',
 
-  tagline: 'तेल और गैस उद्योग के लिए औद्योगिक उत्पाद',
+  tagline: 'तेल और गैस संचालन को शक्ति देने वाले भरोसेमंद औद्योगिक उत्पाद',
   search_placeholder: 'कीवर्ड, पार्ट नंबर',
   cart: 'कार्ट',
   support: 'सहायता',

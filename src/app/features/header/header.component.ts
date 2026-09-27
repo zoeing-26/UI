@@ -18,85 +18,44 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
-  <header class="sticky-header shadow-md" [class.scrolled]="isScrolled()">
+  <header class="sticky-header shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-md" [class.scrolled]="isScrolled()">
 
-    <!-- ROW 1: Top Bar -->
-    <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
-      <div class="flex items-center gap-3 flex-wrap md:flex-nowrap">
+    <div class="border-b border-[#dfeaf1] bg-[#f4f6f8] px-3 py-2.5 sm:px-4">
+      <div class="mx-auto flex max-w-[1420px] flex-wrap items-center gap-2 sm:gap-3 md:flex-nowrap md:gap-4">
 
-        <!-- ZOIENG Logo -->
-        <a routerLink="/" class="flex flex-col items-start shrink-0 mr-2" aria-label="ZOIENG Home">
-          <div class="flex items-center gap-2">
-            <!-- Z square mark -->
-            <span class="w-9 h-9 rounded-md bg-zoeing-navy text-white flex items-center justify-center font-display font-black text-xl shadow-md">
-              Z
-            </span>
-            <span class="font-display font-black text-2xl tracking-tight text-zoeing-navy dark:text-white lowercase">
-              zoieng
-            </span>
-          </div>
-          <span class="text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap mt-0.5 ml-11">
-            {{ lang.t('tagline') }}
-          </span>
+        <a routerLink="/" class="shrink-0" aria-label="ZOIENG Home">
+          <img
+            src="assets/ZO_Industrial_Engineering_Supplies_Transparent.svg"
+            alt="ZOIENG"
+            class="h-9 w-auto sm:h-10 md:h-[52px]"
+          />
         </a>
 
-        <!-- Search Bar -->
-        <div class="flex-1 flex items-center min-w-0 relative">
+        <div class="relative min-w-0 flex-1">
           <input
             type="text"
-            class="w-full border border-gray-300 dark:border-gray-600 rounded-l-md px-4 py-2 text-sm
-                   bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400
-                   focus:outline-none focus:border-zoeing-navy focus:ring-1 focus:ring-zoeing-navy"
+            class="w-full rounded-full border border-[#dfe5ec] bg-[#eef3f7] py-2 pl-3 pr-10 text-xs text-gray-900 placeholder:text-gray-500 focus:border-[#0b4d69] focus:outline-none focus:ring-2 focus:ring-[#0b4d69]/10 sm:py-2.5 sm:pl-4 sm:pr-12 sm:text-sm"
             [placeholder]="lang.t('search_placeholder')"
             [(ngModel)]="searchQuery"
             (keyup.enter)="triggerSearch()"
           />
           <button
-            class="bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white px-4 py-2 rounded-r-md border border-zoeing-secondary transition-colors flex items-center gap-1"
+            class="absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-[#f5a63a] text-white shadow-[0_8px_16px_rgba(245,166,58,0.35)] transition hover:brightness-105 sm:h-9 sm:w-9"
             (click)="triggerSearch()"
+            type="button"
+            aria-label="Search products"
           >
-            <span class="material-icons text-sm">search</span>
-            <span class="hidden sm:inline text-sm font-medium">Search</span>
+            <span class="material-icons text-base">search</span>
           </button>
-
         </div>
 
-        <!-- Right actions -->
-        <div class="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-          <a routerLink="/cart" class="relative flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
-            <span class="material-icons text-xl">shopping_cart</span>
-            @if (cartCount() > 0) {
-              <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                {{ cartCount() > 99 ? '99+' : cartCount() }}
-              </span>
-            }
-            <span class="text-[10px] hidden md:block">{{ lang.t('cart') }}</span>
-          </a>
-
-          <a routerLink="/orders" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
-            <span class="material-icons text-xl">receipt_long</span>
-            <span class="text-[10px]">Orders</span>
-          </a>
-
-          <a routerLink="/quotes" class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
-            <span class="material-icons text-xl">request_quote</span>
-            <span class="text-[10px]">Quotes</span>
-          </a>
-
-          <button class="hidden md:flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors p-1">
-            <span class="material-icons text-xl">headset_mic</span>
-            <span class="text-[10px]">{{ lang.t('support') }}</span>
-          </button>
-
-          <a routerLink="/login" class="btn-primary text-xs px-3 py-1.5 hidden sm:flex">
-            <span class="material-icons text-sm">person</span>
-            {{ lang.t('login') }}
-          </a>
-
+        <div class="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           <button
-            class="p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white"
             (click)="theme.toggle()"
             [title]="theme.isDark() ? 'Light Mode' : 'Dark Mode'"
+            type="button"
+            aria-label="Toggle theme"
           >
             @if (theme.isDark()) {
               <span class="material-icons text-lg">light_mode</span>
@@ -105,21 +64,37 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
             }
           </button>
 
-          <div class="flex items-center gap-1 text-xs border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1">
-            <button
-              class="font-medium transition-colors"
-              [class]="lang.lang() === 'en' ? 'text-zoeing-navy dark:text-zoeing-gold' : 'text-gray-400'"
-              (click)="setLang('en')"
-            >EN</button>
-            <span class="text-gray-300 dark:text-gray-600">|</span>
-            <button
-              class="font-medium transition-colors"
-              [class]="lang.lang() === 'hi' ? 'text-zoeing-navy dark:text-zoeing-gold' : 'text-gray-400'"
-              (click)="setLang('hi')"
-            >हि</button>
+          <a routerLink="/cart" class="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#1d2b36] shadow-sm transition hover:bg-white">
+            <span class="material-icons text-lg">shopping_cart</span>
+            @if (cartCount() > 0) {
+              <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#d95431] text-[9px] font-bold text-white">
+                {{ cartCount() > 99 ? '99+' : cartCount() }}
+              </span>
+            }
+          </a>
+
+          <a routerLink="/login" class="hidden items-center gap-1.5 rounded-full bg-[#f5a63a] px-3 py-2 text-xs font-bold text-white shadow-[0_10px_20px_rgba(245,166,58,0.28)] transition hover:brightness-105 sm:flex">
+            <span class="material-icons text-sm">person</span>
+            <span class="whitespace-nowrap">{{ lang.t('login') }}</span>
+          </a>
+
+          <button
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#0b4d69] shadow-sm transition hover:bg-white md:hidden"
+            (click)="toggleMobileMenu()"
+            type="button"
+            [attr.aria-expanded]="mobileMenuOpen()"
+            aria-label="Toggle mobile menu"
+          >
+            <span class="material-icons">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
+          </button>
+
+          <div class="hidden items-center gap-1 rounded-full border border-[#dfe5ec] bg-white/80 px-1.5 py-1 text-[11px] font-semibold text-[#1d2b36] md:flex">
+            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'en'" (click)="setLang('en')">EN</button>
+            <span class="text-gray-300">|</span>
+            <button class="rounded-full px-2 py-1" [class.text-[#0b4d69]="lang.lang() === 'hi'" (click)="setLang('hi')">हि</button>
           </div>
 
-          <button class="hidden lg:flex text-xs text-gray-600 dark:text-gray-300 items-center gap-0.5">
+          <button class="hidden items-center gap-1 rounded-full px-2.5 py-1.5 text-[#1d2b36] hover:bg-white/80 transition-colors md:flex">
             {{ lang.t('other') }}
             <span class="material-icons text-sm">expand_more</span>
           </button>
@@ -127,81 +102,67 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
       </div>
     </div>
 
-    <!-- ROW 2: Primary Nav -->
-    <nav class="bg-zoeing-primary dark:bg-zoeing-primary-dark">
-      <div class="flex items-center">
-
-        <button
-          class="md:hidden text-white px-4 py-3 flex items-center gap-2 hover:bg-zoeing-primary-light transition-colors"
-          (click)="toggleMobileMenu()"
-        >
-          <span class="material-icons">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
-          <span class="text-sm font-medium">Menu</span>
-        </button>
-
-        <div class="hidden md:flex items-center flex-1">
-
-          <a
-            routerLink="/"
-            routerLinkActive="bg-zoeing-primary-dark text-white"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="flex items-center gap-1.5 px-4 py-3 text-gray-200 text-sm font-semibold hover:bg-zoeing-primary-light hover:text-white transition-colors"
-          >
-            <span class="material-icons text-base">home</span>
-            Home
-          </a>
-
-          @for (item of navItems; track item.key) {
-            <a [routerLink]="item.link"
-              routerLinkActive="bg-zoeing-primary-dark text-white"
-              [routerLinkActiveOptions]="{ exact: item.link !== '/manufacturers' }"
-              class="flex items-center gap-1 px-3 py-3 text-gray-200 text-sm font-medium hover:bg-zoeing-primary-light hover:text-white transition-colors whitespace-nowrap">
-              {{ item.label }}
-              @if (item.badge) {
-                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ml-1"
-                      [class]="item.badgeColor || 'bg-red-600 text-white'">
-                  {{ item.badge }}
-                </span>
-              }
-              @if (item.hasDropdown) {
-                <span class="material-icons text-xs">expand_more</span>
-              }
+    <nav class="bg-[#0b506d]">
+      <div class="mx-auto flex max-w-[1420px] items-center px-2 md:px-0">
+        @if (!isMobile()) {
+          <div class="hidden flex-1 items-center md:flex">
+            <a
+              routerLink="/"
+              routerLinkActive="bg-white/12 text-white shadow-[inset_0_-2px_0_rgba(255,255,255,0.5)]"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
+            >
+              <span class="material-icons text-base">home</span>
+              Home
             </a>
-          }
-        </div>
+
+            @for (item of navItems; track item.key) {
+              <a [routerLink]="item.link"
+                routerLinkActive="bg-white/12 text-white shadow-[inset_0_-2px_0_rgba(255,255,255,0.5)]"
+                [routerLinkActiveOptions]="{ exact: item.link !== '/manufacturers' }"
+                class="flex items-center gap-1 whitespace-nowrap px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white">
+                {{ item.label }}
+                @if (item.badge) {
+                  <span class="ml-1 rounded px-1.5 py-0.5 text-[10px] font-bold" [class]="item.badgeColor || 'bg-red-600 text-white'">{{ item.badge }}</span>
+                }
+                @if (item.hasDropdown) {
+                  <span class="material-icons text-xs">expand_more</span>
+                }
+              </a>
+            }
+          </div>
+        }
 
         <a routerLink="/quote" [queryParams]="{fresh: '1'}"
-           class="ml-auto flex items-center gap-1.5 bg-zoeing-secondary text-white font-bold text-sm px-4 py-3 hover:bg-zoeing-secondary-dark transition-colors shrink-0">
+           class="ml-auto flex items-center gap-2 rounded-md bg-gradient-to-r from-[#f0a648] to-[#d88b32] px-4 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(216,139,50,0.3)] transition hover:brightness-110 md:rounded-l-md md:rounded-r-none">
           <span class="material-icons text-sm">description</span>
           {{ lang.t('quote_order') }}
         </a>
       </div>
 
       @if (mobileMenuOpen()) {
-        <div class="md:hidden bg-zoeing-primary-dark border-t border-zoeing-primary-light animate-fade-slide">
+        <div class="md:hidden border-t border-white/10 bg-[#0a465d]">
           <a
             routerLink="/"
             (click)="closeMobileMenu()"
-            class="w-full block text-left px-6 py-3 text-gray-200 text-sm border-b border-zoeing-primary-light hover:bg-zoeing-primary-light hover:text-white transition-colors flex items-center gap-2"
+            class="flex w-full items-center gap-2 border-b border-white/10 px-6 py-3 text-left text-sm text-slate-200 hover:bg-white/10 hover:text-white"
           >
             <span class="material-icons text-sm">home</span>
             Home
           </a>
-          <div class="border-t border-zoeing-primary-light">
-            @for (item of navItems; track item.key) {
-              <a [routerLink]="item.link"
-                routerLinkActive="bg-zoeing-primary-dark text-white"
-                [routerLinkActiveOptions]="{ exact: item.link !== '/manufacturers' }"
-                (click)="closeMobileMenu()"
-                class="w-full block text-left px-6 py-3 text-gray-200 text-sm border-b border-zoeing-primary-light hover:bg-zoeing-primary-light hover:text-white transition-colors">
-                {{ item.label }}
-              </a>
-            }
-          </div>
+          @for (item of navItems; track item.key) {
+            <a [routerLink]="item.link"
+              (click)="closeMobileMenu()"
+              routerLinkActive="bg-white/10 text-white"
+              [routerLinkActiveOptions]="{ exact: item.link !== '/manufacturers' }"
+              class="block border-b border-white/10 px-6 py-3 text-left text-sm text-slate-200 hover:bg-white/10 hover:text-white"
+            >
+              {{ item.label }}
+            </a>
+          }
         </div>
       }
     </nav>
-
   </header>
   `,
 })
@@ -214,6 +175,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   searchQuery    = '';
   isScrolled     = signal(false);
+  isMobile       = signal(false);
   mobileMenuOpen = signal(false);
 
   readonly cartCount = this.cart.count;
@@ -227,17 +189,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    this.updateMobileState();
+
     this.navSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         const tree = this.router.parseUrl(e.urlAfterRedirects);
         this.searchQuery = tree.queryParams['q'] ?? '';
+        this.closeMobileMenu();
       });
   }
 
   ngOnDestroy(): void { this.navSub?.unsubscribe(); }
 
   @HostListener('window:scroll') onScroll(): void { this.isScrolled.set(window.scrollY > 60); }
+
+  @HostListener('window:resize') onResize(): void { this.updateMobileState(); }
+
+  private updateMobileState(): void {
+    this.isMobile.set(window.innerWidth < 1024);
+    if (!this.isMobile()) {
+      this.mobileMenuOpen.set(false);
+    }
+  }
 
   triggerSearch(): void {
     const q = this.searchQuery.trim();

@@ -207,7 +207,7 @@ interface CategoryRow {
               class="w-full py-1.5 rounded text-[11px] font-semibold transition-colors flex items-center justify-center gap-1"
               [class]="isAdded(item.id)
                 ? 'bg-green-600 text-white'
-                : 'bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white'"
+                : 'bg-zoeing-primary hover:bg-zoeing-primary-light text-white'"
               (click)="addToCart(item)"
             >
               <span class="material-icons text-[13px]">{{ isAdded(item.id) ? 'check' : 'add_shopping_cart' }}</span>

@@ -6,7 +6,6 @@ import { HeroCarouselComponent } from './sections/hero-carousel/hero-carousel.co
 import { CategorySidebarComponent } from './sections/category-sidebar/category-sidebar.component';
 import { PromoBannersComponent } from './sections/promo-banners/promo-banners.component';
 import { BrandHeroComponent } from './sections/brand-hero/brand-hero.component';
-import { PopularBrandsComponent } from './sections/popular-brands/popular-brands.component';
 import { ZoiengChannelComponent } from './sections/zoieng-channel/zoieng-channel.component';
 import { AutomationComponentsComponent } from './sections/automation-components/automation-components.component';
 import { CartService } from '../../core/services/cart.service';
@@ -21,18 +20,35 @@ import { CartService } from '../../core/services/cart.service';
     CategorySidebarComponent,
     PromoBannersComponent,
     BrandHeroComponent,
-    PopularBrandsComponent,
     ZoiengChannelComponent,
     AutomationComponentsComponent,
   ],
   template: `
-  <main class="bg-gray-50 dark:bg-gray-950">
-    <!-- ── Video hero — full-screen, below top bar ── -->
-    <app-brand-hero />
+  <main class="bg-transparent">
+    <div class="max-w-7xl mx-auto px-3 md:px-4 pb-12">
+      <div class="pt-5">
+        <app-brand-hero />
+      </div>
 
-    <!-- ── Top container with sidebar + carousel ── -->
-    <div class="px-3 md:px-4">
-      <section class="flex gap-4 mt-4">
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        <div class="card p-4">
+          <div class="eyebrow">Fast sourcing</div>
+          <h3 class="mt-3 text-xl font-black text-slate-900 dark:text-white">Precision built for industrial teams</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Get the right components with faster approvals, clearer specs, and a more reliable procurement flow.</p>
+        </div>
+        <div class="card p-4">
+          <div class="eyebrow">Trusted supply</div>
+          <h3 class="mt-3 text-xl font-black text-slate-900 dark:text-white">Cross-industry coverage</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">From maintenance and utility projects to manufacturing and automation, we support the full buying journey.</p>
+        </div>
+        <div class="card p-4">
+          <div class="eyebrow">Expert support</div>
+          <h3 class="mt-3 text-xl font-black text-slate-900 dark:text-white">Human guidance, digital convenience</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Speak with sourcing specialists while using a high-clarity experience designed to move proposals forward quickly.</p>
+        </div>
+      </div>
+
+      <section class="mt-8 flex gap-4">
         <div class="hidden lg:block">
           <app-category-sidebar />
         </div>
@@ -41,36 +57,17 @@ import { CartService } from '../../core/services/cart.service';
         </div>
       </section>
 
-      <!-- Promo Banners -->
-      <!-- <app-promo-banners /> -->
-    </div>
-
-    <!-- ── Continue with constrained width ── -->
-    <div class="px-3 md:px-4">
-      <app-popular-brands />
-
-      @defer (on viewport) {
-<!-- <app-zoieng-channel /> -->
-      } @placeholder {
-        <div class="h-48 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse my-6"></div>
-      }
-
-      @defer (on viewport) {
-        <app-automation-components />
-      } @placeholder {
-        <div class="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse my-6"></div>
-      }
+      <div class="mt-8">
+        @defer (on viewport) {
+          <app-automation-components />
+        } @placeholder {
+          <div class="h-64 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse my-6"></div>
+        }
+      </div>
     </div>
   </main>
 
   <!-- ═══ FLOATING ELEMENTS ═══ -->
-
-  <div class="sidebar-strip hidden lg:flex">
-    <div class="sidebar-strip-tab">Viewed Products</div>
-    <div class="sidebar-strip-tab">My Components</div>
-    <div class="sidebar-strip-tab cart">Cart ({{ cartCount() }})</div>
-    <div class="sidebar-strip-tab economy">economy</div>
-  </div>
 
   <button class="fab fab-whatsapp" title="Chat on WhatsApp" (click)="openWhatsApp()">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="white">

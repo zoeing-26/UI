@@ -11,93 +11,71 @@ import { ApiMaterial } from '../../../models/product.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, InrCurrencyPipe],
   template: `
-    <div class="group flex flex-col rounded-lg overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 h-full cursor-pointer hover:shadow-md hover:border-brand-blue/40 transition-all"
+    <div class="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.3rem] border border-slate-200 bg-gradient-to-b from-white to-slate-50 shadow-[0_18px_34px_rgba(15,23,42,0.08)] transition-all duration-250 hover:-translate-y-1 hover:border-amber-300 hover:shadow-[0_22px_40px_rgba(15,23,42,0.12)] dark:border-slate-700 dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 dark:shadow-[0_20px_36px_rgba(2,8,23,0.45)]"
          (click)="onCardClick()">
 
-      <!-- Image -->
-      <div class="relative bg-gray-50 dark:bg-gray-800 flex items-center justify-center" style="height:160px">
+      <div class="relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950" style="height:210px">
         @if (mat().image) {
           <img
             [src]="mat().image!"
             [alt]="mat().name"
-            class="object-contain w-full p-3"
-            style="max-height:140px"
+            class="w-full object-contain p-4 transition-transform duration-250 group-hover:scale-[1.03]"
+            style="max-height:170px"
             loading="lazy"
           />
         } @else {
-          <div class="flex flex-col items-center justify-center gap-1 text-gray-300 dark:text-gray-600 select-none">
+          <div class="flex flex-col items-center justify-center gap-1 select-none text-slate-300 dark:text-slate-600">
             <span class="material-icons text-4xl">image</span>
-            <span class="text-[10px]">No Image</span>
+            <span class="text-[10px] uppercase tracking-[0.2em]">No Image</span>
           </div>
         }
 
-        <!-- Industry badge -->
         @if (mat().industry) {
-          <span class="absolute top-2 left-2 bg-brand-yellow text-brand-blue-dark text-[10px] font-bold px-1.5 py-0.5 rounded uppercase leading-none">
+          <span class="absolute left-3 top-3 rounded-full bg-amber-300/95 px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-slate-900 shadow-sm">
             {{ mat().industry }}
           </span>
         }
       </div>
 
-      <!-- Body -->
-      <div class="flex flex-col flex-1 p-3 gap-1">
-
-        <!-- Product code -->
-        <p class="text-[10px] text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide">
-          {{ mat().product_code }}
-        </p>
-
-        <!-- Name -->
-        <p class="text-xs font-semibold text-gray-800 dark:text-gray-100 leading-snug line-clamp-2 flex-1">
-          {{ mat().name || mat().product_code }}
-        </p>
-
-        <!-- Series label -->
-        <p class="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Economy Series</p>
-
-        <!-- Price row -->
-        <div class="mt-1 flex items-end justify-between gap-2">
-          <div>
-            @if (mat().price) {
-              <p class="text-[10px] text-gray-500 dark:text-gray-400">Price from</p>
-              <p class="text-sm font-bold text-zoeing-secondary dark:text-zoeing-secondary-light">
-                {{ mat().price! | inrCurrency }}
-              </p>
-            } @else {
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 italic">Price on Request</p>
-            }
-          </div>
-
-          <!-- Cart + Quote buttons (in-stock only) -->
+      <div class="flex flex-1 flex-col gap-2 p-4">
+        <div class="flex items-center justify-between gap-2">
+          <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
+            {{ mat().product_code }}
+          </p>
           @if (inStock()) {
-            <div class="flex gap-1 shrink-0" (click)="$event.stopPropagation()">
-              <button
-                class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors"
-                title="Request Quote"
-                (click)="onQuote()"
-              >
-                <span class="material-icons text-sm">description</span>
-              </button>
-              <button
-                class="w-7 h-7 rounded-full bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white flex items-center justify-center transition-colors"
-                title="Add to Cart"
-                (click)="onAddToCart()"
-              >
-                <span class="material-icons text-sm">{{ addedFeedback() ? 'check' : 'add' }}</span>
-              </button>
-            </div>
+            <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+              In stock
+            </span>
           }
         </div>
 
-        <!-- Stock / request row -->
-        <div class="mt-1.5">
+        <p class="flex-1 text-[15px] font-semibold leading-snug text-slate-800 dark:text-slate-100 line-clamp-2">
+          {{ mat().name || mat().product_code }}
+        </p>
+
+        <p class="text-[11px] font-medium text-amber-700 dark:text-amber-300">Economy Series</p>
+
+        <div class="mt-1 flex items-end justify-between gap-2">
+          <div>
+            @if (mat().price) {
+              <p class="text-[10px] text-slate-500 dark:text-slate-400">Price from</p>
+              <p class="text-base font-bold text-[#0d4c6a] dark:text-[#f4c977]">
+                {{ mat().price! | inrCurrency }}
+              </p>
+            } @else {
+              <p class="text-[11px] text-slate-400 dark:text-slate-500 italic">Price on Request</p>
+            }
+          </div>
+        </div>
+
+        <div class="pt-1">
           @if (inStock()) {
-            <p class="text-[10px] font-medium stock-success">
-              ● In Stock ({{ mat().count }})
+            <p class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+              ● Stock available • {{ mat().count }} units
             </p>
           } @else {
             <button
-              class="w-full flex items-center justify-center gap-1 rounded py-1.5 text-[11px] font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white transition-colors"
+              class="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-3 py-3 text-[11px] font-semibold text-white transition-colors hover:bg-sky-700"
               (click)="onRequestMail(); $event.stopPropagation()"
             >
               <span class="material-icons text-[14px]">mail</span>
@@ -105,7 +83,6 @@ import { ApiMaterial } from '../../../models/product.model';
             </button>
           }
         </div>
-
       </div>
     </div>
   `,

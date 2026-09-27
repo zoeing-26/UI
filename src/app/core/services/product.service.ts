@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import {
   Product, ProductFilter, ProductListResponse,
-  Category, ApiCategory, ApiMaterial, ApiBrand, AllMaterialsResponse, Banner, Quote, CartResponse, CartItem,
+  Category, ApiCategory, ApiMaterial, ApiBrand, Banner, Quote, CartResponse, CartItem,
 } from '../../models/product.model';
 
 @Injectable({ providedIn: 'root' })
@@ -62,7 +62,7 @@ export class ProductService {
    * GET /v1/materials
    */
   getCategories(): Observable<ApiCategory[]> {
-    return this.api.getRaw<ApiCategory[]>('v1/materials');
+    return this.api.get<ApiCategory[]>('v1/materials');
   }
 
   /**
@@ -91,16 +91,14 @@ export class ProductService {
    * GET /v1/brand_materials
    */
   getBrands(): Observable<ApiBrand[]> {
-    return this.api.getRaw<ApiBrand[]>('v1/brand_materials');
+    return this.api.get<ApiBrand[]>('v1/brand_materials');
   }
 
   /**
    * GET /v1/all_materials
    */
   getAllMaterials(): Observable<ApiMaterial[]> {
-    return this.api.getRaw<AllMaterialsResponse>('v1/all_materials').pipe(
-      map(res => res.materials)
-    );
+    return this.api.get<ApiMaterial[]>('v1/all_materials');
   }
 
   /**
@@ -116,7 +114,7 @@ export class ProductService {
    * GET /v1/brand_materials/featured
    */
   getFeaturedBrands(): Observable<ApiBrand[]> {
-    return this.api.getRaw<ApiBrand[]>('v1/brand_materials/featured');
+    return this.api.get<ApiBrand[]>('v1/brand_materials/featured');
   }
 
   /**

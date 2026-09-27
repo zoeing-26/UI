@@ -1,0 +1,188 @@
+<div class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <app-layout-wrapper layoutType="full">
+    <section class="relative overflow-hidden border-b border-slate-200 bg-gradient-to-r from-sky-50 via-white to-amber-50 dark:border-slate-700 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
+      <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+          <div>
+            <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+              About ZOIENG
+            </span>
+            <h1 class="mt-5 text-4xl font-black tracking-[-0.06em] text-sky-900 sm:text-5xl lg:text-7xl dark:text-slate-50">
+              Industrial <span class="text-amber-600">sourcing</span> built for demanding environments.
+            </h1>
+            <p class="mt-5 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+              ZO Industrial is an India-based industrial sourcing and engineering supplies company serving industries across India and international markets. We source and supply industrial products, components, equipment, and engineering supplies for demanding industrial environments — connecting customers with the right products and sourcing solutions, wherever the requirement may be.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-[0_18px_40px_rgba(13,76,106,0.08)] backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
+            <div class="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-100 via-white to-amber-50 dark:border-slate-700 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800" aria-hidden="true">
+              <div class="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-300">India • Global</div>
+              <span class="material-icons text-[6rem] text-sky-200 dark:text-amber-400/40">precision_manufacturing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="grid gap-5 lg:grid-cols-[1.3fr_0.7fr]">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <div class="mb-6">
+            <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">Global Industrial Sourcing</span>
+            <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">From India. For industrial requirements worldwide.</h2>
+          </div>
+          <ul class="space-y-4">
+            <li class="flex gap-3 border-b border-slate-200 pb-4 last:border-b-0 last:pb-0 dark:border-slate-700">
+              <span class="mt-1.5 h-3 w-3 shrink-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-300 shadow-[0_0_0_5px_rgba(245,158,11,0.1)]"></span>
+              <span class="text-sm leading-7 text-slate-600 dark:text-slate-300">Import/export operations positioned to support industrial requirements globally, from our base in India.</span>
+            </li>
+            <li class="flex gap-3 border-b border-slate-200 pb-4 last:border-b-0 last:pb-0 dark:border-slate-700">
+              <span class="mt-1.5 h-3 w-3 shrink-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-300 shadow-[0_0_0_5px_rgba(245,158,11,0.1)]"></span>
+              <span class="text-sm leading-7 text-slate-600 dark:text-slate-300">We work closely with each customer to understand technical, commercial, and operational needs, then identify the right sources and coordinate an efficient, reliable supply process.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1.5 h-3 w-3 shrink-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-300 shadow-[0_0_0_5px_rgba(245,158,11,0.1)]"></span>
+              <span class="text-sm leading-7 text-slate-600 dark:text-slate-300">Preparing to establish a presence in the Gulf region to strengthen service across the Middle East.</span>
+            </li>
+          </ul>
+        </div>
+
+        <aside class="rounded-2xl border border-sky-700 bg-gradient-to-br from-sky-900 to-sky-800 p-6 text-white shadow-sm">
+          <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-300">Long-Term Vision</span>
+          <p class="mt-4 text-base leading-7 text-sky-100">
+            Newly established company built with a long-term vision and a practical understanding of industrial sourcing requirements across markets.
+          </p>
+        </aside>
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="mb-7">
+        <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">Industries We Serve</span>
+        <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">Industrial applications across core operating sectors.</h2>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5" role="list" aria-label="Industries we serve">
+        @for (industry of industries; track industry) {
+          <div class="flex min-h-[90px] items-center justify-center rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-4 text-center text-sm font-semibold leading-5 text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200" role="listitem">
+            {{ industry }}
+          </div>
+        }
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="mb-7">
+        <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">What We Do</span>
+        <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">Sourcing support for industrial operations and technical requirements.</h2>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        @for (service of services; track service.title) {
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
+            <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-sky-100 text-sky-800 dark:bg-amber-500/10 dark:text-amber-300">
+              <span class="material-icons text-[1.35rem]">{{ service.icon }}</span>
+            </div>
+            <h3 class="text-xl font-extrabold tracking-[-0.04em] text-slate-900 dark:text-slate-50">{{ service.title }}</h3>
+            <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ service.description }}</p>
+          </article>
+        }
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="full">
+    <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="mb-7">
+        <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">Our Approach</span>
+        <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">A clear process for sourcing and supply.</h2>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        @for (step of steps; track step.title; let i = $index) {
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <div class="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-xs font-extrabold text-sky-800 dark:bg-sky-500/10 dark:text-sky-300">0{{ i + 1 }}</div>
+            <h3 class="text-lg font-extrabold tracking-[-0.04em] text-slate-900 dark:text-slate-50">{{ step.title }}</h3>
+            <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ step.description }}</p>
+          </article>
+        }
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <div class="mb-6">
+            <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">Building a Global Industrial Network</span>
+            <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">Linking customers, suppliers, manufacturers, and requirements across markets.</h2>
+          </div>
+
+          <p class="text-sm leading-7 text-slate-600 dark:text-slate-300">
+            Web application in development as a digital platform for customers to discover products, submit requirements, request quotations, and connect directly with the team. Building an international industrial sourcing network from India — linking customers, suppliers, manufacturers, and engineering requirements across markets, with Gulf expansion as a key part of the vision.
+          </p>
+
+          <div class="mt-5 space-y-3">
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">India-based sourcing foundation</div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">Digital platform for discovery and quotation</div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">Gulf expansion as a strategic growth focus</div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-sky-700 bg-gradient-to-br from-sky-900 to-sky-800 p-6 text-white shadow-sm">
+          <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-300">Our Role</span>
+          <p class="mt-4 text-base leading-7 text-sky-100">
+            We connect customers with the right products and sourcing solutions, wherever the requirement may be, while supporting efficient and reliable supply coordination.
+          </p>
+        </div>
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-900">
+          <span class="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-amber-600">Our Vision</span>
+          <h2 class="mt-3 text-3xl font-black tracking-[-0.06em] text-sky-900 dark:text-slate-50">To become a trusted global industrial sourcing and engineering supplies partner.</h2>
+          <p class="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
+            To become a trusted global industrial sourcing and engineering supplies partner — connecting businesses with reliable products and practical sourcing solutions across industries and markets.
+          </p>
+        </div>
+
+        <ul class="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900" aria-label="Vision values">
+          @for (point of visionPoints; track point) {
+            <li class="flex gap-3 border-b border-slate-200 pb-3 last:border-b-0 last:pb-0 dark:border-slate-700">
+              <span class="mt-1 h-4 w-4 shrink-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-300 shadow-[0_0_0_4px_rgba(245,158,11,0.12)]"></span>
+              <span class="text-sm leading-7 text-slate-700 dark:text-slate-200">{{ point }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  </app-layout-wrapper>
+
+  <app-layout-wrapper layoutType="boxed">
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-sky-800 bg-gradient-to-r from-sky-900 via-sky-800 to-sky-900 px-6 py-10 text-center shadow-[0_18px_35px_rgba(13,76,106,0.18)]">
+        <div class="mx-auto max-w-3xl">
+          <h2 class="text-3xl font-black tracking-[-0.06em] text-white sm:text-4xl">Have an Industrial Requirement?</h2>
+          <p class="mt-4 text-base leading-7 text-sky-100">
+            Whether it is a standard product or a specific technical sourcing need, tell us what you're looking for so our team can find the right sourcing solution.
+          </p>
+          <a class="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 px-5 py-3 text-sm font-extrabold text-white shadow-[0_16px_28px_rgba(217,119,6,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_30px_rgba(217,119,6,0.3)]" routerLink="/quote" aria-label="Tell us your requirement">
+            Tell Us Your Requirement
+          </a>
+        </div>
+      </div>
+    </section>
+  </app-layout-wrapper>
+</div>

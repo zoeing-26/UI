@@ -89,21 +89,6 @@ export class ApiService {
       );
   }
 
-  /** GET — returns raw T (for endpoints that don't use the { success, data } wrapper) */
-  getRaw<T>(endpoint: string, params?: Record<string, string | number | boolean>): Observable<T> {
-    let httpParams = new HttpParams();
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        if (v !== undefined && v !== null && v !== '') {
-          httpParams = httpParams.set(k, String(v));
-        }
-      });
-    }
-    return this.http
-      .get<T>(`${this.baseUrl}/${endpoint}`, { params: httpParams })
-      .pipe(catchError(this.handleError));
-  }
-
   private handleError(error: unknown): Observable<never> {
     console.error('[ApiService] Error:', error);
     return throwError(() => error);

@@ -7,367 +7,239 @@ import { CartService } from '../../core/services/cart.service';
 import { ProductService } from '../../core/services/product.service';
 import { ApiMaterial } from '../../models/product.model';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
+import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
 
 @Component({
   selector: 'app-material-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, InrCurrencyPipe],
+  imports: [CommonModule, RouterModule, InrCurrencyPipe, LayoutWrapperComponent],
   template: `
-  <main class="max-w-screen-xl mx-auto px-4 py-8">
-
-    <!-- Back / Breadcrumb -->
-    <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-6">
-      <button (click)="goBack()"
-        class="flex items-center gap-1 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">
-        <span class="material-icons text-sm">arrow_back</span>
-        Back
-      </button>
-      @if (material()?.category) {
-        <span class="material-icons text-[12px]">chevron_right</span>
-        <a [routerLink]="['/product-list']"
-           [queryParams]="{ category: material()!.category }"
-           class="hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">
-          {{ material()!.category }}
-        </a>
-      }
-      @if (material()?.sub_category) {
-        <span class="material-icons text-[12px]">chevron_right</span>
-        <a [routerLink]="['/product-list']"
-           [queryParams]="{ category: material()!.category, subCategory: material()!.sub_category }"
-           class="hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">
-          {{ material()!.sub_category }}
-        </a>
-      }
-      @if (material()?.name) {
-        <span class="material-icons text-[12px]">chevron_right</span>
-        <span class="text-gray-600 dark:text-gray-300 truncate max-w-[200px]">{{ material()!.name }}</span>
-      }
-    </div>
-
-    <!-- Loading skeleton -->
-    @if (loading()) {
-      <div class="grid lg:grid-cols-2 gap-8 animate-pulse">
-        <div class="rounded-xl bg-gray-100 dark:bg-gray-800 h-96"></div>
-        <div class="space-y-4">
-          <div class="h-4 bg-gray-100 dark:bg-gray-800 rounded w-1/4"></div>
-          <div class="h-8 bg-gray-100 dark:bg-gray-800 rounded w-3/4"></div>
-          <div class="h-4 bg-gray-100 dark:bg-gray-800 rounded w-1/2"></div>
-          <div class="h-24 bg-gray-100 dark:bg-gray-800 rounded"></div>
-          <div class="h-12 bg-gray-100 dark:bg-gray-800 rounded w-1/3"></div>
-          <div class="flex gap-3">
-            <div class="h-10 bg-gray-100 dark:bg-gray-800 rounded flex-1"></div>
-            <div class="h-10 bg-gray-100 dark:bg-gray-800 rounded flex-1"></div>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Not found -->
-    @else if (notFound()) {
-      <div class="flex flex-col items-center justify-center py-24 text-gray-400 dark:text-gray-600">
-        <span class="material-icons text-6xl mb-4">inventory_2</span>
-        <p class="text-xl font-semibold mb-2">Product not found</p>
-        <p class="text-sm mb-6">This product may have been removed or the link is invalid.</p>
-        <a routerLink="/inventory" class="btn-primary">Browse Inventory</a>
-      </div>
-    }
-
-    <!-- Detail content -->
-    @else if (material()) {
-      <div class="grid lg:grid-cols-2 gap-8 xl:gap-12">
-
-        <!-- LEFT: Image panel -->
-        <div class="flex flex-col gap-4">
-          <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900
-                      flex items-center justify-center relative overflow-hidden" style="min-height:380px">
-            @if (material()!.image) {
-              <img [src]="material()!.image!" [alt]="material()!.name"
-                   class="object-contain p-8 w-full" style="max-height:360px" />
-            } @else {
-              <div class="flex flex-col items-center gap-3 text-gray-300 dark:text-gray-700 select-none">
-                <span class="material-icons text-8xl">precision_manufacturing</span>
-                <span class="text-sm">No image available</span>
-              </div>
-            }
-
-            <!-- Industry badge -->
-            @if (material()!.industry) {
-              <span class="absolute top-4 left-4 bg-brand-yellow text-brand-blue-dark text-xs font-bold
-                           px-2.5 py-1 rounded uppercase tracking-wide">
-                {{ material()!.industry }}
-              </span>
-            }
-          </div>
-
-          <!-- Info chips below image -->
-          <div class="flex flex-wrap gap-2">
-            @if (material()!.category) {
-              <span class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-gray-200
-                           dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                <span class="material-icons text-[14px] text-blue-500">category</span>
-                {{ material()!.category }}
-              </span>
-            }
-            @if (material()!.sub_category) {
-              <span class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-gray-200
-                           dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                <span class="material-icons text-[14px] text-violet-500">layers</span>
-                {{ material()!.sub_category }}
-              </span>
-            }
-            @if (material()!.brand) {
-              <span class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-gray-200
-                           dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                <span class="material-icons text-[14px] text-amber-500">verified</span>
-                {{ material()!.brand }}
-              </span>
-            }
-          </div>
-        </div>
-
-        <!-- RIGHT: Detail panel -->
-        <div class="flex flex-col gap-5">
-
-          <!-- Product code + series -->
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-              {{ material()!.product_code }}
-            </span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30
-                         text-amber-700 dark:text-amber-400 uppercase tracking-wide">
-              Economy Series
-            </span>
-          </div>
-
-          <!-- Name -->
-          <h1 class="text-2xl sm:text-3xl font-bold text-zoeing-navy dark:text-white leading-snug">
-            {{ material()!.name || material()!.product_code }}
-          </h1>
-
-          <!-- Stock status -->
-          <div class="flex items-center gap-2">
-            @if (inStock()) {
-              <span class="flex items-center gap-1.5 text-sm font-semibold stock-success">
-                <span class="w-2.5 h-2.5 rounded-full stock-dot-success animate-pulse"></span>
-                In Stock
-              </span>
-              <span class="text-xs text-gray-400 dark:text-gray-500">
-                ({{ material()!.count }} units available)
-              </span>
-            } @else {
-              <span class="flex items-center gap-1.5 text-sm font-semibold stock-danger">
-                <span class="w-2.5 h-2.5 rounded-full stock-dot-danger"></span>
-                Out of Stock
-              </span>
-            }
-          </div>
-
-          <!-- Price -->
-          <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-5 py-4">
-            @if (material()!.price) {
-              <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Price from</p>
-              <p class="text-3xl font-extrabold text-zoeing-secondary dark:text-zoeing-secondary-light">
-                {{ material()!.price! | inrCurrency }}
-              </p>
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Exclusive of GST · Bulk pricing available</p>
-            } @else {
-              <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">Price on Request</p>
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Contact us for bulk or custom pricing</p>
-            }
-          </div>
-
-          <!-- Qty + Actions -->
-          <div class="flex flex-col gap-3">
-
-            @if (inStock()) {
-              <!-- Qty selector -->
-              <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-600 dark:text-gray-300 font-medium">Qty:</span>
-                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                  <button (click)="decreaseQty()"
-                    class="px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700
-                           transition-colors font-bold text-lg leading-none">−</button>
-                  <span class="px-4 py-1.5 text-sm font-semibold text-gray-800 dark:text-gray-100 min-w-[2.5rem] text-center">
-                    {{ qty() }}
-                  </span>
-                  <button (click)="increaseQty()"
-                    class="px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700
-                           transition-colors font-bold text-lg leading-none">+</button>
-                </div>
-              </div>
-
-              <!-- Action buttons -->
-              <div class="flex gap-3">
-                <button (click)="onAddToCart()"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm
-                         transition-colors"
-                  [class]="addedFeedback()
-                    ? 'bg-green-600 text-white'
-                    : 'bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white'">
-                  <span class="material-icons text-base">{{ addedFeedback() ? 'check_circle' : 'add_shopping_cart' }}</span>
-                  {{ addedFeedback() ? 'Added!' : 'Add to Cart' }}
-                </button>
-                <button (click)="onQuote()"
-                  class="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm
-                         bg-zoeing-secondary hover:bg-zoeing-secondary-dark text-white transition-colors">
-                  <span class="material-icons text-base">description</span>
-                  Request Quote
-                </button>
-              </div>
-            } @else {
-              <!-- Qty selector for out-of-stock too -->
-              <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-600 dark:text-gray-300 font-medium">Qty:</span>
-                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                  <button (click)="decreaseQty()"
-                    class="px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700
-                           transition-colors font-bold text-lg leading-none">−</button>
-                  <span class="px-4 py-1.5 text-sm font-semibold text-gray-800 dark:text-gray-100 min-w-[2.5rem] text-center">
-                    {{ qty() }}
-                  </span>
-                  <button (click)="increaseQty()"
-                    class="px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700
-                           transition-colors font-bold text-lg leading-none">+</button>
-                </div>
-              </div>
-              <button (click)="onRequestMail()"
-                class="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm
-                       bg-brand-blue hover:bg-brand-blue/90 text-white transition-colors">
-                <span class="material-icons text-base">add_shopping_cart</span>
-                Add to Cart (Request by Mail)
-              </button>
-            }
-          </div>
-
-          <!-- Trust badges -->
-          <div class="flex flex-wrap gap-4 pt-2 border-t border-gray-100 dark:border-gray-800">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-              <span class="material-icons text-sm text-green-500">verified_user</span>
-              Quality Assured
-            </div>
-            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-              <span class="material-icons text-sm text-blue-500">local_shipping</span>
-              Fast Dispatch
-            </div>
-            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-              <span class="material-icons text-sm text-amber-500">support_agent</span>
-              Expert Support
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Datasheets & Manuals -->
-      @if (material()!.attachment?.length) {
-        <div class="mt-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-          <h2 class="text-base font-bold text-zoeing-navy dark:text-white mb-4 flex items-center gap-2">
-            <span class="material-icons text-base text-zoeing-navy dark:text-zoeing-gold">attach_file</span>
-            Datasheets &amp; Manuals
-          </h2>
-          <div class="flex flex-col gap-2">
-            @for (doc of material()!.attachment!; track doc.file) {
-              <a [href]="doc.file" target="_blank" rel="noopener noreferrer"
-                 class="inline-flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400
-                        hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
-                <span class="material-icons text-[16px] text-red-500">picture_as_pdf</span>
-                {{ doc.name }}
-              </a>
-            }
-          </div>
-        </div>
-      }
-
-      <!-- Description + Specifications -->
-      <div class="mt-10 grid lg:grid-cols-2 gap-6">
-
-        <!-- Description -->
-        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-          <h2 class="text-base font-bold text-zoeing-navy dark:text-white mb-4 flex items-center gap-2">
-            <span class="material-icons text-base text-zoeing-navy dark:text-zoeing-gold">description</span>
-            Description
-          </h2>
-          @if (material()!.description) {
-            <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              {{ material()!.description }}
-            </p>
+  <app-layout-wrapper layoutType="full">
+    <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <aside class="hidden lg:flex w-1/3 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 flex-col relative">
+        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style="background-image: radial-gradient(circle, #0D4C6A 1px, transparent 1px); background-size: 30px 30px;"></div>
+        <div class="relative z-10 flex-1 flex items-center justify-center p-12">
+          @if (material()?.image) {
+            <img [src]="material()!.image!" [alt]="material()!.name" class="object-contain w-full h-full max-h-[70vh] transition-transform duration-500 hover:scale-105" />
           } @else {
-            <div class="flex flex-col items-center py-6 text-gray-300 dark:text-gray-700">
-              <span class="material-icons text-3xl mb-2">notes</span>
-              <p class="text-sm">No description available for this product.</p>
-              <p class="text-xs mt-1 text-gray-400">Contact us for detailed specifications.</p>
+            <div class="flex flex-col items-center gap-3 text-gray-300 dark:text-gray-700 select-none">
+              <span class="material-icons text-9xl">precision_manufacturing</span>
+              <span class="text-sm font-mono uppercase tracking-widest">No Image Available</span>
             </div>
           }
         </div>
+        <div class="absolute top-6 left-6 z-20 flex flex-col gap-2">
+          @if (material()?.industry) {
+            <span class="bg-zoeing-gold text-zoeing-navy text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest shadow-sm">
+              {{ material()!.industry }}
+            </span>
+          }
+          @if (isEconomySeries()) {
+            <span class="bg-zoeing-navy text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest shadow-sm">
+              Economy Series
+            </span>
+          }
+        </div>
+      </aside>
 
-        <!-- Product Specifications -->
-        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-          <h2 class="text-base font-bold text-zoeing-navy dark:text-white mb-4 flex items-center gap-2">
-            <span class="material-icons text-base text-zoeing-navy dark:text-zoeing-gold">fact_check</span>
-            Product Details
-          </h2>
-          <table class="w-full text-sm">
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-              <tr>
-                <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium w-40">Product Code</td>
-                <td class="py-2.5 font-mono text-gray-800 dark:text-gray-100">{{ material()!.product_code }}</td>
-              </tr>
-              @if (material()!.name) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Name</td>
-                  <td class="py-2.5 text-gray-800 dark:text-gray-100">{{ material()!.name }}</td>
-                </tr>
-              }
-              @if (material()!.category) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Category</td>
-                  <td class="py-2.5 text-gray-800 dark:text-gray-100">{{ material()!.category }}</td>
-                </tr>
-              }
-              @if (material()!.sub_category) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Sub-Category</td>
-                  <td class="py-2.5 text-gray-800 dark:text-gray-100">{{ material()!.sub_category }}</td>
-                </tr>
-              }
-              @if (material()!.industry) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Industry</td>
-                  <td class="py-2.5 text-gray-800 dark:text-gray-100">{{ material()!.industry }}</td>
-                </tr>
-              }
-              @if (material()!.brand) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Brand</td>
-                  <td class="py-2.5 text-gray-800 dark:text-gray-100">{{ material()!.brand }}</td>
-                </tr>
-              }
-              <tr>
-                <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Availability</td>
-                <td class="py-2.5">
-                  @if (inStock()) {
-                    <span class="stock-success font-semibold">In Stock ({{ material()!.count }})</span>
+      <main class="flex-1 overflow-y-auto relative">
+        <div class="max-w-4xl mx-auto p-6 lg:p-12">
+          <nav class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-8">
+            <button (click)="goBack()" class="flex items-center gap-1 hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">
+              <span class="material-icons text-sm">arrow_back</span> Back
+            </button>
+            @if (material()?.category) {
+              <span class="material-icons text-[12px]">chevron_right</span>
+              <a [routerLink]="['/product-list']" [queryParams]="{ category: material()!.category }" class="hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">{{ material()!.category }}</a>
+            }
+            @if (material()?.sub_category) {
+              <span class="material-icons text-[12px]">chevron_right</span>
+              <a [routerLink]="['/product-list']" [queryParams]="{ category: material()!.category, subCategory: material()!.sub_category }" class="hover:text-zoeing-navy dark:hover:text-zoeing-gold transition-colors">{{ material()!.sub_category }}</a>
+            }
+            <span class="material-icons text-[12px]">chevron_right</span>
+            <span class="text-gray-600 dark:text-gray-300 truncate max-w-[200px]">{{ material()?.name }}</span>
+          </nav>
+
+          @if (loading()) {
+            <div class="space-y-8 animate-pulse">
+              <div class="h-12 bg-gray-200 dark:bg-gray-800 rounded w-3/4"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/4"></div>
+              <div class="h-64 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="h-32 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
+                <div class="h-32 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
+              </div>
+            </div>
+          } @else if (notFound()) {
+            <div class="flex flex-col items-center justify-center py-24 text-gray-400 dark:text-gray-600">
+              <span class="material-icons text-6xl mb-4">inventory_2</span>
+              <p class="text-xl font-semibold mb-2">Product not found</p>
+              <a routerLink="/inventory" class="btn-primary">Browse Inventory</a>
+            </div>
+          } @else if (material()) {
+            <div class="space-y-10">
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-widest">{{ material()!.product_code }}</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-zoeing-gold/20 text-zoeing-gold uppercase tracking-wide border border-zoeing-gold/30">Verified Grade</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-display font-black text-zoeing-navy dark:text-white leading-tight">{{ material()!.name || material()!.product_code }}</h1>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                  <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4 flex items-center gap-2">
+                    <span class="material-icons text-sm">description</span> Technical Description
+                  </h2>
+                  @if (material()!.description) {
+                    <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ material()!.description }}</p>
                   } @else {
-                    <span class="stock-danger font-semibold">Out of Stock</span>
+                    <p class="text-sm italic text-gray-400">No detailed description available for this component.</p>
                   }
-                </td>
-              </tr>
-              @if (material()!.price) {
-                <tr>
-                  <td class="py-2.5 pr-4 text-gray-400 dark:text-gray-500 font-medium">Price</td>
-                  <td class="py-2.5 font-semibold text-zoeing-secondary dark:text-zoeing-secondary-light">
-                    {{ material()!.price! | inrCurrency }}
-                  </td>
-                </tr>
+                </div>
+
+                <div class="md:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden shadow-sm">
+                  <div class="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 flex items-center gap-2">
+                      <span class="material-icons text-sm">fact_check</span> Technical Specifications
+                    </h2>
+                  </div>
+                  <table class="w-full text-sm text-left">
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                      @for (spec of specifications(); track spec.label) {
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <td class="py-3 px-4 text-gray-500 dark:text-gray-400 font-medium w-1/3">{{ spec.label }}</td>
+                          <td class="py-3 px-4 font-mono text-gray-900 dark:text-white">{{ spec.value }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="md:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                  <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4 flex items-center gap-2">
+                    <span class="material-icons text-sm">attach_file</span> Documentation
+                  </h2>
+                  <div class="flex flex-wrap gap-3">
+                    @for (url of attachments(); track url; let i = $index) {
+                      <a [href]="url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">
+                        <span class="material-icons text-sm text-red-500">picture_as_pdf</span>
+                        Datasheet {{ i + 1 }}
+                      </a>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </main>
+
+      <div class="hidden lg:flex w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex flex-col p-6 relative">
+        <div class="sticky top-6 space-y-8">
+          <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Unit Price</p>
+            @if (material()?.price) {
+              <div class="flex items-baseline gap-2">
+                <p class="text-4xl font-display font-black text-zoeing-navy dark:text-white">{{ material()!.price | inrCurrency }}</p>
+              </div>
+              <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">
+                Exclusive of GST (18%) <br>
+                Bulk pricing available upon request.
+              </p>
+            } @else {
+              <p class="text-xl font-bold text-gray-500 dark:text-gray-400">Price on Request</p>
+              <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">
+                Contact our technical team for custom pricing based on volume.
+              </p>
+            }
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Quantity</span>
+              <span class="text-xs font-mono text-gray-400">{{ material()?.count }} available</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex-1 flex items-center border border-gray-300 dark:border-gray-800 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
+                <button (click)="decreaseQty()" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  <span class="material-icons text-lg">remove</span>
+                </button>
+                <span class="flex-1 text-center font-mono font-bold text-lg">{{ qty() }}</span>
+                <button (click)="increaseQty()" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  <span class="material-icons text-lg">add</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              @if (inStock()) {
+                <button (click)="onAddToCart()" [class]="addedFeedback() ? 'bg-green-600 text-white' : 'bg-zoeing-navy text-white hover:bg-zoeing-navy-light'" class="w-full py-3 rounded-xl font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                  <span class="material-icons text-base">{{ addedFeedback() ? 'check_circle' : 'add_shopping_cart' }}</span>
+                  {{ addedFeedback() ? 'Added to Cart' : 'Add to Cart' }}
+                </button>
+              } @else {
+                <button (click)="onRequestMail()" class="w-full py-3 rounded-xl bg-brand-blue text-white font-bold text-sm hover:bg-brand-blue/90 transition-all shadow-md flex items-center justify-center gap-2">
+                  <span class="material-icons text-base">mail</span>
+                  Request by Mail
+                </button>
               }
-            </tbody>
-          </table>
+              <button (click)="onQuote()" class="w-full py-3 rounded-xl bg-zoeing-secondary text-white font-bold text-sm hover:bg-zoeing-secondary-dark transition-all shadow-md flex items-center justify-center gap-2">
+                <span class="material-icons text-base">description</span>
+                Request Technical Quote
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-gray-200 dark:border-gray-800 space-y-3">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <span class="material-icons text-green-500 text-sm">verified_user</span>
+              <span class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Quality Assured Compliance</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <span class="material-icons text-blue-500 text-sm">local_shipping</span>
+              <span class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Express Dispatch Logistics</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <span class="material-icons text-amber-500 text-sm">support_agent</span>
+              <span class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Expert Sourcing Support</span>
+            </div>
+          </div>
         </div>
       </div>
-    }
 
-  </main>
+      <div class="lg:hidden flex flex-col p-6 space-y-8">
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex items-center justify-center min-h-64">
+          @if (material()?.image) {
+            <img [src]="material()!.image!" [alt]="material()!.name" class="object-contain max-h-64" />
+          } @else {
+            <span class="material-icons text-6xl text-gray-300">precision_manufacturing</span>
+          }
+        </div>
+
+        <div class="space-y-6">
+          <h1 class="text-3xl font-display font-black text-zoeing-navy dark:text-white">{{ material()?.name }}</h1>
+          <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+            <div class="flex items-baseline gap-2 mb-4">
+              <p class="text-2xl font-display font-black text-zoeing-navy dark:text-white">{{ material()?.price | inrCurrency }}</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex-1 flex items-center border rounded-lg overflow-hidden bg-white dark:bg-gray-900">
+                <button (click)="decreaseQty()" class="px-4 py-2 bg-gray-100 dark:bg-gray-800"><span class="material-icons text-sm">remove</span></button>
+                <span class="flex-1 text-center font-bold">{{ qty() }}</span>
+                <button (click)="increaseQty()" class="px-4 py-2 bg-gray-100 dark:bg-gray-800"><span class="material-icons text-sm">add</span></button>
+              </div>
+            </div>
+            <button (click)="onAddToCart()" class="w-full py-3 rounded-xl bg-zoeing-navy text-white font-bold">Add to Cart</button>
+            <button (click)="onQuote()" class="w-full py-3 rounded-xl bg-zoeing-secondary text-white font-bold">Request Quote</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-layout-wrapper>
   `,
+
 })
 export class MaterialDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -382,6 +254,32 @@ export class MaterialDetailComponent implements OnInit {
   qty = signal(1);
 
   inStock = computed(() => (this.material()?.count ?? 0) > 0);
+
+  readonly isEconomySeries = computed(() => {
+    const m = this.material();
+    return m?.industry === 'Economy Series' || m?.description?.toLowerCase().includes('economy series');
+  });
+
+  readonly specifications = computed(() => {
+    const m = this.material();
+    if (!m) return [];
+    return [
+      { label: 'Product Code', value: m.product_code },
+      { label: 'Manufacturer/Brand', value: m.brand || 'ZOIENG' },
+      { label: 'Category', value: m.category || 'General' },
+      { label: 'Sub-Category', value: m.sub_category || 'General' },
+      { label: 'Industrial Sector', value: m.industry || 'General Manufacturing' },
+      { label: 'Availability', value: this.inStock() ? `${m.count} units in stock` : 'Out of Stock' },
+      { label: 'Price', value: m.price ? `${m.price} (Excl. GST)` : 'On Request' },
+    ];
+  });
+
+  readonly attachments = computed(() => {
+    const m = this.material();
+    if (!m) return [];
+    const urls = [m.attachment_1, m.attachment_2, m.attachment_3, m.attachment_4];
+    return urls.filter((u): u is string => !!u);
+  });
 
   ngOnInit(): void {
     const state = history.state as { material?: ApiMaterial };
@@ -408,7 +306,6 @@ export class MaterialDetailComponent implements OnInit {
   }
 
   goBack(): void { history.back(); }
-
   increaseQty(): void { this.qty.update(q => q + 1); }
   decreaseQty(): void { this.qty.update(q => Math.max(1, q - 1)); }
 
