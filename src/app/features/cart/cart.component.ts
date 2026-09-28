@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../core/services/cart.service';
+import { SafeStorageService } from '../../core/services/safe-storage.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
 
@@ -287,6 +288,7 @@ const FLAT_PROMOS: Record<string, number> = {
 export class CartComponent {
   protected cart   = inject(CartService);
   private   router = inject(Router);
+  private   storage = inject(SafeStorageService);
 
   promoInput  = '';
   activePromo = signal<string | null>(null);
@@ -339,7 +341,7 @@ export class CartComponent {
       price: i.price,
       qty: i.qty,
     }));
-    localStorage.setItem('quoteItems', JSON.stringify(quoteItems));
+    this.storage.setItem('quoteItems', JSON.stringify(quoteItems));
     this.router.navigate(['/quote']);
   }
 }

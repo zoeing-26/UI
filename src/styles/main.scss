@@ -538,3 +538,13 @@ textarea:focus-visible {
   // brand marquee (inline animation name)
   * { animation-name: none !important; }
 }
+
+// Guard against horizontal page overflow (ticker tracks, long codes, shadows).
+// CAREFUL with `clip` here: it propagates from body to the viewport in Chrome
+// and kills vertical scrolling of the whole page (measured, not theoretical).
+// `hidden` on body propagates as viewport overflow-x: hidden + overflow-y: auto,
+// which clips horizontal overflow while keeping normal page scroll and
+// position: sticky (viewport-level overflow does not break sticky).
+body {
+  overflow-x: hidden;
+}

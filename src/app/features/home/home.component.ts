@@ -48,11 +48,13 @@ import { CartService } from '../../core/services/cart.service';
         </div>
       </div>
 
-      <section class="mt-8 flex gap-4">
-        <div class="hidden lg:block">
-          <app-category-sidebar />
+      <!-- Dynamic split: collapsed = categories 25% / carousel 75%;
+           expanded  = 50% / 50%. Widths animate via the column transition. -->
+      <section class="mt-8 flex flex-col gap-4 lg:flex-row">
+        <div class="flex w-full flex-col lg:w-[25%] lg:min-w-[15rem] transition-[width] duration-300 ease-out" [class.lg:w-[50%]]="catOpen()">
+          <app-category-sidebar class="flex w-full flex-1 flex-col" [(open)]="catOpen" />
         </div>
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 transition-all duration-300 ease-out">
           <app-hero-carousel />
         </div>
       </section>
@@ -94,6 +96,9 @@ export class HomeComponent {
 
   readonly cartCount = this.cart.count;
   showBackToTop = signal(false);
+
+  /** Category panel open state — drives the 25/75 → 50/50 column split */
+  catOpen = signal(false);
 
   @HostListener('window:scroll')
   onScroll(): void {

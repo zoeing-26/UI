@@ -14,6 +14,27 @@ This repository is an Angular 18 standalone frontend for the ZOIENG B2B commerce
 - Production build: `npm run build:prod`
 - Regular build: `npm run build`
 - Test: `npm test`
+- Build + run SSR server: `npm run build && npm run serve:ssr:zoieng-ui` (PORT env var overrides the default 4000)
+
+## SSR (server-side rendering) rules
+The app ships Angular SSR (`@angular/ssr`) with client hydration, event replay,
+and the default HTTP transfer cache. Follow these rules so the server render
+stays clean and hydration does not break:
+- `window`, `document`, `localStorage`, and `history` do not exist on the server.
+  Never touch them directly — inject [SafeStorageService](src/app/core/services/safe-storage.service.ts)
+  for storage/viewport/doc access, or guard with `typeof window !== 'undefined'`.
+- Visual timers (carousel autoplay, marquee, toasts) must be started only when
+  `SafeStorageService.inBrowser` is true, or inside `afterNextRender(...)`.
+- Browser-only setup in directives uses `afterNextRender` (see
+  [parallax.directive.ts](src/app/shared/directives/parallax.directive.ts),
+  [lazy-image.directive.ts](src/app/shared/directives/lazy-image.directive.ts)).
+  With hydration, `ngOnInit` does NOT re-run in the browser — do not rely on it
+  for client-only initialization.
+- `@defer (on viewport)` blocks skip their content on the server; do not put
+  SEO-critical markup inside `@defer`.
+- Security headers (CSP, HSTS, X-Frame-Options, …) are set in [server.ts](server.ts).
+  When adding a new external origin (API, CDN, websocket), update the CSP there
+  (`API_ORIGIN` env var overrides the API host).
 
 ## Project conventions
 - Prefer the Angular 18 standalone style already used throughout the app.

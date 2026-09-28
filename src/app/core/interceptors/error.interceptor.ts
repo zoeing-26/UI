@@ -26,7 +26,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           console.error('[Error] Server error:', error.status, req.url);
           break;
         default:
-          if (!navigator.onLine) {
+          // navigator is undefined during SSR — guard before checking
+          if (typeof navigator !== 'undefined' && !navigator.onLine) {
             console.error('[Error] No internet connection');
           }
       }
