@@ -215,7 +215,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private updateMobileState(): void {
     // SSR guard: window is undefined during server rendering
     if (typeof window === 'undefined') return;
-    this.isMobile.set(window.innerWidth < 1024);
+    // Must match the CSS breakpoints: desktop nav is `md:flex` (≥768) and the
+    // hamburger is `md:hidden` (hidden ≥768). Using 1024 here left the 768–1023
+    // tablet range with NO menu at all.
+    this.isMobile.set(window.innerWidth < 768);
     if (!this.isMobile()) {
       this.mobileMenuOpen.set(false);
     }

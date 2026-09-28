@@ -51,8 +51,8 @@ import { CartService } from '../../core/services/cart.service';
       <!-- Dynamic split: collapsed = categories 25% / carousel 75%;
            expanded  = 50% / 50%. Widths animate via the column transition. -->
       <section class="mt-8 flex flex-col gap-4 lg:flex-row">
-        <div class="w-full lg:w-[25%] lg:min-w-[15rem] transition-[width] duration-300 ease-out" [class.lg:w-[50%]]="catOpen()">
-          <app-category-sidebar [(open)]="catOpen" />
+        <div class="flex w-full flex-col lg:w-[25%] lg:min-w-[15rem] transition-[width] duration-300 ease-out" [class.lg:w-[50%]]="catOpen()">
+          <app-category-sidebar class="flex w-full flex-1 flex-col" [(open)]="catOpen" />
         </div>
         <div class="flex-1 min-w-0 transition-all duration-300 ease-out">
           <app-hero-carousel />

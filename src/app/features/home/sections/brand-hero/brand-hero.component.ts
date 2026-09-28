@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, OnInit, OnDestroy,
+  Component, ChangeDetectionStrategy, NgZone, inject, signal, OnInit, OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -118,6 +118,7 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
 export class BrandHeroComponent implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private browser = inject(SafeStorageService);
+  private zone = inject(NgZone);
   private destroy$ = new Subject<void>();
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -154,11 +155,16 @@ export class BrandHeroComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nextIndex.set(this.currentIndex());
-    // SSR: autoplay timer + document access are browser-only
-    if (!this.browser.inBrowser) return;
-    interval(2000)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.goToNext());
+    // SSR: autoplay timer + document access are browser-only.
+    // A forever-rescheduling interval inside the zone keeps the app unstable
+    // and blocks hydration (NG0506) — keep the TIMER outside the zone. Each
+    // state write re-enters the zone: signal writes made outside it don't
+    // schedule change detection in zone.js apps.
+    this.zone.runOutsideAngular(() => {
+      interval(2000)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.zone.run(() => this.goToNext()));
+    });
   }
 
   ngOnDestroy(): void {

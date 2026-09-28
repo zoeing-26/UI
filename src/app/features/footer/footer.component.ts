@@ -14,7 +14,7 @@ import { LanguageService } from '../../core/services/language.service';
     <!-- News Ticker -->
     <div class="bg-zoeing-navy text-white overflow-hidden py-2 flex items-center gap-3">
       <span class="shrink-0 bg-zoeing-gold text-zoeing-navy-dark text-[11px] font-bold px-3 py-1 ml-3">NEWS</span>
-      <div class="overflow-hidden flex-1">
+      <div class="min-w-0 overflow-hidden flex-1">
         <p class="animate-ticker text-sm whitespace-nowrap">
           Instant quotes available — submit your BOM and get competitive pricing within 24 hours &nbsp;&nbsp;|&nbsp;&nbsp;
           Economy Series: Factory automation components at up to 50% below standard market price &nbsp;&nbsp;|&nbsp;&nbsp;

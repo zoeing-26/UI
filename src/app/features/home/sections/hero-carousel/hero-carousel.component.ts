@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal, inject,
+  Component, ChangeDetectionStrategy, NgZone, OnInit, OnDestroy, signal, inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
@@ -107,6 +107,7 @@ interface Slide {
 export class HeroCarouselComponent implements OnInit, OnDestroy {
   protected lang = inject(LanguageService);
   private browser = inject(SafeStorageService);
+  private zone = inject(NgZone);
   current = signal(0);
   private timer?: ReturnType<typeof setInterval>;
 
@@ -202,7 +203,13 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
 
   startAuto(): void {
     if (!this.browser.inBrowser) return;
-    this.timer = setInterval(() => this.next(), 5000);
+    // A live interval keeps zone.js permanently unstable, which blocks
+    // hydration (NG0506) — keep the TIMER outside the zone. Each state write
+    // re-enters the zone: signal writes made outside it don't schedule
+    // change detection in zone.js apps.
+    this.zone.runOutsideAngular(() => {
+      this.timer = setInterval(() => this.zone.run(() => this.next()), 5000);
+    });
   }
 
   pauseAuto(): void { clearInterval(this.timer); }

@@ -25,7 +25,8 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
           : '-translate-x-full lg:translate-x-0 lg:w-72'"
         class="fixed lg:sticky top-0 left-0 z-40 h-screen transition-transform duration-300 ease-in-out
                backdrop-blur-md bg-white/90 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-800
-               flex flex-col shadow-[0_0_0_1px_rgba(15,23,42,0.02)]">
+               flex flex-col overflow-x-clip
+               shadow-[0_0_0_1px_rgba(15,23,42,0.02)]">
 
         <div class="p-5 border-b border-gray-200 dark:border-gray-800">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500 mb-4">
