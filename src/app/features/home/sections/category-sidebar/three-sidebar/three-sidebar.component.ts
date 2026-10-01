@@ -80,7 +80,7 @@ function webglSupported(): boolean {
       <div class="flex items-start justify-between">
         <span class="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-white/70">
           <span class="h-1.5 w-1.5 bg-amber-400 shadow-[0_0_8px_rgba(251,146,60,0.9)]"></span>
-          ZOIENG · Flow control
+          ZO-INDUSTRIAL · Flow control
         </span>
         <span class="font-mono text-[9px] uppercase tracking-[0.22em] text-white/40">PN-16</span>
       </div>

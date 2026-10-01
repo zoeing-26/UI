@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { ProductService } from '../../core/services/product.service';
+import { GeoLocationService, isMaterialBlocked } from '../../core/services/geo-location.service';
 import { ApiMaterial } from '../../models/product.model';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
@@ -17,6 +18,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
   template: `
   <app-layout-wrapper layoutType="full">
     <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      @if (!regionBlocked()) {
       <aside class="hidden lg:flex w-1/3 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 flex-col relative">
         <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style="background-image: radial-gradient(circle, #0D4C6A 1px, transparent 1px); background-size: 30px 30px;"></div>
         <div class="relative z-10 flex-1 flex items-center justify-center p-12">
@@ -42,6 +44,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
           }
         </div>
       </aside>
+      }
 
       <main class="flex-1 overflow-y-auto relative">
         <div class="max-w-4xl mx-auto p-6 lg:p-12">
@@ -76,6 +79,23 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
               <span class="material-icons text-6xl mb-4">inventory_2</span>
               <p class="text-xl font-semibold mb-2">Product not found</p>
               <a routerLink="/inventory" class="btn-primary">Browse Inventory</a>
+            </div>
+          } @else if (regionBlocked()) {
+            <div class="flex flex-col items-center justify-center py-24 text-center">
+              <div class="mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-red-200 bg-red-50 dark:border-red-900/60 dark:bg-red-950/40">
+                <span class="material-icons text-4xl text-red-400">public_off</span>
+              </div>
+              <p class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Not available in your region</p>
+              <p class="mb-8 max-w-md text-sm text-gray-500 dark:text-gray-400">
+                {{ material()!.name || material()!.product_code }} cannot be offered in
+                {{ regionName() }}. Our team can suggest suitable alternatives.
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <a routerLink="/inventory" class="btn-primary">Browse Inventory</a>
+                <a routerLink="/brand" class="flex items-center gap-2 rounded-xl border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
+                  <span class="material-icons text-base">factory</span> Manufacturers
+                </a>
+              </div>
             </div>
           } @else if (material()) {
             <div class="space-y-10">
@@ -136,6 +156,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
         </div>
       </main>
 
+      @if (!regionBlocked()) {
       <div class="hidden lg:flex w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex flex-col p-6 relative">
         <div class="sticky top-6 space-y-8">
           <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
@@ -208,7 +229,9 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
           </div>
         </div>
       </div>
+      }
 
+      @if (!regionBlocked()) {
       <div class="lg:hidden flex flex-col p-6 space-y-8">
         <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex items-center justify-center min-h-64">
           @if (material()?.image) {
@@ -236,6 +259,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
           </div>
         </div>
       </div>
+      }
     </div>
   </app-layout-wrapper>
   `,
@@ -246,6 +270,7 @@ export class MaterialDetailComponent implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductService);
   private cart = inject(CartService);
+  private geo = inject(GeoLocationService);
 
   material = signal<ApiMaterial | null>(null);
   loading = signal(true);
@@ -254,6 +279,12 @@ export class MaterialDetailComponent implements OnInit {
   qty = signal(1);
 
   inStock = computed(() => (this.material()?.count ?? 0) > 0);
+  /** Region blocking: this material must not be offered in the visitor's country. */
+  readonly regionBlocked = computed(() => {
+    const m = this.material();
+    return !!m && isMaterialBlocked(m, this.geo.country(), this.geo.blockedIds());
+  });
+  protected readonly regionName = computed(() => this.geo.countryName() || 'your country');
 
   readonly isEconomySeries = computed(() => {
     const m = this.material();
@@ -265,7 +296,7 @@ export class MaterialDetailComponent implements OnInit {
     if (!m) return [];
     return [
       { label: 'Product Code', value: m.product_code },
-      { label: 'Manufacturer/Brand', value: m.brand || 'ZOIENG' },
+      { label: 'Manufacturer/Brand', value: m.brand || 'ZO-Industrial Engineering Supplies' },
       { label: 'Category', value: m.category || 'General' },
       { label: 'Sub-Category', value: m.sub_category || 'General' },
       { label: 'Industrial Sector', value: m.industry || 'General Manufacturing' },

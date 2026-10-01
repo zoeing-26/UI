@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
+import { GeoLocationService, isMaterialBlocked } from '../../core/services/geo-location.service';
 import { ApiBrand, ApiMaterial } from '../../models/product.model';
 import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
 import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
@@ -196,6 +197,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
 })
 export class BrandComponent implements OnInit {
   private productService = inject(ProductService);
+  private geo            = inject(GeoLocationService);
   private router         = inject(Router);
   private route          = inject(ActivatedRoute);
 
@@ -232,9 +234,14 @@ export class BrandComponent implements OnInit {
   readonly filteredMaterials = computed((): ApiMaterial[] => {
     const brand = this.selectedBrand();
     if (!brand) return [];
+    // Region blocking: hide materials not sellable in the visitor's country.
+    const country = this.geo.country();
+    const visible = country
+      ? brand.materials.filter(m => !isMaterialBlocked(m, country, this.geo.blockedIds()))
+      : brand.materials;
     const q = this.searchQuery.toLowerCase().trim();
-    if (!q) return brand.materials;
-    return brand.materials.filter(m =>
+    if (!q) return visible;
+    return visible.filter(m =>
       (m.name ?? m.product_code).toLowerCase().includes(q) ||
       m.product_code.toLowerCase().includes(q) ||
       (m.description?.toLowerCase().includes(q) ?? false)

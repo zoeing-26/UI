@@ -1,10 +1,13 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { SafeStorageService } from './safe-storage.service';
+import { GeoLocationService } from './geo-location.service';
+import { isMaterialBlocked } from './geo-location.service';
 import { CartItem, MaterialCartItem, Product, ApiMaterial } from '../../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private readonly storage = inject(SafeStorageService);
+  private readonly geo = inject(GeoLocationService);
   private readonly PRODUCT_KEY  = 'zoieng_cart';
   private readonly MATERIAL_KEY = 'zoieng_material_cart';
 
@@ -55,6 +58,8 @@ export class CartService {
   // ── Material cart ──────────────────────────────────────────────────────────
 
   addMaterial(material: ApiMaterial, qty = 1): void {
+    // Region blocking: never allow a blocked material into the cart.
+    if (isMaterialBlocked(material, this.geo.country())) return;
     const price = typeof material.price === 'string' ? parseFloat(material.price) || 0 : (material.price ?? 0);
     this._matItems.update(items => {
       const existing = items.find(i => i.materialId === material.id);

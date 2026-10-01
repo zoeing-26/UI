@@ -6,7 +6,7 @@ export type Lang = 'en' | 'hi';
 // ─── English Translations ─────────────────────────────────────
 const EN: Record<string, string> = {
   // Brand
-  brand_name: 'zoieng',
+  brand_name: 'ZO-Industrial Engineering Supplies',
   brand_tagline: 'Reliable Industrial Products Powering Oil & Gas Operations',
 
   // Header
@@ -54,7 +54,7 @@ const EN: Record<string, string> = {
   free_cad: 'Free CAD Download',
 
   // Brand Hero (parallax section)
-  hero_eyebrow: 'ZOIENG ENGINEERING',
+  hero_eyebrow: 'ZO-INDUSTRIAL ENGINEERING SUPPLIES',
   hero_title_1: 'Precision Components.',
   hero_title_2: 'Delivered On Time.',
   hero_subtitle: 'Over 20 million parts. 3D CAD downloads. Same-day quotes. Built for global industrial operations.',
@@ -63,7 +63,7 @@ const EN: Record<string, string> = {
 
   // Sections
   popular_brand: 'Popular Brand',
-  zoeing_channel: 'ZOIENG Channel',
+  zoeing_channel: 'ZO-INDUSTRIAL Channel',
   know_more: 'Know More',
   view_more: 'View More',
   load_more: 'Load More',
@@ -80,7 +80,7 @@ const EN: Record<string, string> = {
   // Footer
   customer_service: 'Customer Service',
   my_account: 'My Account',
-  about_zoeing: 'About ZOIENG',
+  about_zoeing: 'About ZO-INDUSTRIAL',
   related_sites: 'Related Sites',
   register: 'Register',
   how_to_use: 'How To Use',
@@ -96,7 +96,7 @@ const EN: Record<string, string> = {
 
 // ─── Hindi Translations ───────────────────────────────────────
 const HI: Record<string, string> = {
-  brand_name: 'zoieng',
+  brand_name: 'ZO-Industrial Engineering Supplies',
   brand_tagline: 'तेल और गैस संचालन को शक्ति देने वाले भरोसेमंद औद्योगिक उत्पाद',
 
   tagline: 'तेल और गैस संचालन को शक्ति देने वाले भरोसेमंद औद्योगिक उत्पाद',
@@ -140,7 +140,7 @@ const HI: Record<string, string> = {
   part_number_checker: 'पार्ट नंबर चेकर',
   free_cad: 'मुफ्त CAD डाउनलोड',
 
-  hero_eyebrow: 'ZOIENG इंजीनियरिंग',
+  hero_eyebrow: 'ZO-INDUSTRIAL इंजीनियरिंग',
   hero_title_1: 'सटीक कॉम्पोनेंट।',
   hero_title_2: 'समय पर डिलीवर।',
   hero_subtitle: '2 करोड़ से अधिक पार्ट्स। 3D CAD डाउनलोड। उसी दिन कोटेशन। भारत के औद्योगिक भविष्य के लिए बनाया गया।',
@@ -148,7 +148,7 @@ const HI: Record<string, string> = {
   request_a_quote: 'कोटेशन अनुरोध',
 
   popular_brand: 'लोकप्रिय ब्रांड',
-  zoeing_channel: 'ZOIENG चैनल',
+  zoeing_channel: 'ZO-INDUSTRIAL चैनल',
   know_more: 'और जानें',
   view_more: 'और देखें',
   load_more: 'और लोड करें',
@@ -164,7 +164,7 @@ const HI: Record<string, string> = {
 
   customer_service: 'ग्राहक सेवा',
   my_account: 'मेरा खाता',
-  about_zoeing: 'ZOIENG के बारे में',
+  about_zoeing: 'ZO-INDUSTRIAL के बारे में',
   related_sites: 'संबंधित साइटें',
   register: 'रजिस्टर करें',
   how_to_use: 'कैसे उपयोग करें',

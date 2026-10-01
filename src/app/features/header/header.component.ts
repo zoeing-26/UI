@@ -23,10 +23,10 @@ interface NavItem { label: string; key: string; link: string; hasDropdown?: bool
     <div class="border-b border-[#dfeaf1] bg-[#f4f6f8] px-3 py-2.5 sm:px-4 dark:border-gray-800 dark:bg-gray-900">
       <div class="mx-auto flex max-w-[1420px] flex-wrap items-center gap-2 sm:gap-3 md:flex-nowrap md:gap-4">
 
-        <a routerLink="/" class="shrink-0" aria-label="ZOIENG Home">
+        <a routerLink="/" class="shrink-0" aria-label="ZO-Industrial Engineering Supplies Home">
           <img
             src="assets/ZO_Industrial_Engineering_Supplies_Transparent.svg"
-            alt="ZOIENG"
+            alt="ZO-Industrial Engineering Supplies"
             class="h-9 w-auto sm:h-10 md:h-[52px]"
           />
         </a>

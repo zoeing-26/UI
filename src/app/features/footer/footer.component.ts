@@ -51,7 +51,7 @@ import { LanguageService } from '../../core/services/language.service';
 
     <!-- Main Footer Links -->
     <div class="bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      <div class="max-w-screen-xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="max-w-screen-xl mx-auto grid grid-cols-2 md:grid-cols-2 gap-8">
         @for (col of footerColumns; track col.title) {
           <div>
             <h4 class="font-bold text-sm text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -91,11 +91,11 @@ import { LanguageService } from '../../core/services/language.service';
         </div>
 
         <p class="text-xs text-gray-400 dark:text-gray-500 text-center">
-          © {{ year }} ZOIENG Global Pvt. Ltd. All rights reserved.
+          © {{ year }} ZO-Industrial Engineering Supplies. All rights reserved.
         </p>
 
         <div class="text-xs text-gray-500 dark:text-gray-400 text-right">
-          <p class="font-semibold text-gray-700 dark:text-gray-200">ZOIENG Global Contact</p>
+          <p class="font-semibold text-gray-700 dark:text-gray-200">ZO-Industrial Engineering Supplies — Contact</p>
           <p>📞 1800-XXX-XXXX &nbsp;|&nbsp; ✉ support&#64;zoieng.com</p>
         </div>
       </div>
@@ -130,20 +130,8 @@ export class FooterComponent {
       { label: 'Order History',   route: null,         external: false },
       { label: 'Quote History',   route: null,         external: false },
     ] },
-    { title: 'About ZOIENG', links: [
-      { label: 'Company Profile', route: '/about',     external: false },
-      { label: 'Code of Conduct', route: null,         external: true  },
-      { label: 'Privacy Policy',  route: null,         external: false },
-      { label: 'Terms of Use',    route: null,         external: false },
-      { label: 'Eco-Friendly',    route: null,         external: true  },
-      { label: 'RoHS Information',route: null,         external: false },
-    ] },
-    { title: 'Related Sites', links: [
-      { label: 'ZOIENG Group Inc.',         route: null,          external: true  },
-      { label: 'Country/Region/Language',   route: null,          external: true  },
-      { label: 'Technical Data',            route: '/inventory',  external: false },
-      { label: 'Technical Tutorial',        route: null,          external: true  },
-    ] },
+    // NOTE: 'About ZOIENG' and 'Related Sites' columns intentionally removed —
+    // no real target URLs yet. Restore them (and md:grid-cols-4) when links exist.
   ];
 
   readonly socials = [

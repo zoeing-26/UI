@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LanguageService } from '../../../../core/services/language.service';
 import { ProductService } from '../../../../core/services/product.service';
+import { GeoLocationService, isMaterialBlocked } from '../../../../core/services/geo-location.service';
 import { ApiCategory, ApiMaterial } from '../../../../models/product.model';
 import { InrCurrencyPipe } from '../../../../shared/pipes/inr-currency.pipe';
 import { ThreeSidebarComponent } from './three-sidebar/three-sidebar.component';
@@ -249,6 +250,7 @@ import { ThreeSidebarComponent } from './three-sidebar/three-sidebar.component';
 export class CategorySidebarComponent implements OnInit {
   protected lang = inject(LanguageService);
   private productService = inject(ProductService);
+  private geo = inject(GeoLocationService);
   private router = inject(Router);
 
   categories = signal<ApiCategory[]>([]);
@@ -271,9 +273,13 @@ export class CategorySidebarComponent implements OnInit {
     this.categories().find(c => c.name === this.hoveredCategory())?.sub_category ?? []
   );
 
-  hoveredMaterials = computed(() =>
-    this.hoveredSubCategories().find(s => s.name === this.hoveredSubCategory())?.materials ?? []
-  );
+  hoveredMaterials = computed(() => {
+    const materials =
+      this.hoveredSubCategories().find(s => s.name === this.hoveredSubCategory())?.materials ?? [];
+    // Region blocking: hide materials not sellable in the visitor's country.
+    const country = this.geo.country();
+    return country ? materials.filter(m => !isMaterialBlocked(m, country, this.geo.blockedIds())) : materials;
+  });
 
   // ── Icon palettes ──────────────────────────────────────────────────────────
 

@@ -110,6 +110,6 @@ export class HomeComponent {
   }
 
   openWhatsApp(): void {
-    window.open('https://wa.me/918XXXXXXXXX?text=Hello+ZOIENG', '_blank');
+    window.open('https://wa.me/918XXXXXXXXX?text=Hello+ZO-Industrial+Engineering+Supplies', '_blank');
   }
 }

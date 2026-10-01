@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } 
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
+import { GeoLocationService, isMaterialBlocked } from '../../core/services/geo-location.service';
 import { Product, ProductFilter, ApiMaterial } from '../../models/product.model';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
@@ -106,6 +107,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
 export class ProductListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
+  private geo = inject(GeoLocationService);
   protected lang = inject(LanguageService);
 
   products = signal<Product[]>([]);
@@ -157,7 +159,11 @@ export class ProductListComponent implements OnInit {
     this.materialsMode.set(true);
     this.productService.getMaterialsBySubCategory(category, subCategory).subscribe({
       next: items => {
-        this.materials.set(items);
+        // Region blocking: hide materials not sellable in the visitor's country.
+        const country = this.geo.country();
+        this.materials.set(country
+          ? items.filter(m => !isMaterialBlocked(m, country, this.geo.blockedIds()))
+          : items);
         this.loading.set(false);
       },
       error: () => {

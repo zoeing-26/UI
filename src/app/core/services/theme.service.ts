@@ -8,7 +8,9 @@ export class ThemeService {
   private readonly storage = inject(SafeStorageService);
   private readonly STORAGE_KEY = 'zoieng_theme';
 
-  private _theme = signal<Theme>('light');
+  // Dark is the site default (business decision); an explicit user choice
+  // saved in localStorage always wins over the default.
+  private _theme = signal<Theme>('dark');
 
   /** Public read-only signal */
   readonly theme = this._theme.asReadonly();
@@ -28,17 +30,18 @@ export class ThemeService {
     });
   }
 
-  /** Initialize from localStorage or system preference */
+  /**
+   * Initialize from localStorage; dark is the default when nothing is saved.
+   * (The old system-preference fallback was removed — the business wants a
+   * consistent dark-first look, and the user can still switch to light.)
+   */
   init(): void {
     const saved = this.storage.getItem(this.STORAGE_KEY) as Theme | null;
     if (saved === 'light' || saved === 'dark') {
       this._theme.set(saved);
       return;
     }
-    // Fallback to system preference (browser only; server stays light)
-    if (!this.storage.inBrowser) return;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    this._theme.set(prefersDark ? 'dark' : 'light');
+    this._theme.set('dark');
   }
 
   /** Toggle between light and dark */

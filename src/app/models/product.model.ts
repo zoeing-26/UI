@@ -78,6 +78,12 @@ export interface SubCategory {
 
 // ─── API Category Models (v1/materials response) ──────────────────────────────
 
+/** A country where a material must not be offered (region blocking). */
+export interface ApiBlockedCountry {
+  code: string;   // ISO-3166 alpha-2, e.g. "AE"
+  name: string;   // e.g. "United Arab Emirates"
+}
+
 export interface ApiMaterial {
   id: number;
   name?: string;
@@ -95,6 +101,8 @@ export interface ApiMaterial {
   attachment_3?: string | null;
   attachment_4?: string | null;
   attachment?: never[];
+  /** Countries where this material is blocked (from /v1/brand_materials). */
+  blocked_countries?: ApiBlockedCountry[];
 }
 
 // Shape returned by GET /v1/brand_materials

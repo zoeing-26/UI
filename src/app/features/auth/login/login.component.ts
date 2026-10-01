@@ -38,7 +38,7 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
           }
         </ul>
       </div>
-      <p class="text-white/40 text-xs">&copy; 2025 Zoieng Global Pvt. Ltd.</p>
+      <p class="text-white/40 text-xs">&copy; 2025 ZO-Industrial Engineering Supplies</p>
     </div>
 
     <!-- Right form panel -->
@@ -53,7 +53,7 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
       <div class="w-full max-w-sm">
         <h2 class="font-display font-black text-3xl text-gray-900 dark:text-white mb-1">Sign in</h2>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">
-          New to Zoieng?
+          New to ZO-Industrial?
           <a routerLink="/register" class="text-zoeing-primary dark:text-zoeing-accent font-semibold hover:underline">
             Create an account
           </a>
@@ -150,7 +150,7 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
         <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 text-center">
           <p class="text-xs text-gray-400 dark:text-gray-500">
-            By signing in you agree to Zoieng's
+            By signing in you agree to ZO-Industrial's
             <a href="#" class="underline hover:text-zoeing-primary dark:hover:text-zoeing-accent">Terms of Service</a>
             and
             <a href="#" class="underline hover:text-zoeing-primary dark:hover:text-zoeing-accent">Privacy Policy</a>.

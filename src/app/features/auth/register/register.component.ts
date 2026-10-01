@@ -43,7 +43,7 @@ function passwordMatch(control: AbstractControl): ValidationErrors | null {
           }
         </ul>
       </div>
-      <p class="text-white/40 text-xs">&copy; 2025 Zoieng Global Pvt. Ltd.</p>
+      <p class="text-white/40 text-xs">&copy; 2025 ZO-Industrial Engineering Supplies</p>
     </div>
 
     <!-- Right form panel -->
@@ -218,7 +218,7 @@ function passwordMatch(control: AbstractControl): ValidationErrors | null {
 
         <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 text-center">
           <p class="text-xs text-gray-400 dark:text-gray-500">
-            By registering you agree to Zoieng's
+            By registering you agree to ZO-Industrial's
             <a href="#" class="underline hover:text-zoeing-primary dark:hover:text-zoeing-accent">Terms of Service</a>
             and
             <a href="#" class="underline hover:text-zoeing-primary dark:hover:text-zoeing-accent">Privacy Policy</a>.

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
+import { GeoLocationService, isMaterialBlocked } from '../../core/services/geo-location.service';
 import { ApiMaterial } from '../../models/product.model';
 import { MaterialCardComponent } from '../../shared/components/material-card/material-card.component';
 import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-wrapper.component';
@@ -212,6 +213,7 @@ import { LayoutWrapperComponent } from '../../shared/components/layouts/layout-w
 export class InventoryComponent implements OnInit, OnDestroy {
   private routeSub?: Subscription;
   private productService = inject(ProductService);
+  private geo            = inject(GeoLocationService);
   private route          = inject(ActivatedRoute);
   private router         = inject(Router);
 
@@ -246,6 +248,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const cat = this.activeCategory();
     const sub = this.activeSubCategory();
     const q   = this.searchQuery().toLowerCase().trim();
+
+    // Region blocking: hide materials not sellable in the visitor's country.
+    const country = this.geo.country();
+    if (country) items = items.filter(m => !isMaterialBlocked(m, country, this.geo.blockedIds()));
 
     if (cat !== 'All') items = items.filter(m => (m.category ?? 'Other') === cat);
     if (sub !== 'All') items = items.filter(m => (m.sub_category ?? 'General') === sub);

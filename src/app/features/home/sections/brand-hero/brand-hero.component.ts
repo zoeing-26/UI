@@ -106,12 +106,7 @@ interface VideoClip { src: SafeUrl; label: string; industry: string; }
       </div>
     </div>
 
-    <div class="absolute inset-x-0 bottom-0 h-1 bg-white/10">
-      <div
-        class="h-full origin-left rounded-r-full bg-gradient-to-r from-amber-400 via-orange-400 to-amber-300 transition-[width] duration-500 ease-out"
-        [style.width.%]="((currentIndex() + 1) / clips.length) * 100"
-      ></div>
-    </div>
+    <!-- Autoplay progress bar removed per business request (screenshot circle). -->
   </div>
   `,
 })

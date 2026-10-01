@@ -25,7 +25,7 @@
   ],
 })
 export class LogoComponent {
-  @Input() label = 'ZOIENG';
+  @Input() label = 'ZO-Industrial Engineering Supplies';
   @Input() primaryColor = '#0b2e3b';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() viewBox = '0 0 650 220';

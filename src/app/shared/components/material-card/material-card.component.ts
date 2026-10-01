@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 import { CartService } from '../../../core/services/cart.service';
 import { SafeStorageService } from '../../../core/services/safe-storage.service';
+import { GeoLocationService, isMaterialBlocked } from '../../../core/services/geo-location.service';
 import { ApiMaterial } from '../../../models/product.model';
 
 @Component({
@@ -34,6 +35,12 @@ import { ApiMaterial } from '../../../models/product.model';
         @if (mat().industry) {
           <span class="absolute left-3 top-3 rounded-full bg-amber-300/95 px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-slate-900 shadow-sm">
             {{ mat().industry }}
+          </span>
+        }
+
+        @if (blocked()) {
+          <span class="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-red-600/95 px-2 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-white shadow-sm">
+            <span class="material-icons text-[11px]">public_off</span> Blocked
           </span>
         }
       </div>
@@ -70,7 +77,12 @@ import { ApiMaterial } from '../../../models/product.model';
         </div>
 
         <div class="pt-1">
-          @if (inStock()) {
+          @if (blocked()) {
+            <p class="flex items-center justify-center gap-1.5 rounded-xl border border-red-200 bg-red-50 py-2.5 text-[10px] font-bold uppercase tracking-[0.12em] text-red-500 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-400">
+              <span class="material-icons text-[13px]">public_off</span>
+              Not available in {{ regionName() }}
+            </p>
+          } @else if (inStock()) {
             <p class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
               ● Stock available • {{ mat().count }} units
             </p>
@@ -94,11 +106,16 @@ export class MaterialCardComponent {
   private cart    = inject(CartService);
   private router  = inject(Router);
   private storage = inject(SafeStorageService);
+  private geo     = inject(GeoLocationService);
 
   protected inStock       = computed(() => (this.mat().count ?? 0) > 0);
+  /** Region blocking: material must not be offered in the visitor's country. */
+  protected blocked       = computed(() => isMaterialBlocked(this.mat(), this.geo.country(), this.geo.blockedIds()));
+  protected regionName    = computed(() => this.geo.countryName() || 'your region');
   protected addedFeedback = signal(false);
 
   onCardClick(): void {
+    if (this.blocked()) return;
     this.router.navigate(['/material', this.mat().id], { state: { material: this.mat() } });
   }
 
